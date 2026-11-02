@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: dev
+    open-pull-requests-limit: 5
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 1
+    groups:
+      npm-minor:
+        update-types: [minor]
+      npm-patch:
+        update-types: [patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    open-pull-requests-limit: 5
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 1
+    groups:
+      github-actions-minor:
+        update-types: [minor]
+      github-actions-patch:
+        update-types: [patch]

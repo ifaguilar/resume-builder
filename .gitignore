@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+.output
+.nitro
+.tanstack
+.wrangler
+coverage
+
+# Environment
+.env
+.env.*
+!.env.example
+*.local
+
+# Agent skills
+.agents/skills/
+.claude/skills/
+.claude/settings.local.json
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+__unconfig*
