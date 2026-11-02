@@ -19,6 +19,15 @@ export const WARNING_MESSAGES = {
     `"${key}" is not part of JSON Resume. It will be kept; consider moving it under "custom".`,
 } as const;
 
+export const LOCATION_PART_KEYS = [
+  "address",
+  "city",
+  "region",
+  "postalCode",
+  "countryCode",
+] as const;
+export const LOCATION_PART_SEPARATOR = ", ";
+
 export const TEMPLATE_IDS = ["classic"] as const;
 export const THEME_IDS = ["default"] as const;
 export const DEFAULT_TEMPLATE_ID = TEMPLATE_IDS[0];
