@@ -56,9 +56,9 @@ export function RemoveEntryButton({
     );
   }
 
-  // Entries are keyed by position until the reorder wave, so after a removal
-  // the next entry takes this one's place and this dialog stays mounted.
-  // Close it explicitly, or a second click would remove that entry too.
+  // Entries are keyed by index, so after a removal the next entry takes this
+  // one's place and this dialog stays mounted. Close it explicitly, or a
+  // second click would remove that entry too.
   function confirmRemove() {
     setIsOpen(false);
     removeAndMoveFocus();

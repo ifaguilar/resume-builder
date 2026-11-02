@@ -81,7 +81,7 @@ export const WorkSection = withForm({
               >
                 {entries.map((_, index) => (
                   <EntryCard
-                    // Positions are the identity until the reorder wave.
+                    // Index keys until entries get stable ids.
                     // oxlint-disable-next-line react/no-array-index-key
                     key={index}
                     header={

@@ -29,8 +29,6 @@ export function toBulletLines(pasted: string): string[] {
     .filter((line) => line !== "");
 }
 
-// Pasting several lines into one bullet turns each line into its own bullet,
-// replacing the selection. Returns the new list and the last pasted bullet.
 export function pasteBullets(
   items: readonly string[],
   index: number,

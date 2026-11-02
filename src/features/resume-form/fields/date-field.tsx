@@ -37,8 +37,7 @@ const MONTHS = Array.from({ length: MONTHS_PER_YEAR }, (_, index) => index + 1);
 
 type DateFieldProps = {
   label: string;
-  // "end": an empty end date means "Present" in JSON Resume.
-  // "single": a date on its own, such as a graduation date.
+  // An empty "end" date means "Present" in JSON Resume.
   kind: "start" | "end" | "single";
   description?: string;
 };
@@ -83,7 +82,6 @@ export function DateField({ label, kind, description }: DateFieldProps) {
     setIsOpen(open);
   }
 
-  // Arrow keys move between months; Tab leaves the grid.
   function handleMonthKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     const next = moveMonth(shownYear, activeMonth, event.key);
     if (!next) return;

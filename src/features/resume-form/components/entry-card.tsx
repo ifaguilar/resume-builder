@@ -9,9 +9,8 @@ type EntryHeaderProps = {
   onRemove: () => void;
 };
 
-// The card's title and remove button. Sections render it inside a
-// form.Subscribe for the entry: an array field in "array" mode re-renders
-// only when entries are added or removed, not when one is edited.
+// Sections render this inside a form.Subscribe for the entry: an array field
+// in "array" mode re-renders only when entries are added or removed.
 export function EntryHeader({
   title,
   entry,
