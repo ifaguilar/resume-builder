@@ -15,8 +15,36 @@
     "suspicious": "warn",
     "perf": "warn"
   },
+  "ignorePatterns": ["src/routeTree.gen.ts"],
   "rules": {
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "unicorn/filename-case": [
+      "error",
+      { "case": "kebabCase", "ignore": ["^__root\\.tsx$"] }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "regex": "^\\.{1,2}/",
+            "message": "Use absolute imports (#/...), not relative paths."
+          }
+        ]
+      }
+    ],
+    "oxc/no-barrel-file": ["error", { "threshold": 0 }],
+    "no-magic-numbers": [
+      "error",
+      {
+        "ignore": [-1, 0, 1],
+        "ignoreArrayIndexes": true,
+        "ignoreDefaultValues": true,
+        "ignoreNumericLiteralTypes": true,
+        "ignoreTypeIndexes": true,
+        "enforceConst": true
+      }
+    ]
   },
   "overrides": [
     {
@@ -25,7 +53,14 @@
         "jsx-a11y/label-has-associated-control": "off",
         "jsx-a11y/prefer-tag-over-role": "off",
         "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/no-noninteractive-element-interactions": "off"
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "no-magic-numbers": "off"
+      }
+    },
+    {
+      "files": ["tests/**", "**/*.test.ts", "**/*.test.tsx", "*.config.ts"],
+      "rules": {
+        "no-magic-numbers": "off"
       }
     }
   ],
