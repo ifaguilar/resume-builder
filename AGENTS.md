@@ -68,7 +68,16 @@ tests/             Vitest suites and fixtures
 - **No barrel files.** Never create `index.ts` or `index.tsx` outside `src/routes/`, and never re-export (`export { x } from`, `export * from`). Import from the file that defines the thing. Lint only catches `export *` (`oxc/no-barrel-file`), so follow this by hand.
 - **No magic numbers.** Every number that means something gets a named `const` in a `constants.ts`, with its unit in the name when it has one (`FORM_PANEL_MIN_SIZE_PX`, `PREVIEW_PAGE_PADDING_PT`). Lint: `no-magic-numbers`, but it does not check numbers inside JSX attributes (`minSize={360}`), so use constants there by hand too.
 - **No magic strings.** Not lint-checked. Any string the code depends on (ids, keys, storage keys, event names, option values such as `"A4"`, route paths) is a named constant or comes from a typed source (a `const` array, a union type, the schema). Tailwind class strings and user-facing copy are not magic strings; copy stays inline until internationalization.
+- **Comments only explain a non-obvious why**: a workaround, a library quirk, a reason that isn't visible in the code. Never restate what the code or a name already says.
+- **Tailwind classes stay inline** in `className`. Never wrap them in objects or constants (no `STYLES = { card: "…" }`). When a look repeats, make a component; for conditional classes use `cn()`.
 - **The schema mirrors JSON Resume v1.7.0** (`@jsonresume/schema`, `JSON_RESUME_SCHEMA_VERSION`). Every field is optional. Unknown keys and `custom` data are always preserved, never stripped. To upgrade, bump `@jsonresume/schema`, update `resume-schema.ts` until the drift test in `tests/schema.test.ts` passes, then update `JSON_RESUME_SCHEMA_VERSION`.
+- **Icon-only buttons** are wrapped in `IconTooltip` (`shared/components/icon-tooltip.tsx`), which sets both the tooltip and the accessible name. Icons that only decorate (such as a chevron on a picker) aren't buttons.
+- **The resume form** uses TanStack Form. Inputs are field components in `features/resume-form/fields/`, registered in `use-resume-form.ts`. Sections use `withForm`; an entry (one job, one degree) uses `withFieldGroup`.
+  - It offers only the fields recruiters recommend (`EDITED_*_KEYS` in `features/resume-form/constants.ts`). Data it doesn't edit is kept and exported, never dropped.
+  - Warnings come from `validateResume` and never block editing. They use the amber `warning` color, never destructive red.
+  - Text is trimmed when a field loses focus, and an emptied field stores `undefined`. Dates are picked as `YYYY-MM`.
+  - Tips under a field give CV advice only, never instructions for the form itself. Every field has an "e.g." placeholder.
+  - Every lookup works offline: suggestions are constants, and country names come from `Intl.DisplayNames`.
 - **react-pdf stays client-only.** Import `@react-pdf/renderer` only in files loaded through `React.lazy` inside `<ClientOnly>`. A static import from a server-rendered component breaks SSR and puts react-pdf in the main bundle.
 
 ## PDF and ATS rules
