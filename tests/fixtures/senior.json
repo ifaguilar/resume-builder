@@ -1,0 +1,176 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/master/packages/schema/schema.json",
+  "basics": {
+    "name": "Morgan Achterberg",
+    "label": "Staff Software Engineer",
+    "pronouns": "they/them",
+    "image": "",
+    "email": "morgan@example.org",
+    "phone": "+1 555 010 7788",
+    "url": "https://morgan.example.org",
+    "summary": "Engineer with twelve years of experience building distributed data systems.",
+    "location": {
+      "address": "100 Example Street",
+      "postalCode": "94000",
+      "city": "Sample City",
+      "countryCode": "US",
+      "region": "California"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "machterberg",
+        "url": "https://linkedin.example.com/in/machterberg"
+      }
+    ],
+    "custom": {
+      "resumeBuilder": { "headline": "Systems" }
+    }
+  },
+  "objective": "Lead a platform team building reliable data infrastructure.",
+  "work": [
+    {
+      "name": "Northwind Data",
+      "location": "Remote",
+      "description": "Analytics platform",
+      "position": "Staff Software Engineer",
+      "url": "https://northwind.example.com",
+      "startDate": "2020-03-01",
+      "summary": "Tech lead for the ingestion platform.",
+      "highlights": ["Scaled ingestion to two million events per second"],
+      "keywords": ["Go", "Kafka"],
+      "custom": {
+        "resumeBuilder": { "teamSize": 8 }
+      }
+    },
+    {
+      "name": "Fabrikam Labs",
+      "location": {
+        "city": "Sample City",
+        "region": "California",
+        "countryCode": "US"
+      },
+      "position": "Senior Software Engineer",
+      "startDate": "2014-05",
+      "endDate": "2020-02",
+      "highlights": ["Designed the multi-region storage layer"]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Code Garden",
+      "location": "Sample City",
+      "position": "Mentor",
+      "url": "https://codegarden.example.org",
+      "startDate": "2018",
+      "summary": "Weekly mentoring for new programmers.",
+      "highlights": ["Mentored 40 students"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Example Institute of Technology",
+      "location": "Sample City",
+      "url": "https://eit.example.edu",
+      "area": "Computer Engineering",
+      "studyType": "Master",
+      "startDate": "2011",
+      "endDate": "2013",
+      "score": "3.9/4.0",
+      "courses": ["Distributed Systems"],
+      "summary": "Thesis on consensus protocols."
+    }
+  ],
+  "awards": [
+    {
+      "title": "Engineering Excellence Award",
+      "date": "2022-11",
+      "awarder": "Northwind Data",
+      "summary": "For the ingestion platform rewrite."
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Certified Cloud Architect",
+      "date": "2021-04-15",
+      "url": "https://certs.example.com/verify/abc123",
+      "credentialId": "ABC-123",
+      "issuer": "Example Cloud",
+      "expiryDate": "2027-04-15",
+      "summary": "Professional level."
+    }
+  ],
+  "publications": [
+    {
+      "name": "Backpressure in Practice",
+      "authors": ["Morgan Achterberg", "Riley Example"],
+      "publisher": "Example Systems Journal",
+      "releaseDate": "2019-08",
+      "volume": "12",
+      "issue": "3",
+      "pages": "45-60",
+      "identifiers": {
+        "doi": "10.0000/example.2019.123",
+        "ssrn": "0000000"
+      },
+      "url": "https://journal.example.org/backpressure",
+      "summary": "Patterns for flow control in streaming systems.",
+      "type": "article"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Distributed Systems",
+      "level": "Expert",
+      "keywords": ["Kafka", "Raft"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native speaker"
+    },
+    {
+      "language": "Dutch",
+      "fluency": "Professional"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Cycling",
+      "keywords": ["Gravel"]
+    }
+  ],
+  "references": [
+    {
+      "name": "Avery Example",
+      "reference": "Morgan raised the bar for every team they joined.",
+      "relationship": "Former manager",
+      "organization": "Northwind Data",
+      "date": "2023-01",
+      "availableOnRequest": false
+    }
+  ],
+  "projects": [
+    {
+      "name": "Flowgate",
+      "summary": "Rate limiter library",
+      "description": "Adaptive rate limiting for Go services.",
+      "highlights": ["Used by several hundred projects"],
+      "keywords": ["Go"],
+      "startDate": "2019",
+      "url": "https://flowgate.example.com",
+      "roles": ["Maintainer"],
+      "entity": "Personal",
+      "type": "application"
+    }
+  ],
+  "meta": {
+    "canonical": "https://morgan.example.org/resume.json",
+    "version": "v1.0.0",
+    "lastModified": "2026-10-30T12:00:00"
+  },
+  "custom": {
+    "resumeBuilder": { "draft": false }
+  }
+}

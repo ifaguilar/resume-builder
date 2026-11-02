@@ -1,0 +1,69 @@
+{
+  "basics": {
+    "name": "Jordan Ellery",
+    "label": "Junior Frontend Developer",
+    "email": "jordan.ellery@example.com",
+    "phone": "555-0142",
+    "url": "https://jordanellery.example.com",
+    "summary": "Recent computer science graduate who builds accessible web interfaces with React and TypeScript.",
+    "location": {
+      "city": "Portland",
+      "region": "Oregon",
+      "countryCode": "US"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "jellery",
+        "url": "https://github.example.com/jellery"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Brightleaf Studio",
+      "position": "Frontend Intern",
+      "url": "https://brightleaf.example.com",
+      "startDate": "2024-06",
+      "endDate": "2024-08",
+      "highlights": [
+        "Rebuilt the booking form with accessible error messages",
+        "Cut the landing page bundle size by 30%"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Cascade State University",
+      "area": "Computer Science",
+      "studyType": "Bachelor",
+      "startDate": "2021-09",
+      "endDate": "2025-06",
+      "score": "3.7/4.0",
+      "courses": ["Data Structures", "Human-Computer Interaction"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Trail Notes",
+      "description": "Offline-first hiking journal",
+      "startDate": "2025-01",
+      "highlights": ["Works fully offline with IndexedDB"],
+      "keywords": ["React", "PWA"],
+      "url": "https://trailnotes.example.com"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Frontend",
+      "level": "Intermediate",
+      "keywords": ["React", "TypeScript", "CSS"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native speaker"
+    }
+  ]
+}

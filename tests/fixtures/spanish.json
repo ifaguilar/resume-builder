@@ -1,0 +1,57 @@
+{
+  "basics": {
+    "name": "Lucía Peñalosa Ibáñez",
+    "label": "Ingeniera de Software",
+    "email": "lucia.penalosa@example.es",
+    "phone": "+34 600 000 000",
+    "url": "https://luciapenalosa.example.es",
+    "summary": "Ingeniera con cinco años de experiencia en aplicaciones web accesibles y diseño de sistemas.",
+    "location": {
+      "city": "Logroño",
+      "region": "La Rioja",
+      "countryCode": "ES"
+    }
+  },
+  "work": [
+    {
+      "name": "Compañía Ejemplo S.L.",
+      "location": "Madrid",
+      "position": "Desarrolladora sénior",
+      "startDate": "2022-02",
+      "summary": "Responsable del diseño de la interfaz de pagos.",
+      "highlights": [
+        "Reduje el tiempo de carga en un 40 %",
+        "Lideré la migración a TypeScript"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Universidad de Ejemplo",
+      "area": "Ingeniería Informática",
+      "studyType": "Grado",
+      "startDate": "2015",
+      "endDate": "2019"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Desarrollo web",
+      "level": "Avanzado",
+      "keywords": ["React", "Accesibilidad", "Diseño de interfaces"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Español",
+      "fluency": "Nativo"
+    },
+    {
+      "language": "Inglés",
+      "fluency": "C1"
+    }
+  ],
+  "meta": {
+    "version": "v1.0.0"
+  }
+}

@@ -57,6 +57,7 @@ tests/             Vitest suites and fixtures
 ```
 
 - A feature is named after what it does for the user (`editor`, `resume-form`, `pdf-preview`), not after a technical layer.
+- `features/resume/` is the domain model (JSON Resume schema, types, validation, settings schema). It is the one feature other features may import.
 - `shared/` never imports from `features/`.
 - Constants live in the feature that owns them (`src/features/<feature>/constants.ts`). Constants used by several features go to `src/shared/constants/<topic>.ts`.
 
@@ -67,6 +68,7 @@ tests/             Vitest suites and fixtures
 - **No barrel files.** Never create `index.ts` or `index.tsx` outside `src/routes/`, and never re-export (`export { x } from`, `export * from`). Import from the file that defines the thing. Lint only catches `export *` (`oxc/no-barrel-file`), so follow this by hand.
 - **No magic numbers.** Every number that means something gets a named `const` in a `constants.ts`, with its unit in the name when it has one (`FORM_PANEL_MIN_SIZE_PX`, `PREVIEW_PAGE_PADDING_PT`). Lint: `no-magic-numbers`, but it does not check numbers inside JSX attributes (`minSize={360}`), so use constants there by hand too.
 - **No magic strings.** Not lint-checked. Any string the code depends on (ids, keys, storage keys, event names, option values such as `"A4"`, route paths) is a named constant or comes from a typed source (a `const` array, a union type, the schema). Tailwind class strings and user-facing copy are not magic strings; copy stays inline until internationalization.
+- **The schema mirrors JSON Resume v1.7.0** (`@jsonresume/schema`, `JSON_RESUME_SCHEMA_VERSION`). Every field is optional. Unknown keys and `custom` data are always preserved, never stripped. To upgrade, bump `@jsonresume/schema`, update `resume-schema.ts` until the drift test in `tests/schema.test.ts` passes, then update `JSON_RESUME_SCHEMA_VERSION`.
 - **react-pdf stays client-only.** Import `@react-pdf/renderer` only in files loaded through `React.lazy` inside `<ClientOnly>`. A static import from a server-rendered component breaks SSR and puts react-pdf in the main bundle.
 
 ## PDF and ATS rules
