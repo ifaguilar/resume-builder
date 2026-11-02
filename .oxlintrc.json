@@ -20,7 +20,7 @@
   },
   "overrides": [
     {
-      "files": ["src/components/ui/**"],
+      "files": ["src/shared/components/ui/**"],
       "rules": {
         "jsx-a11y/label-has-associated-control": "off",
         "jsx-a11y/prefer-tag-over-role": "off",
