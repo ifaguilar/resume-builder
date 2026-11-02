@@ -12,6 +12,7 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
 
