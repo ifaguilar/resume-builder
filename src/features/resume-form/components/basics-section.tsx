@@ -107,9 +107,7 @@ export const BasicsSection = withForm({
         </form.AppField>
 
         {/* The divider is on a wrapper: on a fieldset, the browser draws the
-
             border through the legend. */}
-
         <div className="border-t pt-6">
           <LabeledGroup title="Location">
             <div className="grid grid-cols-3 gap-x-4 gap-y-6">
@@ -172,7 +170,7 @@ export const BasicsSection = withForm({
                           </form.Subscribe>
                         }
                       >
-                        {/* useFieldGroup keeps the path it was created with, so the fields remount when the entry's index changes. */}
+                        {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                         <ProfileFields
                           key={index}
                           form={form}

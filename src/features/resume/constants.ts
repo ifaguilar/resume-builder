@@ -1,11 +1,9 @@
-// The JSON Resume spec version the Zod schema mirrors (@jsonresume/schema).
 export const JSON_RESUME_SCHEMA_VERSION = "1.7.0";
 
 // The official "iso8601" definition: YYYY, YYYY-MM or YYYY-MM-DD.
 export const PARTIAL_DATE_PATTERN =
   /^([1-2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])|[1-2][0-9]{3}-(0[1-9]|1[0-2])|[1-2][0-9]{3})$/;
 
-// A full YYYY-MM-DD date, captured as year, month and day.
 export const FULL_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export const WARNING_MESSAGES = {

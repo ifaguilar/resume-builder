@@ -102,7 +102,7 @@ export const WorkSection = withForm({
                       </form.Subscribe>
                     }
                   >
-                    {/* useFieldGroup keeps the path it was created with, so the fields remount when the entry's index changes. */}
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                     <WorkEntryFields
                       key={index}
                       form={form}

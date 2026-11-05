@@ -52,7 +52,7 @@ export function CountryField({ label, placeholder }: CountryFieldProps) {
         isItemEqualToValue={(a, b) => a.code === b.code}
         autoHighlight
       >
-        {/* Anchored to the whole box: the input alone is narrower than the box, so the popup overshot it. */}
+        {/* The popup anchors to this box; the input inside it is narrower. */}
         <div ref={anchor}>
           <ComboboxInput
             id={id}
