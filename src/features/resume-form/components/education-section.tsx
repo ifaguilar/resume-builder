@@ -71,16 +71,16 @@ export const EducationSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No education yet."
                 addLabel="Add education"
+                entryLabel="education entry"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.education?.[index]}
@@ -93,18 +93,20 @@ export const EducationSection = withForm({
                             )}
                             entry={entry}
                             entryLabel="education entry"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
+                    {/* useFieldGroup keeps the path it was created with, so the fields remount when the entry's index changes. */}
                     <EducationEntryFields
+                      key={index}
                       form={form}
                       fields={`education[${index}]`}
                     />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}

@@ -1,5 +1,5 @@
 import { Trash2Icon } from "lucide-react";
-import { use, useState } from "react";
+import { use } from "react";
 
 import { AddEntryButtonContext } from "#/features/resume-form/components/entry-list-context";
 import { hasContent } from "#/features/resume-form/has-content";
@@ -33,7 +33,6 @@ export function RemoveEntryButton({
 }: RemoveEntryButtonProps) {
   const label = `Remove ${entryLabel}`;
   const addButtonRef = use(AddEntryButtonContext);
-  const [isOpen, setIsOpen] = useState(false);
 
   // The card (and the dialog inside it) unmounts on removal, so wait a frame
   // for React and the dialog's own focus handling to finish.
@@ -56,16 +55,8 @@ export function RemoveEntryButton({
     );
   }
 
-  // Entries are keyed by index, so after a removal the next entry takes this
-  // one's place and this dialog stays mounted. Close it explicitly, or a
-  // second click would remove that entry too.
-  function confirmRemove() {
-    setIsOpen(false);
-    removeAndMoveFocus();
-  }
-
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+    <AlertDialog>
       <IconTooltip label={label}>
         <AlertDialogTrigger
           render={<Button variant="destructive" size="icon-sm" />}
@@ -85,7 +76,7 @@ export function RemoveEntryButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={confirmRemove}>
+          <AlertDialogAction variant="destructive" onClick={removeAndMoveFocus}>
             Remove
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -78,6 +78,9 @@ tests/             Vitest suites and fixtures
   - Text is trimmed when a field loses focus, and an emptied field stores `undefined`. Dates are picked as `YYYY-MM`.
   - Tips under a field give CV advice only, never instructions for the form itself. Every field has an "e.g." placeholder.
   - Every lookup works offline: suggestions are constants, and country names come from `Intl.DisplayNames`.
+  - List items (entries, bullets) are keyed by `useListKeys`, never by index, and the keys never go into form values. Every add, remove, split, paste or move updates the keys in the same event as the values.
+  - A field group inside a list item gets `key={index}`: `useFieldGroup` keeps the path it was created with, so it must remount when the item moves.
+  - Reordering uses `EntryList` or `SortableList`/`SortableItem` and one `ReorderMenu` grip per item: dragging it moves the item; clicking it, or Enter or Space, opens Move up / down / to top / to bottom. Every move is announced through `AnnounceContext`.
 - **react-pdf stays client-only.** Import `@react-pdf/renderer` only in files loaded through `React.lazy` inside `<ClientOnly>`. A static import from a server-rendered component breaks SSR and puts react-pdf in the main bundle.
 
 ## PDF and ATS rules

@@ -15,13 +15,6 @@ export function splitBullet(
   ];
 }
 
-export function removeBullet(
-  items: readonly string[],
-  index: number,
-): string[] {
-  return items.filter((_, itemIndex) => itemIndex !== index);
-}
-
 export function toBulletLines(pasted: string): string[] {
   return pasted
     .split(LINE_BREAK)

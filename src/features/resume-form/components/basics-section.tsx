@@ -142,16 +142,16 @@ export const BasicsSection = withForm({
                 const profiles = field.state.value ?? [];
                 return (
                   <EntryList
-                    isEmpty={profiles.length === 0}
+                    count={profiles.length}
                     emptyText="No profiles yet."
                     addLabel="Add profile"
+                    entryLabel="profile"
                     onAdd={() => field.pushValue({})}
+                    onRemove={(index) => field.removeValue(index)}
+                    onMove={(from, to) => field.moveValue(from, to)}
                   >
-                    {profiles.map((_, index) => (
+                    {({ index, remove }) => (
                       <EntryCard
-                        // Index keys until entries get stable ids.
-                        // oxlint-disable-next-line react/no-array-index-key
-                        key={index}
                         header={
                           <form.Subscribe
                             selector={(state) =>
@@ -166,18 +166,20 @@ export const BasicsSection = withForm({
                                 )}
                                 entry={profile}
                                 entryLabel="profile"
-                                onRemove={() => field.removeValue(index)}
+                                onRemove={remove}
                               />
                             )}
                           </form.Subscribe>
                         }
                       >
+                        {/* useFieldGroup keeps the path it was created with, so the fields remount when the entry's index changes. */}
                         <ProfileFields
+                          key={index}
                           form={form}
                           fields={`basics.profiles[${index}]`}
                         />
                       </EntryCard>
-                    ))}
+                    )}
                   </EntryList>
                 );
               }}
