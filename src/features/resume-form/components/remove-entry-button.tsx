@@ -1,7 +1,8 @@
 import { Trash2Icon } from "lucide-react";
-import { use, useState } from "react";
+import { use } from "react";
 
 import { AddEntryButtonContext } from "#/features/resume-form/components/entry-list-context";
+import { RemoveButton } from "#/features/resume-form/components/remove-button";
 import { hasContent } from "#/features/resume-form/has-content";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import {
@@ -16,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "#/shared/components/ui/alert-dialog";
-import { Button } from "#/shared/components/ui/button";
 
 type RemoveEntryButtonProps = {
   entry: unknown;
@@ -33,7 +33,6 @@ export function RemoveEntryButton({
 }: RemoveEntryButtonProps) {
   const label = `Remove ${entryLabel}`;
   const addButtonRef = use(AddEntryButtonContext);
-  const [isOpen, setIsOpen] = useState(false);
 
   // The card (and the dialog inside it) unmounts on removal, so wait a frame
   // for React and the dialog's own focus handling to finish.
@@ -45,31 +44,17 @@ export function RemoveEntryButton({
   if (!hasContent(entry)) {
     return (
       <IconTooltip label={label}>
-        <Button
-          variant="destructive"
-          size="icon-sm"
-          onClick={removeAndMoveFocus}
-        >
+        <RemoveButton onClick={removeAndMoveFocus}>
           <Trash2Icon />
-        </Button>
+        </RemoveButton>
       </IconTooltip>
     );
   }
 
-  // Entries are keyed by index, so after a removal the next entry takes this
-  // one's place and this dialog stays mounted. Close it explicitly, or a
-  // second click would remove that entry too.
-  function confirmRemove() {
-    setIsOpen(false);
-    removeAndMoveFocus();
-  }
-
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+    <AlertDialog>
       <IconTooltip label={label}>
-        <AlertDialogTrigger
-          render={<Button variant="destructive" size="icon-sm" />}
-        >
+        <AlertDialogTrigger render={<RemoveButton />}>
           <Trash2Icon />
         </AlertDialogTrigger>
       </IconTooltip>
@@ -85,7 +70,7 @@ export function RemoveEntryButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={confirmRemove}>
+          <AlertDialogAction variant="destructive" onClick={removeAndMoveFocus}>
             Remove
           </AlertDialogAction>
         </AlertDialogFooter>

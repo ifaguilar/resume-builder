@@ -107,9 +107,7 @@ export const BasicsSection = withForm({
         </form.AppField>
 
         {/* The divider is on a wrapper: on a fieldset, the browser draws the
-
             border through the legend. */}
-
         <div className="border-t pt-6">
           <LabeledGroup title="Location">
             <div className="grid grid-cols-3 gap-x-4 gap-y-6">
@@ -142,16 +140,16 @@ export const BasicsSection = withForm({
                 const profiles = field.state.value ?? [];
                 return (
                   <EntryList
-                    isEmpty={profiles.length === 0}
+                    count={profiles.length}
                     emptyText="No profiles yet."
                     addLabel="Add profile"
+                    entryLabel="profile"
                     onAdd={() => field.pushValue({})}
+                    onRemove={(index) => field.removeValue(index)}
+                    onMove={(from, to) => field.moveValue(from, to)}
                   >
-                    {profiles.map((_, index) => (
+                    {({ index, remove }) => (
                       <EntryCard
-                        // Index keys until entries get stable ids.
-                        // oxlint-disable-next-line react/no-array-index-key
-                        key={index}
                         header={
                           <form.Subscribe
                             selector={(state) =>
@@ -166,18 +164,20 @@ export const BasicsSection = withForm({
                                 )}
                                 entry={profile}
                                 entryLabel="profile"
-                                onRemove={() => field.removeValue(index)}
+                                onRemove={remove}
                               />
                             )}
                           </form.Subscribe>
                         }
                       >
+                        {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                         <ProfileFields
+                          key={index}
                           form={form}
                           fields={`basics.profiles[${index}]`}
                         />
                       </EntryCard>
-                    ))}
+                    )}
                   </EntryList>
                 );
               }}

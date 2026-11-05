@@ -6,9 +6,6 @@ import {
   WARNING_MESSAGES,
 } from "#/features/resume/constants";
 
-// A strict copy of JSON Resume v1.7.0 (see JSON_RESUME_SCHEMA_VERSION).
-// Every field is optional, and unknown keys are reported (never removed).
-
 function isRealCalendarDate(value: string): boolean {
   const match = FULL_DATE_PATTERN.exec(value);
   if (!match) return true;

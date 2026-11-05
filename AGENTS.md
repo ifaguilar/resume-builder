@@ -21,8 +21,6 @@ These shape most code decisions:
 - shadcn/ui on Base UI, Tailwind CSS v4, lucide icons, react-resizable-panels, dnd-kit
 - Vitest, oxlint (type-aware), oxfmt, pnpm
 
-TanStack Start renders on the server, but react-pdf must run only in the browser: see the last rule under [Conventions](#conventions).
-
 ## Commands
 
 ```bash
@@ -78,6 +76,9 @@ tests/             Vitest suites and fixtures
   - Text is trimmed when a field loses focus, and an emptied field stores `undefined`. Dates are picked as `YYYY-MM`.
   - Tips under a field give CV advice only, never instructions for the form itself. Every field has an "e.g." placeholder.
   - Every lookup works offline: suggestions are constants, and country names come from `Intl.DisplayNames`.
+  - List items (entries, bullets) are keyed by `useListKeys`, never by index, and the keys never go into form values. Every add, remove, split, paste, move or drop of empty items updates the keys in the same event as the values.
+  - A field group inside a list item gets `key={index}`: `useFieldGroup` keeps the path it was created with, so it must remount when the item moves.
+  - Reorderable lists use `EntryList` (entries) or `SortableList`/`SortableItem` (anything else) with a `ReorderMenu` grip per item, and announce each move through `AnnounceContext`.
 - **react-pdf stays client-only.** Import `@react-pdf/renderer` only in files loaded through `React.lazy` inside `<ClientOnly>`. A static import from a server-rendered component breaks SSR and puts react-pdf in the main bundle.
 
 ## PDF and ATS rules

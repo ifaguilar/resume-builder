@@ -47,8 +47,6 @@ function toWarnings(
   return [{ path, message: issue.message }];
 }
 
-// Checks a resume against JSON Resume and reports problems as warnings.
-// It never throws and never changes the input: a half-written resume is valid.
 export function validateResume(input: unknown): { warnings: ResumeWarning[] } {
   const result = resumeSchema.safeParse(input);
   if (result.success) return { warnings: [] };

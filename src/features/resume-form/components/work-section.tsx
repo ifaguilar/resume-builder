@@ -74,16 +74,16 @@ export const WorkSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No work experience yet."
                 addLabel="Add work entry"
+                entryLabel="work entry"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.work?.[index]}
@@ -96,15 +96,20 @@ export const WorkSection = withForm({
                             )}
                             entry={entry}
                             entryLabel="work entry"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
-                    <WorkEntryFields form={form} fields={`work[${index}]`} />
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
+                    <WorkEntryFields
+                      key={index}
+                      form={form}
+                      fields={`work[${index}]`}
+                    />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}

@@ -76,16 +76,16 @@ export const ProjectsSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No projects yet."
                 addLabel="Add project"
+                entryLabel="project"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.projects?.[index]}
@@ -95,15 +95,20 @@ export const ProjectsSection = withForm({
                             title={entryTitle([entry?.name], "New project")}
                             entry={entry}
                             entryLabel="project"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
-                    <ProjectFields form={form} fields={`projects[${index}]`} />
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
+                    <ProjectFields
+                      key={index}
+                      form={form}
+                      fields={`projects[${index}]`}
+                    />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}
