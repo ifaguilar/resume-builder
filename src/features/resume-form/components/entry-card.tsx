@@ -44,9 +44,11 @@ export function EntryCard({ header, children }: EntryCardProps) {
   return (
     <section
       ref={item?.ref}
+      // During a drag, dnd-kit leaves a hidden copy of this card where it will
+      // land; the data-dnd-placeholder styles turn that copy into a drop slot.
       className={cn(
-        "flex flex-col gap-5 rounded-xl border bg-background p-4 shadow-xs",
-        item?.isDragging && "relative z-10 shadow-lg ring-2 ring-ring/40",
+        "flex flex-col gap-5 rounded-xl border bg-background p-4 shadow-xs data-dnd-placeholder:visible! data-dnd-placeholder:border-transparent data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:shadow-none data-dnd-placeholder:ring-0 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
+        item?.isDragging && "relative z-10 shadow-xl ring-2 ring-primary/30",
       )}
     >
       {header}

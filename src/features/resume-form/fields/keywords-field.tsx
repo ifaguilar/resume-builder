@@ -83,7 +83,8 @@ export function KeywordsField({
             <IconTooltip label={`Remove ${keyword}`}>
               <button
                 type="button"
-                className="shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:text-destructive"
+                // A 24px hit area around the small icon, without making the chip taller.
+                className="relative shrink-0 rounded-full text-muted-foreground before:absolute before:-inset-1.5 hover:bg-destructive/10 hover:text-destructive focus-visible:text-destructive"
                 onClick={() =>
                   field.handleChange(
                     keywords.filter((item) => item !== keyword),

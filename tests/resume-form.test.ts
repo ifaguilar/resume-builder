@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
+  filledBulletIndexes,
   pasteBullets,
   splitBullet,
   toBulletLines,
@@ -241,6 +242,11 @@ describe("countries", () => {
 });
 
 describe("bullets", () => {
+  it("finds the bullets that have text", () => {
+    expect(filledBulletIndexes(["a", "", "  ", "b"])).toEqual([0, 3]);
+    expect(filledBulletIndexes(["", " "])).toEqual([]);
+  });
+
   it("splits a bullet at the caret", () => {
     expect(splitBullet(["Led the redesign Built it", "Other"], 0, 17)).toEqual([
       "Led the redesign",

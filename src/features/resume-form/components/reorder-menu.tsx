@@ -1,3 +1,4 @@
+import { useDragDropMonitor } from "@dnd-kit/react";
 import {
   ArrowDownIcon,
   ArrowDownToLineIcon,
@@ -21,7 +22,28 @@ import {
 export function ReorderMenu({ label }: { label: string }) {
   const item = use(SortableItemContext);
   const [isOpen, setIsOpen] = useState(false);
-  if (!item || item.count < MIN_SORTABLE_ITEMS) return null;
+
+  // A drag can start from the grip of an open menu, which would otherwise
+  // stay open and follow the moving item.
+  useDragDropMonitor({ onDragStart: () => setIsOpen(false) });
+
+  if (!item) return null;
+
+  // Still shown for a single item, so the title doesn't shift when a second
+  // one is added.
+  if (item.count < MIN_SORTABLE_ITEMS) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        className="shrink-0 text-muted-foreground"
+        aria-label={label}
+        disabled
+      >
+        <GripVerticalIcon />
+      </Button>
+    );
+  }
 
   const { handleRef, index, count, move } = item;
   const isFirst = index === 0;

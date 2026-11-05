@@ -25,5 +25,9 @@ export function useListKeys(length: number) {
     remove: (index: number) => setKeys((current) => removeItem(current, index)),
     move: (from: number, to: number) =>
       setKeys((current) => moveItem(current, from, to)),
+    keep: (indexes: readonly number[]) =>
+      setKeys((current) =>
+        current.filter((_, index) => indexes.includes(index)),
+      ),
   };
 }

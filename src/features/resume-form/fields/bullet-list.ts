@@ -15,6 +15,10 @@ export function splitBullet(
   ];
 }
 
+export function filledBulletIndexes(items: readonly string[]): number[] {
+  return items.flatMap((item, index) => (item.trim() === "" ? [] : [index]));
+}
+
 export function toBulletLines(pasted: string): string[] {
   return pasted
     .split(LINE_BREAK)
