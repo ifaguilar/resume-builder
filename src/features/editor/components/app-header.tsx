@@ -1,5 +1,6 @@
 import { Download, FileDown, Upload } from "lucide-react";
 
+import { ColorSchemeMenu } from "#/features/color-scheme/color-scheme-menu";
 import { Button } from "#/shared/components/ui/button";
 import { ButtonGroup } from "#/shared/components/ui/button-group";
 
@@ -22,6 +23,7 @@ export function AppHeader() {
           <FileDown data-icon="inline-start" aria-hidden />
           Export PDF
         </Button>
+        <ColorSchemeMenu />
       </div>
     </header>
   );
