@@ -36,10 +36,8 @@ export function FormPanel({ form }: { form: ResumeForm }) {
 
   return (
     <LiveAnnouncer>
-      {/* The container is the panel itself: a container query can't style
-          its own element, and the padding below changes with the width. Each
-          row adds columns at the smallest Tailwind container size where its
-          longest placeholder fits. */}
+      {/* A container query can't style its own element, and the padding
+          below depends on the width. */}
       <ScrollArea className="@container/form h-full bg-background">
         <div className="flex flex-col p-2 @lg/form:p-4">
           <Accordion
