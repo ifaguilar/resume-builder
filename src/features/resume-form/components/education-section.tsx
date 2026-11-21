@@ -52,6 +52,7 @@ const EducationEntryFields = withFieldGroup({
             <field.DateField
               label="Graduation date (or expected)"
               kind="single"
+              allowFuture
             />
           )}
         </group.AppField>

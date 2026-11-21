@@ -6,12 +6,18 @@ import {
   isFieldWarning,
 } from "#/features/resume-form/resume-warnings-validator";
 
-export function useVisibleWarnings(field: AnyFieldApi) {
+// Warnings wait while the user is typing. A picker's value is final once
+// picked, and focus returns to its trigger, so it opts out.
+export function useVisibleWarnings(
+  field: AnyFieldApi,
+  { hideWhileFocused = true }: { hideWhileFocused?: boolean } = {},
+) {
   const [isFocused, setIsFocused] = useState(false);
 
-  const warnings: FieldWarning[] = isFocused
-    ? []
-    : field.state.meta.errors.flat().filter(isFieldWarning);
+  const warnings: FieldWarning[] =
+    hideWhileFocused && isFocused
+      ? []
+      : field.state.meta.errors.flat().filter(isFieldWarning);
 
   return {
     warnings,
