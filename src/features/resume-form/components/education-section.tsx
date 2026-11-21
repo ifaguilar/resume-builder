@@ -28,7 +28,7 @@ const EducationEntryFields = withFieldGroup({
             />
           )}
         </group.AppField>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 @2xl/form:grid-cols-2">
           <group.AppField name="studyType">
             {(field) => (
               <field.AutocompleteField
