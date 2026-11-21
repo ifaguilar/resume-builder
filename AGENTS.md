@@ -43,6 +43,8 @@ tests/              Vitest suites and fixtures
 - Comments only for a non-obvious why.
 - Tailwind classes inline; a component for a repeated look, `cn()` for conditions.
 - Dates use Temporal, never `Date`.
+- Icon-only buttons go through `IconTooltip`.
+- Warnings use the amber `warning` color, never destructive red.
 
 ## Workflow
 
