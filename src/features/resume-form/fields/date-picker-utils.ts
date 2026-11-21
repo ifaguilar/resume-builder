@@ -3,7 +3,6 @@ import {
   ARROW_LEFT_KEY,
   ARROW_RIGHT_KEY,
   ARROW_UP_KEY,
-  DATE_PART_SEPARATOR,
   DISPLAY_LOCALE,
   END_KEY,
   HOME_KEY,
@@ -13,42 +12,25 @@ import {
   MONTH_GRID_COLUMNS,
   MONTHS_PER_YEAR,
 } from "#/features/resume-form/constants";
-import { PARTIAL_DATE_PATTERN } from "#/features/resume/constants";
+import { DATE_PART_SEPARATOR } from "#/features/resume/constants";
+import {
+  type PartialDate,
+  parsePartialDate,
+} from "#/features/resume/partial-date";
 
-export type PartialDate = { year: number; month?: number; day?: number };
-
-const shortMonth = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-  month: "short",
-  timeZone: "UTC",
-});
-const longMonthYear = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-function utcDate(year: number, month: number): Date {
-  return new Date(Date.UTC(year, month - 1));
-}
-
-export function parsePartialDate(
-  value: string | undefined,
-): PartialDate | undefined {
-  if (value === undefined || !PARTIAL_DATE_PATTERN.test(value)) {
-    return undefined;
-  }
-  const [year, month, day] = value.split(DATE_PART_SEPARATOR).map(Number);
-  if (year === undefined) return undefined;
-  return { year, month, day };
+// Intl can't format a PlainYearMonth without an explicit calendar, so
+// months are formatted from their first day.
+function firstDayOf(year: number, month: number): Temporal.PlainDate {
+  return Temporal.PlainDate.from({ year, month, day: 1 });
 }
 
 export function initialFocusMonth(
   date: PartialDate | undefined,
   shownYear: number,
-  today: Date,
+  today: Temporal.PlainDate,
 ): number {
   if (date?.year === shownYear && date.month !== undefined) return date.month;
-  if (today.getFullYear() === shownYear) return today.getMonth() + 1;
+  if (today.year === shownYear) return today.month;
   return 1;
 }
 
@@ -63,6 +45,7 @@ export function moveMonth(
   year: number,
   month: number,
   key: string,
+  maxYear = MAX_PICKER_YEAR,
 ): { year: number; month: number } | undefined {
   if (key === HOME_KEY) return { year, month: 1 };
   if (key === END_KEY) return { year, month: MONTHS_PER_YEAR };
@@ -73,7 +56,7 @@ export function moveMonth(
     year: Math.floor(index / MONTHS_PER_YEAR),
     month: (index % MONTHS_PER_YEAR) + 1,
   };
-  if (next.year < MIN_PICKER_YEAR || next.year > MAX_PICKER_YEAR) {
+  if (next.year < MIN_PICKER_YEAR || next.year > maxYear) {
     return undefined;
   }
   return next;
@@ -85,11 +68,16 @@ export function toMonthValue(year: number, month: number): string {
 }
 
 export function formatShortMonth(year: number, month: number): string {
-  return shortMonth.format(utcDate(year, month));
+  return firstDayOf(year, month).toLocaleString(DISPLAY_LOCALE, {
+    month: "short",
+  });
 }
 
 export function formatLongMonthYear(year: number, month: number): string {
-  return longMonthYear.format(utcDate(year, month));
+  return firstDayOf(year, month).toLocaleString(DISPLAY_LOCALE, {
+    month: "long",
+    year: "numeric",
+  });
 }
 
 export function formatDisplayDate(value: string): string {

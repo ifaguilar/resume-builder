@@ -1,20 +1,10 @@
 import { z } from "zod";
 
 import {
-  FULL_DATE_PATTERN,
   PARTIAL_DATE_PATTERN,
   WARNING_MESSAGES,
 } from "#/features/resume/constants";
-
-function isRealCalendarDate(value: string): boolean {
-  const match = FULL_DATE_PATTERN.exec(value);
-  if (!match) return true;
-  const [, year, month, day] = match.map(Number);
-  if (year === undefined || month === undefined || day === undefined)
-    return true;
-  const date = new Date(Date.UTC(year, month - 1, day));
-  return date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
-}
+import { isRealCalendarDate } from "#/features/resume/partial-date";
 
 // An empty string means "not filled in yet", so it never warns.
 function optionalFormat<T extends z.ZodType<string>>(schema: T) {

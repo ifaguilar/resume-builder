@@ -35,7 +35,6 @@ export const MONTH_DIGITS = 2;
 // The years PARTIAL_DATE_PATTERN accepts.
 export const MIN_PICKER_YEAR = 1000;
 export const MAX_PICKER_YEAR = 2999;
-export const DATE_PART_SEPARATOR = "-";
 export const DISPLAY_LOCALE = "en";
 
 export const POPUP_SIDE_OFFSET_PX = 6;

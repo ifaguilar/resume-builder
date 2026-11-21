@@ -13,12 +13,12 @@ import {
   formatShortMonth,
   initialFocusMonth,
   moveMonth,
-  parsePartialDate,
   toMonthValue,
 } from "#/features/resume-form/fields/date-picker-utils";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
+import { parsePartialDate } from "#/features/resume/partial-date";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { Button } from "#/shared/components/ui/button";
 import {
@@ -40,15 +40,23 @@ type DateFieldProps = {
   // An empty "end" date means "Present" in JSON Resume.
   kind: "start" | "end" | "single";
   description?: string;
+  allowFuture?: boolean;
 };
 
 function currentYear(): number {
-  return new Date().getFullYear();
+  return Temporal.Now.plainDateISO().year;
 }
 
-export function DateField({ label, kind, description }: DateFieldProps) {
+export function DateField({
+  label,
+  kind,
+  description,
+  allowFuture = false,
+}: DateFieldProps) {
   const field = useFieldContext<string | undefined>();
-  const { warnings, isInvalid, focusProps } = useVisibleWarnings(field);
+  const { warnings, isInvalid, focusProps } = useVisibleWarnings(field, {
+    hideWhileFocused: false,
+  });
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
   const value = field.state.value;
@@ -58,7 +66,7 @@ export function DateField({ label, kind, description }: DateFieldProps) {
   // Set when the picker opens: reading the clock during render isn't pure,
   // and year navigation shouldn't move the focus.
   const [activeMonth, setActiveMonth] = useState(1);
-  const [today, setToday] = useState<{ year: number; month: number }>();
+  const [today, setToday] = useState<Temporal.PlainDate>();
   const monthButtons = useRef<(HTMLButtonElement | null)[]>([]);
   const focusActiveMonth = useRef(false);
 
@@ -69,21 +77,32 @@ export function DateField({ label, kind, description }: DateFieldProps) {
   });
 
   const isEnd = kind === "end";
+  // An imported future year still opens, so its own months stay reachable.
+  const maxYear =
+    allowFuture || !today ? MAX_PICKER_YEAR : Math.max(today.year, shownYear);
+
+  function isFutureMonth(month: number): boolean {
+    if (allowFuture || !today) return false;
+    return (
+      shownYear > today.year ||
+      (shownYear === today.year && month > today.month)
+    );
+  }
 
   function handleOpenChange(open: boolean) {
     if (open) {
-      const now = new Date();
+      const now = Temporal.Now.plainDateISO();
       const current = parsePartialDate(field.state.value);
-      const year = current?.year ?? now.getFullYear();
+      const year = current?.year ?? now.year;
       setShownYear(year);
       setActiveMonth(initialFocusMonth(current, year, now));
-      setToday({ year: now.getFullYear(), month: now.getMonth() + 1 });
+      setToday(now);
     }
     setIsOpen(open);
   }
 
   function handleMonthKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    const next = moveMonth(shownYear, activeMonth, event.key);
+    const next = moveMonth(shownYear, activeMonth, event.key, maxYear);
     if (!next) return;
     event.preventDefault();
     setShownYear(next.year);
@@ -146,7 +165,7 @@ export function DateField({ label, kind, description }: DateFieldProps) {
               <Button
                 variant="ghost"
                 size="icon-sm"
-                disabled={shownYear >= MAX_PICKER_YEAR}
+                disabled={shownYear >= maxYear}
                 onClick={() => setShownYear((year) => year + 1)}
               >
                 <ChevronRightIcon />
@@ -154,12 +173,19 @@ export function DateField({ label, kind, description }: DateFieldProps) {
             </IconTooltip>
           </div>
           <Separator />
-          <div className="grid grid-cols-3 gap-1 p-2">
+          {/* A click on a disabled month or a gap would move focus to the
+              popup and leave the arrow keys with no month to start from. */}
+          <div
+            role="presentation"
+            className="grid grid-cols-3 gap-1 p-2"
+            onMouseDown={(event) => event.preventDefault()}
+          >
             {MONTHS.map((month) => {
               const isSelected =
                 date?.year === shownYear && date.month === month;
               const isThisMonth =
                 today?.year === shownYear && today.month === month;
+              const isDisabled = isFutureMonth(month) && !isSelected;
               return (
                 <Button
                   key={month}
@@ -169,13 +195,21 @@ export function DateField({ label, kind, description }: DateFieldProps) {
                   tabIndex={month === activeMonth ? 0 : -1}
                   onFocus={() => setActiveMonth(month)}
                   onKeyDown={handleMonthKeyDown}
+                  // Not Base UI's `disabled`: it skips our onKeyDown on a
+                  // disabled button, so arrow keys would stop on a future month.
+                  aria-disabled={isDisabled || undefined}
                   variant={isSelected ? "default" : "ghost"}
+                  // The popup focuses a month even when opened by a click,
+                  // where :focus-visible would hide where the arrow keys start.
                   className={cn(
+                    "focus:border-ring focus:ring-[3px] focus:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
                     isThisMonth && !isSelected && "font-semibold text-primary",
                   )}
                   aria-label={formatLongMonthYear(shownYear, month)}
                   aria-pressed={isSelected}
-                  onClick={() => select(toMonthValue(shownYear, month))}
+                  onClick={() => {
+                    if (!isDisabled) select(toMonthValue(shownYear, month));
+                  }}
                 >
                   {formatShortMonth(shownYear, month)}
                 </Button>

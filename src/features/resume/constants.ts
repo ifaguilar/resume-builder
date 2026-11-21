@@ -5,12 +5,15 @@ export const PARTIAL_DATE_PATTERN =
   /^([1-2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])|[1-2][0-9]{3}-(0[1-9]|1[0-2])|[1-2][0-9]{3})$/;
 
 export const FULL_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+export const DATE_PART_SEPARATOR = "-";
 
 export const WARNING_MESSAGES = {
   email: "Enter a valid email address, like name@example.com",
   url: "Use a full web address starting with https://",
   date: "Use YYYY, YYYY-MM or YYYY-MM-DD",
   nonexistentDate: "This date doesn't exist",
+  futureDate: "This date is in the future",
+  endBeforeStart: "The end date is before the start date",
   location: "Use text or an address",
   notAnObject: "A resume must be a JSON object",
   unknownKey: (key: string) =>

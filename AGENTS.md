@@ -74,6 +74,8 @@ tests/             Vitest suites and fixtures
   - It offers only the fields recruiters recommend (`EDITED_*_KEYS` in `features/resume-form/constants.ts`). Data it doesn't edit is kept and exported, never dropped.
   - Warnings come from `validateResume` and never block editing. They use the amber `warning` color, never destructive red.
   - Text is trimmed when a field loses focus, and an emptied field stores `undefined`. Dates are picked as `YYYY-MM`.
+  - Work, project and education start dates can't be in the future: `features/resume/date-rules.ts` warns from `validateResume`, and the picker disables future months. An education end date is a graduation date and may be expected (`allowFuture`).
+  - Dates use Temporal (`Temporal.PlainDate`, `PlainYearMonth.compare`), never `Date`. Check that a date exists with `PlainDate.from({ year, month, day }, { overflow: "reject" })`, never with Temporal's string parsing, which also accepts times and offsets.
   - Tips under a field give CV advice only, never instructions for the form itself. Every field has an "e.g." placeholder.
   - Every lookup works offline: suggestions are constants, and country names come from `Intl.DisplayNames`.
   - List items (entries, bullets) are keyed by `useListKeys`, never by index, and the keys never go into form values. Every add, remove, split, paste, move or drop of empty items updates the keys in the same event as the values.
