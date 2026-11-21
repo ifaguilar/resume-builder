@@ -9,6 +9,8 @@ import {
 } from "#/features/resume-form/fields/bullet-list";
 import {
   formatDisplayDate,
+  formatLongMonthYear,
+  formatShortMonth,
   initialFocusMonth,
   moveMonth,
   toMonthValue,
@@ -166,6 +168,13 @@ describe("date picker", () => {
     ["Sept 2023", "Sept 2023"],
   ])("shows %s as %s", (value, display) => {
     expect(formatDisplayDate(value)).toBe(display);
+  });
+
+  it("names each month in the grid", () => {
+    expect(formatShortMonth(5)).toBe("May");
+    expect(formatShortMonth(12)).toBe("Dec");
+    expect(formatLongMonthYear(2023, 9)).toBe("September 2023");
+    expect(formatLongMonthYear(1999, 1)).toBe("January 1999");
   });
 });
 

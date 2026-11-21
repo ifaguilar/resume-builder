@@ -10,6 +10,7 @@ import {
   MIN_PICKER_YEAR,
   MONTH_DIGITS,
   MONTH_GRID_COLUMNS,
+  MONTH_NAMES_REFERENCE_YEAR,
   MONTHS_PER_YEAR,
 } from "#/features/resume-form/constants";
 import { DATE_PART_SEPARATOR } from "#/features/resume/constants";
@@ -18,10 +19,27 @@ import {
   parsePartialDate,
 } from "#/features/resume/partial-date";
 
-// Intl can't format a PlainYearMonth without an explicit calendar, so
-// months are formatted from their first day.
-function firstDayOf(year: number, month: number): Temporal.PlainDate {
-  return Temporal.PlainDate.from({ year, month, day: 1 });
+type MonthWidth = "short" | "long";
+
+const monthNamesByWidth = new Map<MonthWidth, readonly string[]>();
+
+// Formatting a Temporal date with Intl is slow (tens of µs), and a month's
+// name doesn't depend on its year, so the names are formatted once, on first
+// use. Intl can't format a PlainYearMonth without an explicit calendar,
+// hence the day.
+function nameOfMonth(width: MonthWidth, month: number): string {
+  let names = monthNamesByWidth.get(width);
+  if (!names) {
+    names = Array.from({ length: MONTHS_PER_YEAR }, (_, index) =>
+      Temporal.PlainDate.from({
+        year: MONTH_NAMES_REFERENCE_YEAR,
+        month: index + 1,
+        day: 1,
+      }).toLocaleString(DISPLAY_LOCALE, { month: width }),
+    );
+    monthNamesByWidth.set(width, names);
+  }
+  return names[month - 1] ?? String(month);
 }
 
 export function initialFocusMonth(
@@ -67,17 +85,12 @@ export function toMonthValue(year: number, month: number): string {
   return `${year}${DATE_PART_SEPARATOR}${paddedMonth}`;
 }
 
-export function formatShortMonth(year: number, month: number): string {
-  return firstDayOf(year, month).toLocaleString(DISPLAY_LOCALE, {
-    month: "short",
-  });
+export function formatShortMonth(month: number): string {
+  return nameOfMonth("short", month);
 }
 
 export function formatLongMonthYear(year: number, month: number): string {
-  return firstDayOf(year, month).toLocaleString(DISPLAY_LOCALE, {
-    month: "long",
-    year: "numeric",
-  });
+  return `${nameOfMonth("long", month)} ${year}`;
 }
 
 export function formatDisplayDate(value: string): string {
@@ -85,7 +98,7 @@ export function formatDisplayDate(value: string): string {
   if (!date) return value;
   const { year, month, day } = date;
   if (month === undefined) return String(year);
-  const monthName = formatShortMonth(year, month);
+  const monthName = formatShortMonth(month);
   return day === undefined
     ? `${monthName} ${year}`
     : `${monthName} ${day}, ${year}`;

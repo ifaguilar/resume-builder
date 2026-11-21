@@ -211,7 +211,7 @@ export function DateField({
                     if (!isDisabled) select(toMonthValue(shownYear, month));
                   }}
                 >
-                  {formatShortMonth(shownYear, month)}
+                  {formatShortMonth(month)}
                 </Button>
               );
             })}

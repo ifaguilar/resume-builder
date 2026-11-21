@@ -36,6 +36,8 @@ export const MONTH_DIGITS = 2;
 export const MIN_PICKER_YEAR = 1000;
 export const MAX_PICKER_YEAR = 2999;
 export const DISPLAY_LOCALE = "en";
+// Any Gregorian year works: month names don't depend on it.
+export const MONTH_NAMES_REFERENCE_YEAR = 2000;
 
 export const POPUP_SIDE_OFFSET_PX = 6;
 
