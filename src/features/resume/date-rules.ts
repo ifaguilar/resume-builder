@@ -1,4 +1,7 @@
-import { WARNING_MESSAGES } from "#/features/resume/constants";
+import {
+  DATE_RANGE_YEARS,
+  WARNING_MESSAGES,
+} from "#/features/resume/constants";
 import {
   compareDates,
   isRealCalendarDate,
@@ -47,6 +50,19 @@ function isFutureDate(date: PartialDate, today: Temporal.PlainDate): boolean {
   return compareDates({ year: date.year, month: date.month }, thisMonth) > 0;
 }
 
+function outOfRangeMessage(
+  date: PartialDate,
+  today: Temporal.PlainDate,
+): string | undefined {
+  if (date.year < today.year - DATE_RANGE_YEARS) {
+    return WARNING_MESSAGES.dateTooOld;
+  }
+  if (date.year > today.year + DATE_RANGE_YEARS) {
+    return WARNING_MESSAGES.dateTooFar;
+  }
+  return undefined;
+}
+
 export function dateWarnings(
   input: unknown,
   today: Temporal.PlainDate,
@@ -60,18 +76,30 @@ export function dateWarnings(
 
     entries.forEach((entry: unknown, index) => {
       if (!isRecord(entry)) return;
-      for (const key of pastOnly) {
-        const date = dateAt(entry, key);
-        if (date && isFutureDate(date, today)) {
+      const start = dateAt(entry, START_KEY);
+      const end = dateAt(entry, END_KEY);
+      let isInRange = true;
+
+      for (const [key, date] of [
+        [START_KEY, start],
+        [END_KEY, end],
+      ] as const) {
+        if (!date) continue;
+        // A date this far off is most likely a typo, which is the one
+        // thing worth saying about it.
+        const rangeMessage = outOfRangeMessage(date, today);
+        if (rangeMessage) {
+          isInRange = false;
+          warnings.push({ path: [section, index, key], message: rangeMessage });
+        } else if (pastOnly.includes(key) && isFutureDate(date, today)) {
           warnings.push({
             path: [section, index, key],
             message: WARNING_MESSAGES.futureDate,
           });
         }
       }
-      const start = dateAt(entry, START_KEY);
-      const end = dateAt(entry, END_KEY);
-      if (start && end && compareDates(end, start) < 0) {
+
+      if (isInRange && start && end && compareDates(end, start) < 0) {
         warnings.push({
           path: [section, index, END_KEY],
           message: WARNING_MESSAGES.endBeforeStart,

@@ -293,11 +293,22 @@ describe("moveMonth", () => {
   });
 
   it("stops at the last year allowed", () => {
-    expect(moveMonth(2026, 12, "ArrowRight", 2026)).toBeUndefined();
-    expect(moveMonth(2026, 11, "ArrowDown", 2026)).toBeUndefined();
-    expect(moveMonth(2026, 8, "ArrowDown", 2026)).toEqual({
+    const bounds = { maxYear: 2026 };
+    expect(moveMonth(2026, 12, "ArrowRight", bounds)).toBeUndefined();
+    expect(moveMonth(2026, 11, "ArrowDown", bounds)).toBeUndefined();
+    expect(moveMonth(2026, 8, "ArrowDown", bounds)).toEqual({
       year: 2026,
       month: 11,
+    });
+  });
+
+  it("stops at the first year allowed", () => {
+    const bounds = { minYear: 1926 };
+    expect(moveMonth(1926, 1, "ArrowLeft", bounds)).toBeUndefined();
+    expect(moveMonth(1926, 2, "ArrowUp", bounds)).toBeUndefined();
+    expect(moveMonth(1926, 5, "ArrowUp", bounds)).toEqual({
+      year: 1926,
+      month: 2,
     });
   });
 });

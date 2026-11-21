@@ -63,7 +63,10 @@ export function moveMonth(
   year: number,
   month: number,
   key: string,
-  maxYear = MAX_PICKER_YEAR,
+  {
+    minYear = MIN_PICKER_YEAR,
+    maxYear = MAX_PICKER_YEAR,
+  }: { minYear?: number; maxYear?: number } = {},
 ): { year: number; month: number } | undefined {
   if (key === HOME_KEY) return { year, month: 1 };
   if (key === END_KEY) return { year, month: MONTHS_PER_YEAR };
@@ -74,7 +77,7 @@ export function moveMonth(
     year: Math.floor(index / MONTHS_PER_YEAR),
     month: (index % MONTHS_PER_YEAR) + 1,
   };
-  if (next.year < MIN_PICKER_YEAR || next.year > maxYear) {
+  if (next.year < minYear || next.year > maxYear) {
     return undefined;
   }
   return next;

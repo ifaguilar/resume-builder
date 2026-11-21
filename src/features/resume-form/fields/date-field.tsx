@@ -18,6 +18,7 @@ import {
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
+import { DATE_RANGE_YEARS } from "#/features/resume/constants";
 import { parsePartialDate } from "#/features/resume/partial-date";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { Button } from "#/shared/components/ui/button";
@@ -77,9 +78,17 @@ export function DateField({
   });
 
   const isEnd = kind === "end";
-  // An imported future year still opens, so its own months stay reachable.
-  const maxYear =
-    allowFuture || !today ? MAX_PICKER_YEAR : Math.max(today.year, shownYear);
+  // The stored year stays reachable even outside the range, so an imported
+  // date still opens on its own month.
+  const minYear = today
+    ? Math.min(today.year - DATE_RANGE_YEARS, date?.year ?? today.year)
+    : MIN_PICKER_YEAR;
+  const maxYear = today
+    ? Math.max(
+        allowFuture ? today.year + DATE_RANGE_YEARS : today.year,
+        date?.year ?? today.year,
+      )
+    : MAX_PICKER_YEAR;
 
   function isFutureMonth(month: number): boolean {
     if (allowFuture || !today) return false;
@@ -102,7 +111,10 @@ export function DateField({
   }
 
   function handleMonthKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    const next = moveMonth(shownYear, activeMonth, event.key, maxYear);
+    const next = moveMonth(shownYear, activeMonth, event.key, {
+      minYear,
+      maxYear,
+    });
     if (!next) return;
     event.preventDefault();
     setShownYear(next.year);
@@ -152,7 +164,7 @@ export function DateField({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                disabled={shownYear <= MIN_PICKER_YEAR}
+                disabled={shownYear <= minYear}
                 onClick={() => setShownYear((year) => year - 1)}
               >
                 <ChevronLeftIcon />

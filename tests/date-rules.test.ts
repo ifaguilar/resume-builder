@@ -150,6 +150,53 @@ describe("end date before start date", () => {
   });
 });
 
+function tooOld(path: (string | number)[]) {
+  return { path, message: WARNING_MESSAGES.dateTooOld };
+}
+
+function tooFar(path: (string | number)[]) {
+  return { path, message: WARNING_MESSAGES.dateTooFar };
+}
+
+describe("dates more than 100 years away", () => {
+  it("accepts the edges of the range", () => {
+    const resume = {
+      work: [{ startDate: "1926-01" }],
+      education: [{ startDate: "1926", endDate: "2126-12" }],
+    };
+    expect(warningsOf(resume)).toEqual([]);
+  });
+
+  it("warns about dates outside the range", () => {
+    const resume = {
+      work: [{ startDate: "1925-12" }, { startDate: "1023-05" }],
+      education: [{ startDate: "2020", endDate: "2127" }],
+    };
+    expect(warningsOf(resume)).toEqual([
+      tooOld(["work", 0, "startDate"]),
+      tooOld(["work", 1, "startDate"]),
+      tooFar(["education", 0, "endDate"]),
+    ]);
+  });
+
+  it("says only that a date is out of range", () => {
+    const resume = {
+      work: [
+        { startDate: "2203-01" },
+        { startDate: "2023-01", endDate: "1023-01" },
+      ],
+    };
+    expect(warningsOf(resume)).toEqual([
+      tooFar(["work", 0, "startDate"]),
+      tooOld(["work", 1, "endDate"]),
+    ]);
+  });
+
+  it("ignores sections the form doesn't edit", () => {
+    expect(warningsOf({ volunteer: [{ startDate: "1023" }] })).toEqual([]);
+  });
+});
+
 describe("malformed input", () => {
   it("leaves malformed and nonexistent dates to the format warnings", () => {
     expect(
@@ -172,7 +219,9 @@ describe("malformed input", () => {
       warningsOf(input).filter(
         (warning) =>
           warning.message === WARNING_MESSAGES.futureDate ||
-          warning.message === WARNING_MESSAGES.endBeforeStart,
+          warning.message === WARNING_MESSAGES.endBeforeStart ||
+          warning.message === WARNING_MESSAGES.dateTooOld ||
+          warning.message === WARNING_MESSAGES.dateTooFar,
       ),
     ).toEqual([]);
   });
