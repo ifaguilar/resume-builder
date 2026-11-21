@@ -40,7 +40,7 @@ const WorkEntryFields = withFieldGroup({
             />
           )}
         </group.AppField>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2">
           <group.AppField name="startDate">
             {(field) => <field.DateField label="Start date" kind="start" />}
           </group.AppField>

@@ -36,9 +36,19 @@ export function FormPanel({ form }: { form: ResumeForm }) {
 
   return (
     <LiveAnnouncer>
-      <ScrollArea className="h-full bg-background">
-        <div className="flex flex-col p-4">
-          <Accordion multiple defaultValue={[...DEFAULT_OPEN_SECTIONS]}>
+      {/* The container is the panel itself: a container query can't style
+          its own element, and the padding below changes with the width. Each
+          row adds columns at the smallest Tailwind container size where its
+          longest placeholder fits. */}
+      <ScrollArea className="@container/form h-full bg-background">
+        <div className="flex flex-col p-2 @lg/form:p-4">
+          <Accordion
+            multiple
+            defaultValue={[...DEFAULT_OPEN_SECTIONS]}
+            // shadcn's AccordionContent pads its panel element, which its
+            // className doesn't reach.
+            className="[&_[data-slot=accordion-content]]:px-2 @lg/form:[&_[data-slot=accordion-content]]:px-4"
+          >
             {sections.map((section) => {
               const Section = SECTION_COMPONENTS[section.id];
               const count = warnings.filter(
@@ -46,7 +56,7 @@ export function FormPanel({ form }: { form: ResumeForm }) {
               ).length;
               return (
                 <AccordionItem key={section.id} value={section.id}>
-                  <AccordionTrigger className="items-center px-5 py-4 hover:no-underline">
+                  <AccordionTrigger className="items-center px-3 py-4 hover:no-underline @lg/form:px-5">
                     <span className="flex flex-col gap-1">
                       <span className="flex items-center gap-2">
                         <span className="text-base font-semibold">

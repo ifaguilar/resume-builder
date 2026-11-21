@@ -19,7 +19,7 @@ const LanguageFields = withFieldGroup({
   defaultValues: EMPTY_LANGUAGE,
   render: function LanguageFields({ group }) {
     return (
-      <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 @2xl/form:grid-cols-[1fr_2fr]">
         <group.AppField name="language">
           {(field) => (
             <field.TextField label="Language" placeholder="e.g. Spanish" />
