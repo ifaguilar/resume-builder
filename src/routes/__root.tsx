@@ -1,8 +1,16 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel as TanStackFormDevtoolsPanel } from "@tanstack/react-form-devtools";
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+  HeadContent,
+  ScriptOnce,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
+
+import { ColorSchemeProvider } from "#/features/color-scheme/color-scheme-provider";
+import { colorSchemeScript } from "#/features/color-scheme/color-scheme-script";
 
 import styles from "#/styles.css?url";
 
@@ -32,12 +40,14 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    // The inline script sets the color scheme on <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ScriptOnce>{colorSchemeScript}</ScriptOnce>
+        <ColorSchemeProvider>{children}</ColorSchemeProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",
