@@ -12,6 +12,7 @@ import { TextField } from "#/features/resume-form/fields/text-field";
 import { TextareaField } from "#/features/resume-form/fields/textarea-field";
 import { fieldContext, formContext } from "#/features/resume-form/form-context";
 import { resumeWarningsValidator } from "#/features/resume-form/resume-warnings-validator";
+import type { Resume } from "#/features/resume/resume-schema";
 
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldContext,
@@ -34,8 +35,11 @@ export const resumeFormOptions = formOptions({
   validators: { onChange: resumeWarningsValidator },
 });
 
-export function useResumeForm() {
-  const form = useAppForm(resumeFormOptions);
+export function useResumeForm(initialResume: Resume = EMPTY_RESUME) {
+  const form = useAppForm({
+    ...resumeFormOptions,
+    defaultValues: initialResume,
+  });
 
   // Validate the starting data too. An onMount validator would leave stale
   // warnings on fields after they're fixed, so run the onChange one instead.
