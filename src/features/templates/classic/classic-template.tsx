@@ -13,6 +13,7 @@ import {
   SECTION_TITLES,
   TEL_PREFIX,
 } from "#/features/templates/constants";
+import { withContentKeys } from "#/features/templates/content-keys";
 import { BODY_LEADING, tw } from "#/features/templates/design-tokens";
 import { PDF_FONT_FEATURES } from "#/features/templates/fonts/constants";
 import {
@@ -77,9 +78,8 @@ function Header({ resume }: { resume: Resume }) {
           ) : null}
           {email ? <Link href={MAILTO_PREFIX + email}>{email}</Link> : null}
           {website ? <Link href={website}>{displayUrl(website)}</Link> : null}
-          {profileUrls.map((url, index) => (
-            // oxlint-disable-next-line react/no-array-index-key
-            <Link key={index} href={url}>
+          {withContentKeys(profileUrls).map(({ key, item: url }) => (
+            <Link key={key} href={url}>
               {displayUrl(url)}
             </Link>
           ))}
@@ -109,10 +109,8 @@ function SkillsSection({ resume }: { resume: Resume }) {
   return (
     <Section title={SECTION_TITLES.skills}>
       <BulletList>
-        {groups.map((group, index) => (
-          // Groups have no id, and nothing reorders them during a render.
-          // oxlint-disable-next-line react/no-array-index-key
-          <LabeledItem key={index} label={group.label} value={group.value} />
+        {withContentKeys(groups).map(({ key, item: group }) => (
+          <LabeledItem key={key} label={group.label} value={group.value} />
         ))}
         {languages ? (
           <LabeledItem label={LANGUAGES_LABEL} value={languages} />
@@ -143,10 +141,9 @@ function ExperienceSection({ resume }: { resume: Resume }) {
   return (
     <Section title={SECTION_TITLES.experience}>
       <View style={tw("gap-3.5")}>
-        {filled.map((entry, index) => (
+        {withContentKeys(filled).map(({ key, item: entry }) => (
           <Entry
-            // oxlint-disable-next-line react/no-array-index-key
-            key={index}
+            key={key}
             title={entry.title}
             date={entry.date}
             subtitle={entry.subtitle}
@@ -185,10 +182,9 @@ function ProjectsSection({ resume }: { resume: Resume }) {
   return (
     <Section title={SECTION_TITLES.projects}>
       <View style={tw("gap-3.5")}>
-        {entries.map((entry, index) => (
+        {withContentKeys(entries).map(({ key, item: entry }) => (
           <Entry
-            // oxlint-disable-next-line react/no-array-index-key
-            key={index}
+            key={key}
             title={entry.title}
             date={entry.date}
             subtitle={entry.subtitle}
@@ -220,9 +216,8 @@ function EducationSection({ resume }: { resume: Resume }) {
   return (
     <Section title={SECTION_TITLES.education}>
       <View style={tw("gap-3.5")}>
-        {entries.map((entry, index) => (
-          // oxlint-disable-next-line react/no-array-index-key
-          <Entry key={index} {...entry} />
+        {withContentKeys(entries).map(({ key, item: entry }) => (
+          <Entry key={key} {...entry} />
         ))}
       </View>
     </Section>

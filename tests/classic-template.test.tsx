@@ -33,14 +33,16 @@ afterEach(() => {
 
 describe("ClassicTemplate", () => {
   it.each([...Object.entries(fixtures), ["empty", {}] as const])(
-    "renders %s without style warnings",
+    "renders %s without warnings or errors",
     async (_name, resume) => {
       const warn = vi.spyOn(console, "warn");
+      const error = vi.spyOn(console, "error");
       const pdf = await renderToBuffer(<ClassicTemplate resume={resume} />);
       expect(pdf.subarray(0, PDF_SIGNATURE.length).toString()).toBe(
         PDF_SIGNATURE,
       );
       expect(warn).not.toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
     },
   );
 });

@@ -2,6 +2,7 @@ import { Text, View } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 
 import { PDF_DATE_FEATURES } from "#/features/templates/constants";
+import { type Keyed, withContentKeys } from "#/features/templates/content-keys";
 import { tw } from "#/features/templates/design-tokens";
 import {
   Bullet,
@@ -20,14 +21,12 @@ function Row({ left, right }: { left: ReactNode; right: ReactNode }) {
   );
 }
 
-function Bullets({ items, offset }: { items: string[]; offset: number }) {
+function Bullets({ items }: { items: Keyed<string>[] }) {
   if (items.length === 0) return null;
   return (
     <BulletList>
-      {items.map((item, index) => (
-        // Bullets have no id, and nothing reorders them during a render.
-        // oxlint-disable-next-line react/no-array-index-key
-        <Bullet key={offset + index}>{item}</Bullet>
+      {items.map(({ key, item }) => (
+        <Bullet key={key}>{item}</Bullet>
       ))}
     </BulletList>
   );
@@ -46,7 +45,7 @@ export function Entry({
   aside?: ReactNode;
   highlights?: string[];
 }) {
-  const [first, ...rest] = highlights ?? NO_HIGHLIGHTS;
+  const [first, ...rest] = withContentKeys(highlights ?? NO_HIGHLIGHTS);
 
   return (
     <View style={tw("gap-1")}>
@@ -73,9 +72,9 @@ export function Entry({
             right={aside}
           />
         </View>
-        <Bullets items={first === undefined ? [] : [first]} offset={0} />
+        <Bullets items={first === undefined ? [] : [first]} />
       </View>
-      <Bullets items={rest} offset={1} />
+      <Bullets items={rest} />
     </View>
   );
 }
