@@ -1,6 +1,8 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
+import type { Resume } from "#/features/resume/resume-schema";
+
 const PdfPreview = lazy(
   () => import("#/features/pdf-preview/components/pdf-preview"),
 );
@@ -13,12 +15,12 @@ function PreviewSkeleton() {
   );
 }
 
-export function PreviewPanel() {
+export function PreviewPanel({ resume }: { resume: Resume }) {
   return (
     <div className="h-full bg-muted">
       <ClientOnly fallback={<PreviewSkeleton />}>
         <Suspense fallback={<PreviewSkeleton />}>
-          <PdfPreview />
+          <PdfPreview resume={resume} />
         </Suspense>
       </ClientOnly>
     </div>
