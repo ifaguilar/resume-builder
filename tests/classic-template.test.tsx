@@ -3,7 +3,9 @@ import { fileURLToPath } from "node:url";
 import { Font, renderToBuffer } from "@react-pdf/renderer";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { PAGE_SIZES } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
+import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
 import { ClassicTemplate } from "#/features/templates/classic/classic-template";
 import { FONT_FAMILY, FONT_FILES } from "#/features/templates/fonts/constants";
 
@@ -32,12 +34,22 @@ afterEach(() => {
 });
 
 describe("ClassicTemplate", () => {
-  it.each([...Object.entries(fixtures), ["empty", {}] as const])(
-    "renders %s without warnings or errors",
-    async (_name, resume) => {
+  const cases = [...Object.entries(fixtures), ["empty", {}] as const].flatMap(
+    ([name, resume]) =>
+      PAGE_SIZES.map((pageSize) => [name, pageSize, resume] as const),
+  );
+
+  it.each(cases)(
+    "renders %s on %s without warnings or errors",
+    async (_name, pageSize, resume) => {
       const warn = vi.spyOn(console, "warn");
       const error = vi.spyOn(console, "error");
-      const pdf = await renderToBuffer(<ClassicTemplate resume={resume} />);
+      const pdf = await renderToBuffer(
+        <ClassicTemplate
+          resume={resume}
+          settings={{ ...DEFAULT_SETTINGS, pageSize }}
+        />,
+      );
       expect(pdf.subarray(0, PDF_SIGNATURE.length).toString()).toBe(
         PDF_SIGNATURE,
       );

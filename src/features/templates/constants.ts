@@ -13,7 +13,6 @@ export const PT_PER_REM = BODY_SIZE_PT / TEXT_XS_REM;
 // en-GB abbreviates September as "Sept"; one fixed locale keeps one format.
 export const TEMPLATE_LOCALE = "en-US";
 export const DOCUMENT_LANGUAGE = "en";
-export const PAGE_SIZE = "A4";
 
 export const BULLET = "•";
 export const DATE_RANGE_SEPARATOR = " - ";

@@ -272,4 +272,11 @@ describe("settings", () => {
         .success,
     ).toBe(false);
   });
+
+  it("rejects an unknown page size", () => {
+    expect(
+      settingsSchema.safeParse({ ...DEFAULT_SETTINGS, pageSize: "Legal" })
+        .success,
+    ).toBe(false);
+  });
 });

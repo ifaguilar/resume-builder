@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Resume } from "#/features/resume/resume-schema";
 import {
+  DEFAULT_SETTINGS,
+  type Settings,
+} from "#/features/resume/settings-schema";
+import {
   DRAFT_BACKUP_STORAGE_KEY,
   DRAFT_STORAGE_KEY,
 } from "#/features/storage/constants";
@@ -41,15 +45,25 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+const A4_SETTINGS: Settings = { ...DEFAULT_SETTINGS, pageSize: "A4" };
+
+function draftText(fields: Record<string, unknown>) {
+  return JSON.stringify({ version: 1, ...fields });
+}
+
 describe("parseDraft", () => {
   it("reads a saved draft", () => {
     const resume = { basics: { name: "Ana Torres" } };
-    expect(parseDraft(serializeDraft({ resume }))).toEqual({ resume });
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
   });
 
   it("keeps a resume that breaks schema rules", () => {
     const resume = { basics: { email: "ana@" }, extra: true };
-    expect(parseDraft(serializeDraft({ resume }))).toEqual({ resume });
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
   });
 
   it.each([
@@ -63,8 +77,40 @@ describe("parseDraft", () => {
     expect(parseDraft(text)).toBeUndefined();
   });
 
+  it("reads saved settings", () => {
+    const draft = { resume: {}, settings: A4_SETTINGS };
+    expect(parseDraft(serializeDraft(draft))).toEqual(draft);
+  });
+
+  it("gives a draft without settings the defaults", () => {
+    expect(parseDraft(draftText({ resume: {} }))).toEqual({
+      resume: {},
+      settings: DEFAULT_SETTINGS,
+    });
+  });
+
+  it("fills in settings the draft lacks", () => {
+    expect(
+      parseDraft(draftText({ resume: {}, settings: { pageSize: "A4" } })),
+    ).toEqual({ resume: {}, settings: A4_SETTINGS });
+  });
+
+  it.each([
+    ["an unknown page size", { pageSize: "Legal" }],
+    ["an unknown key", { pageSize: "A4", zoom: 2 }],
+    ["a non-object", "A4"],
+  ])("keeps the resume and uses default settings for %s", (_, settings) => {
+    const resume = { basics: { name: "Ana Torres" } };
+    expect(parseDraft(draftText({ resume, settings }))).toEqual({
+      resume,
+      settings: DEFAULT_SETTINGS,
+    });
+  });
+
   it.each(Object.entries(fixtures))("round-trips %s", (_, resume) => {
-    expect(parseDraft(serializeDraft({ resume }))).toEqual({ resume });
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
   });
 });
 
@@ -72,8 +118,11 @@ describe("localDraftStorage", () => {
   it("saves and loads a draft", async () => {
     stubStorage();
     const resume = { basics: { name: "Ana Torres" } };
-    await localDraftStorage.saveDraft({ resume });
-    await expect(localDraftStorage.loadDraft()).resolves.toEqual({ resume });
+    await localDraftStorage.saveDraft({ resume, settings: DEFAULT_SETTINGS });
+    await expect(localDraftStorage.loadDraft()).resolves.toEqual({
+      resume,
+      settings: DEFAULT_SETTINGS,
+    });
   });
 
   it("loads nothing when there's no draft", async () => {
@@ -108,7 +157,7 @@ describe("localDraftStorage", () => {
   it("skips a save when storage is full", async () => {
     stubStorage({ writeThrows: true });
     await expect(
-      localDraftStorage.saveDraft({ resume: {} }),
+      localDraftStorage.saveDraft({ resume: {}, settings: DEFAULT_SETTINGS }),
     ).resolves.toBeUndefined();
   });
 });

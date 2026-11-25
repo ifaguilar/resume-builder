@@ -1,6 +1,7 @@
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 
 import type { Resume } from "#/features/resume/resume-schema";
+import type { PageSize, Settings } from "#/features/resume/settings-schema";
 import {
   DEGREE_AREA_JOINER,
   DOCUMENT_LANGUAGE,
@@ -9,7 +10,6 @@ import {
   LANGUAGES_LABEL,
   LIST_SEPARATOR,
   MAILTO_PREFIX,
-  PAGE_SIZE,
   SECTION_TITLES,
   TEL_PREFIX,
 } from "#/features/templates/constants";
@@ -34,6 +34,15 @@ import { Link } from "#/features/templates/primitives/link";
 import { Section } from "#/features/templates/primitives/section";
 
 const PHONE_LINK_JUNK = /[^\d+]/g;
+
+// Letter is 50 pt shorter than A4, so it gets tighter margins and section
+// gaps to keep a one-page CV on one page.
+const PAGE_LAYOUTS = {
+  A4: { page: "p-14", sectionGap: "mt-5" },
+  LETTER: { page: "px-14 py-10", sectionGap: "mt-3" },
+} satisfies Record<PageSize, { page: string; sectionGap: string }>;
+
+type SectionProps = { resume: Resume; sectionGap: string };
 
 function LabeledItem({ label, value }: { label: string; value: string }) {
   return (
@@ -89,7 +98,7 @@ function Header({ resume }: { resume: Resume }) {
   );
 }
 
-function SkillsSection({ resume }: { resume: Resume }) {
+function SkillsSection({ resume, sectionGap }: SectionProps) {
   const groups = (resume.skills ?? [])
     .map((skill) => ({
       label: cleanText(skill.name),
@@ -107,7 +116,7 @@ function SkillsSection({ resume }: { resume: Resume }) {
   if (groups.length === 0 && !languages) return null;
 
   return (
-    <Section title={SECTION_TITLES.skills}>
+    <Section title={SECTION_TITLES.skills} topMargin={sectionGap}>
       <BulletList>
         {withContentKeys(groups).map(({ key, item: group }) => (
           <LabeledItem key={key} label={group.label} value={group.value} />
@@ -120,7 +129,7 @@ function SkillsSection({ resume }: { resume: Resume }) {
   );
 }
 
-function ExperienceSection({ resume }: { resume: Resume }) {
+function ExperienceSection({ resume, sectionGap }: SectionProps) {
   const entries = (resume.work ?? []).map((work) => ({
     title: cleanText(work.position),
     date: formatDateRange(work.startDate, work.endDate),
@@ -139,7 +148,7 @@ function ExperienceSection({ resume }: { resume: Resume }) {
   if (filled.length === 0) return null;
 
   return (
-    <Section title={SECTION_TITLES.experience}>
+    <Section title={SECTION_TITLES.experience} topMargin={sectionGap}>
       <View style={tw("gap-3.5")}>
         {withContentKeys(filled).map(({ key, item: entry }) => (
           <Entry
@@ -160,7 +169,7 @@ function ExperienceSection({ resume }: { resume: Resume }) {
   );
 }
 
-function ProjectsSection({ resume }: { resume: Resume }) {
+function ProjectsSection({ resume, sectionGap }: SectionProps) {
   const entries = (resume.projects ?? [])
     .map((project) => ({
       title: cleanText(project.name),
@@ -180,7 +189,7 @@ function ProjectsSection({ resume }: { resume: Resume }) {
   if (entries.length === 0) return null;
 
   return (
-    <Section title={SECTION_TITLES.projects}>
+    <Section title={SECTION_TITLES.projects} topMargin={sectionGap}>
       <View style={tw("gap-3.5")}>
         {withContentKeys(entries).map(({ key, item: entry }) => (
           <Entry
@@ -201,7 +210,7 @@ function ProjectsSection({ resume }: { resume: Resume }) {
   );
 }
 
-function EducationSection({ resume }: { resume: Resume }) {
+function EducationSection({ resume, sectionGap }: SectionProps) {
   const entries = (resume.education ?? [])
     .map((education) => ({
       title: [cleanText(education.studyType), cleanText(education.area)]
@@ -214,7 +223,7 @@ function EducationSection({ resume }: { resume: Resume }) {
   if (entries.length === 0) return null;
 
   return (
-    <Section title={SECTION_TITLES.education}>
+    <Section title={SECTION_TITLES.education} topMargin={sectionGap}>
       <View style={tw("gap-3.5")}>
         {withContentKeys(entries).map(({ key, item: entry }) => (
           <Entry key={key} {...entry} />
@@ -224,7 +233,14 @@ function EducationSection({ resume }: { resume: Resume }) {
   );
 }
 
-export function ClassicTemplate({ resume }: { resume: Resume }) {
+export function ClassicTemplate({
+  resume,
+  settings,
+}: {
+  resume: Resume;
+  settings: Settings;
+}) {
+  const layout = PAGE_LAYOUTS[settings.pageSize];
   const name = cleanText(resume.basics?.name);
   const summary = cleanText(resume.basics?.summary);
 
@@ -235,22 +251,24 @@ export function ClassicTemplate({ resume }: { resume: Resume }) {
       language={DOCUMENT_LANGUAGE}
     >
       <Page
-        size={PAGE_SIZE}
+        size={settings.pageSize}
         style={[
-          tw(`p-14 font-sans text-xs ${BODY_LEADING} text-foreground`),
+          tw(
+            `${layout.page} font-sans text-xs ${BODY_LEADING} text-foreground`,
+          ),
           { fontFeatureSettings: PDF_FONT_FEATURES },
         ]}
       >
         <Header resume={resume} />
         {summary ? (
-          <Section title={SECTION_TITLES.summary}>
+          <Section title={SECTION_TITLES.summary} topMargin={layout.sectionGap}>
             <Text>{summary}</Text>
           </Section>
         ) : null}
-        <SkillsSection resume={resume} />
-        <ExperienceSection resume={resume} />
-        <ProjectsSection resume={resume} />
-        <EducationSection resume={resume} />
+        <SkillsSection resume={resume} sectionGap={layout.sectionGap} />
+        <ExperienceSection resume={resume} sectionGap={layout.sectionGap} />
+        <ProjectsSection resume={resume} sectionGap={layout.sectionGap} />
+        <EducationSection resume={resume} sectionGap={layout.sectionGap} />
       </Page>
     </Document>
   );
