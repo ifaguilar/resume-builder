@@ -11,9 +11,20 @@ import {
   PREVIEW_PAGE_PADDING_PT,
   PREVIEW_PAGE_SIZE,
 } from "#/features/pdf-preview/constants";
+import {
+  FONT_FAMILY,
+  PDF_FONT_FEATURES,
+} from "#/features/templates/fonts/constants";
+import { registerFonts } from "#/features/templates/fonts/register-fonts";
+
+registerFonts();
 
 const styles = StyleSheet.create({
-  page: { padding: PREVIEW_PAGE_PADDING_PT },
+  page: {
+    padding: PREVIEW_PAGE_PADDING_PT,
+    fontFamily: FONT_FAMILY,
+    fontFeatureSettings: PDF_FONT_FEATURES,
+  },
   text: { fontSize: PREVIEW_FONT_SIZE_PT },
 });
 

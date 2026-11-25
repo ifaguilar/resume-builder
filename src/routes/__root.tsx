@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 
 import { ColorSchemeProvider } from "#/features/color-scheme/color-scheme-provider";
 import { colorSchemeScript } from "#/features/color-scheme/color-scheme-script";
+import { FONT_REGULAR_URL } from "#/features/templates/fonts/constants";
 
 import styles from "#/styles.css?url";
 
@@ -32,6 +33,13 @@ export const Route = createRootRoute({
       {
         rel: "stylesheet",
         href: styles,
+      },
+      {
+        rel: "preload",
+        href: FONT_REGULAR_URL,
+        as: "font",
+        type: "font/ttf",
+        crossOrigin: "anonymous",
       },
     ],
   }),
