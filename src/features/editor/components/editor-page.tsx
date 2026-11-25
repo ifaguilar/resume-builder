@@ -8,17 +8,20 @@ import {
   PREVIEW_PANEL_DEFAULT_SIZE_PERCENT,
   PREVIEW_PANEL_MIN_SIZE_PX,
 } from "#/features/editor/constants";
+import { useDraftAutosave } from "#/features/editor/use-draft-autosave";
 import { PreviewPanel } from "#/features/pdf-preview/components/preview-panel";
 import { FormPanel } from "#/features/resume-form/components/form-panel";
 import { useResumeForm } from "#/features/resume-form/use-resume-form";
+import type { Draft } from "#/features/storage/draft-format";
 import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "#/shared/components/ui/resizable";
 import { TooltipProvider } from "#/shared/components/ui/tooltip";
 
-export function EditorPage() {
-  const form = useResumeForm();
+export function EditorPage({ draft }: { draft: Draft | undefined }) {
+  const form = useResumeForm(draft?.resume);
+  useDraftAutosave(form);
 
   return (
     <TooltipProvider>
