@@ -139,7 +139,7 @@ export function DateField({
             <Button
               id={id}
               variant="outline"
-              className="justify-between border-foreground/15 bg-background font-normal shadow-xs hover:bg-background aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
+              className="justify-between border-foreground/15 bg-background font-normal tabular-nums shadow-xs hover:bg-background aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
               aria-invalid={isInvalid || undefined}
               {...focusProps}
             />
