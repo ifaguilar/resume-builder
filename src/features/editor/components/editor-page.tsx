@@ -48,7 +48,7 @@ export function EditorPage({ draft }: { draft: Draft | undefined }) {
             defaultSize={PREVIEW_PANEL_DEFAULT_SIZE_PERCENT}
             minSize={PREVIEW_PANEL_MIN_SIZE_PX}
           >
-            <PreviewPanel />
+            <PreviewPanel resume={draft?.resume ?? {}} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
