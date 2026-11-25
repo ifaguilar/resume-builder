@@ -37,3 +37,6 @@ export const TEMPLATE_IDS = ["classic"] as const;
 export const THEME_IDS = ["default"] as const;
 export const DEFAULT_TEMPLATE_ID = TEMPLATE_IDS[0];
 export const DEFAULT_THEME_ID = THEME_IDS[0];
+// react-pdf's own page size names.
+export const PAGE_SIZES = ["LETTER", "A4"] as const;
+export const DEFAULT_PAGE_SIZE = PAGE_SIZES[0];

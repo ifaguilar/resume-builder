@@ -5,13 +5,16 @@ import { KEEP_WITH_NEXT_PT, tw } from "#/features/templates/design-tokens";
 
 export function Section({
   title,
+  topMargin,
   children,
 }: {
   title: string;
+  // A Tailwind margin class, such as "mt-5".
+  topMargin: string;
   children: ReactNode;
 }) {
   return (
-    <View style={tw("mt-5")}>
+    <View style={tw(topMargin)}>
       <Text
         minPresenceAhead={KEEP_WITH_NEXT_PT}
         style={tw(
