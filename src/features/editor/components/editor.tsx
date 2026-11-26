@@ -29,9 +29,11 @@ import { TooltipProvider } from "#/shared/components/ui/tooltip";
 
 export function Editor({
   draft,
+  imported,
   onImport,
 }: {
   draft: Draft | undefined;
+  imported: boolean;
   onImport: (draft: Draft) => void;
 }) {
   const form = useResumeForm(draft?.resume);
@@ -43,7 +45,12 @@ export function Editor({
     <MotionProvider>
       <TooltipProvider>
         <div className="flex h-dvh flex-col">
-          <AppHeader form={form} settings={settings} onImport={onImport} />
+          <AppHeader
+            form={form}
+            settings={settings}
+            imported={imported}
+            onImport={onImport}
+          />
           <ResizablePanelGroup
             orientation="horizontal"
             // The PDF preview is an embedded document, which swallows pointer

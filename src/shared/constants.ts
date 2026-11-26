@@ -14,3 +14,4 @@ const LIST_EASING_X2 = 0.5;
 export const LIST_EASING = [LIST_EASING_X1, 1, LIST_EASING_X2, 1] as const;
 export const FADE_DURATION_MS = 150;
 export const FEEDBACK_DURATION_MS = 1500;
+export const ICON_POP_SCALE = 0.5;

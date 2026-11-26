@@ -12,11 +12,14 @@
   "editor_tab_settings": "Paramètres",
 
   "export_json_button": "Exporter le JSON",
+  "export_json_done": "JSON exporté.",
   "export_pdf_button": "Exporter le PDF",
+  "export_pdf_done": "PDF exporté.",
   "export_pdf_error_title": "Impossible de créer le PDF",
   "export_pdf_error_message": "Un problème est survenu pendant le rendu. Votre CV est intact ; réessayez.",
 
   "import_json_button": "Importer un JSON",
+  "import_json_done": "JSON importé.",
   "import_error_title": "Impossible d’importer ce fichier",
   "import_error_not_json": "Ce n’est pas un fichier JSON valide.",
   "import_error_not_a_resume": "Il ne contient pas de CV.",

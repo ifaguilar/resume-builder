@@ -12,11 +12,14 @@
   "editor_tab_settings": "Ajustes",
 
   "export_json_button": "Exportar JSON",
+  "export_json_done": "JSON exportado.",
   "export_pdf_button": "Exportar PDF",
+  "export_pdf_done": "PDF exportado.",
   "export_pdf_error_title": "No se pudo crear el PDF",
   "export_pdf_error_message": "Algo salió mal al generarlo. Tu currículum está a salvo; inténtalo de nuevo.",
 
   "import_json_button": "Importar JSON",
+  "import_json_done": "JSON importado.",
   "import_error_title": "No se puede importar este archivo",
   "import_error_not_json": "No es un archivo JSON válido.",
   "import_error_not_a_resume": "No contiene un currículum.",

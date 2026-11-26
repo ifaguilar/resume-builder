@@ -12,11 +12,14 @@
   "editor_tab_settings": "Settings",
 
   "export_json_button": "Export JSON",
+  "export_json_done": "JSON exported.",
   "export_pdf_button": "Export PDF",
+  "export_pdf_done": "PDF exported.",
   "export_pdf_error_title": "The PDF couldn't be created",
   "export_pdf_error_message": "Something went wrong while rendering it. Your resume is safe; try again.",
 
   "import_json_button": "Import JSON",
+  "import_json_done": "JSON imported.",
   "import_error_title": "This file can't be imported",
   "import_error_not_json": "It isn't a valid JSON file.",
   "import_error_not_a_resume": "It doesn't contain a resume.",

@@ -12,11 +12,14 @@
   "editor_tab_settings": "Einstellungen",
 
   "export_json_button": "JSON exportieren",
+  "export_json_done": "JSON exportiert.",
   "export_pdf_button": "PDF exportieren",
+  "export_pdf_done": "PDF exportiert.",
   "export_pdf_error_title": "Das PDF konnte nicht erstellt werden",
   "export_pdf_error_message": "Beim Erstellen ist ein Fehler aufgetreten. Ihr Lebenslauf ist sicher; versuchen Sie es erneut.",
 
   "import_json_button": "JSON importieren",
+  "import_json_done": "JSON importiert.",
   "import_error_title": "Diese Datei kann nicht importiert werden",
   "import_error_not_json": "Sie ist keine gültige JSON-Datei.",
   "import_error_not_a_resume": "Sie enthält keinen Lebenslauf.",

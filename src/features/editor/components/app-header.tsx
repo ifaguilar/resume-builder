@@ -5,27 +5,36 @@ import { ImportJsonButton } from "#/features/import/components/import-json-butto
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
 import type { Draft } from "#/features/storage/draft-format";
+import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import { ButtonGroup } from "#/shared/components/ui/button-group";
 
 export function AppHeader({
   form,
   settings,
+  imported,
   onImport,
 }: {
   form: ResumeForm;
   settings: Settings;
+  imported: boolean;
   onImport: (draft: Draft) => void;
 }) {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
       <h1 className="text-base font-semibold">{APP_NAME}</h1>
-      <div className="flex items-center gap-2">
-        <ButtonGroup>
-          <ImportJsonButton form={form} onImport={onImport} />
-          <ExportJsonButton form={form} settings={settings} />
-        </ButtonGroup>
-        <ExportPdfButton form={form} settings={settings} />
-      </div>
+      <LiveAnnouncer>
+        <div className="flex items-center gap-2">
+          <ButtonGroup>
+            <ImportJsonButton
+              form={form}
+              imported={imported}
+              onImport={onImport}
+            />
+            <ExportJsonButton form={form} settings={settings} />
+          </ButtonGroup>
+          <ExportPdfButton form={form} settings={settings} />
+        </div>
+      </LiveAnnouncer>
     </header>
   );
 }

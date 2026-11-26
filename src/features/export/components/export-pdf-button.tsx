@@ -1,5 +1,5 @@
 import { FileDown } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 
 import { downloadFile } from "#/features/export/download";
 import { pdfFileName } from "#/features/export/file-name";
@@ -7,8 +7,11 @@ import { cvLanguage, documentWord } from "#/features/languages/cv-language";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
 import { m } from "#/paraglide/messages.js";
+import { AnnounceContext } from "#/shared/components/announce-context";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
+import { StatusIcon } from "#/shared/components/status-icon";
 import { Button } from "#/shared/components/ui/button";
+import { useFeedback } from "#/shared/lib/use-feedback";
 
 export function ExportPdfButton({
   form,
@@ -19,6 +22,8 @@ export function ExportPdfButton({
 }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const done = useFeedback();
+  const announce = use(AnnounceContext);
 
   // Rendered from the live values: the preview's are debounced and can miss
   // the last keystroke.
@@ -36,6 +41,8 @@ export function ExportPdfButton({
           documentWord(cvLanguage(resume), settings.pageSize),
         ),
       );
+      done.show();
+      announce(m.export_pdf_done());
     } catch {
       setNotice({
         title: m.export_pdf_error_title(),
@@ -55,7 +62,10 @@ export function ExportPdfButton({
         aria-busy={busy}
         onClick={() => void exportPdf()}
       >
-        <FileDown data-icon="inline-start" aria-hidden />
+        <StatusIcon
+          status={busy ? "busy" : done.shown ? "done" : "idle"}
+          icon={<FileDown />}
+        />
         {m.export_pdf_button()}
       </Button>
       <NoticeDialog notice={notice} onClose={() => setNotice(null)} />
