@@ -1,24 +1,12 @@
 import type { Resume } from "#/features/resume/resume-schema";
 import {
-  DEFAULT_SETTINGS,
+  parseSettings,
   type Settings,
-  settingsSchema,
 } from "#/features/resume/settings-schema";
 import { DRAFT_FORMAT_VERSION } from "#/features/storage/constants";
+import { isRecord } from "#/shared/lib/is-record";
 
 export type Draft = { resume: Resume; settings: Settings };
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-// Drafts saved before settings existed have none, and later settings are
-// missing from older drafts, so whatever is absent or unreadable gets its
-// default.
-function parseSettings(value: unknown): Settings {
-  const result = settingsSchema.partial().safeParse(value);
-  return { ...DEFAULT_SETTINGS, ...(result.success ? result.data : {}) };
-}
 
 export function serializeDraft(draft: Draft): string {
   return JSON.stringify({

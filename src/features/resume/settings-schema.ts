@@ -23,3 +23,10 @@ export const DEFAULT_SETTINGS: Settings = {
   themeId: DEFAULT_THEME_ID,
   pageSize: DEFAULT_PAGE_SIZE,
 };
+
+// Drafts and files saved before a setting existed lack it, so whatever is
+// absent or unreadable gets its default.
+export function parseSettings(value: unknown): Settings {
+  const result = settingsSchema.partial().safeParse(value);
+  return { ...DEFAULT_SETTINGS, ...(result.success ? result.data : {}) };
+}
