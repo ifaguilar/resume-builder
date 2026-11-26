@@ -1,13 +1,13 @@
-import { CV_SECTION_IDS, type CvSectionId } from "#/features/resume/constants";
+import type { CvLanguage, CvSectionId } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
+import type { Settings } from "#/features/resume/settings-schema";
 import {
-  DEGREE_AREA_JOINER,
-  LANGUAGES_LABEL,
+  type CvWords,
   LIST_SEPARATOR,
   MAILTO_PREFIX,
-  SECTION_TITLES,
   TEL_PREFIX,
 } from "#/features/templates/constants";
+import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 import {
   cleanList,
   cleanText,
@@ -50,13 +50,14 @@ export type ResumeHeader = {
 };
 
 export type ResumeContent = {
+  language: CvLanguage;
   header: ResumeHeader;
   sections: ResumeSection[];
 };
 
-function header(resume: Resume): ResumeHeader {
+function header(resume: Resume, words: CvWords): ResumeHeader {
   const basics = resume.basics ?? {};
-  const place = formatPlace(basics.location);
+  const place = formatPlace(basics.location, words.locale);
   const phone = cleanText(basics.phone);
   const email = cleanText(basics.email);
   const website = cleanText(basics.url);
@@ -96,20 +97,23 @@ function hasContent(entry: EntryContent): boolean {
 
 function entrySection(
   id: EntrySectionId,
+  title: string,
   entries: EntryContent[],
 ): ResumeSection | null {
   const filled = entries.filter(hasContent);
-  return filled.length === 0
-    ? null
-    : { id, title: SECTION_TITLES[id], entries: filled };
+  return filled.length === 0 ? null : { id, title, entries: filled };
 }
 
-function summary(resume: Resume): ResumeSection | null {
+function summary(resume: Resume, title: string): ResumeSection | null {
   const text = cleanText(resume.basics?.summary);
-  return text ? { id: "summary", title: SECTION_TITLES.summary, text } : null;
+  return text ? { id: "summary", title, text } : null;
 }
 
-function skills(resume: Resume): ResumeSection | null {
+function skills(
+  resume: Resume,
+  title: string,
+  words: CvWords,
+): ResumeSection | null {
   const items = (resume.skills ?? [])
     .map((skill) => ({
       label: cleanText(skill.name),
@@ -124,21 +128,24 @@ function skills(resume: Resume): ResumeSection | null {
     })
     .filter((language) => language !== "")
     .join(LIST_SEPARATOR);
-  if (languages) items.push({ label: LANGUAGES_LABEL, value: languages });
+  if (languages) items.push({ label: words.languagesLabel, value: languages });
 
-  return items.length === 0
-    ? null
-    : { id: "skills", title: SECTION_TITLES.skills, items };
+  return items.length === 0 ? null : { id: "skills", title, items };
 }
 
-function experience(resume: Resume): ResumeSection | null {
+function experience(
+  resume: Resume,
+  title: string,
+  words: CvWords,
+): ResumeSection | null {
   return entrySection(
     "experience",
+    title,
     (resume.work ?? []).map((work) => {
-      const place = formatPlace(work.location);
+      const place = formatPlace(work.location, words.locale);
       return {
         title: cleanText(work.position),
-        date: formatDateRange(work.startDate, work.endDate),
+        date: formatDateRange(work.startDate, work.endDate, words),
         subtitle: cleanText(work.name),
         aside: place ? { text: place } : undefined,
         highlights: cleanList(work.highlights),
@@ -147,14 +154,19 @@ function experience(resume: Resume): ResumeSection | null {
   );
 }
 
-function projects(resume: Resume): ResumeSection | null {
+function projects(
+  resume: Resume,
+  title: string,
+  words: CvWords,
+): ResumeSection | null {
   return entrySection(
     "projects",
+    title,
     (resume.projects ?? []).map((project) => {
       const url = cleanText(project.url);
       return {
         title: cleanText(project.name),
-        date: formatDateRange(project.startDate, project.endDate),
+        date: formatDateRange(project.startDate, project.endDate, words),
         subtitle: cleanText(project.description),
         aside: url ? { text: displayUrl(url), href: url } : undefined,
         highlights: cleanList(project.highlights),
@@ -163,13 +175,18 @@ function projects(resume: Resume): ResumeSection | null {
   );
 }
 
-function education(resume: Resume): ResumeSection | null {
+function education(
+  resume: Resume,
+  title: string,
+  words: CvWords,
+): ResumeSection | null {
   return entrySection(
     "education",
+    title,
     (resume.education ?? []).map((entry) => ({
       title: [cleanText(entry.studyType), cleanText(entry.area)]
         .filter((part) => part !== "")
-        .join(DEGREE_AREA_JOINER),
+        .join(words.degreeAreaJoiner),
       date: formatYear(entry.endDate),
       subtitle: cleanText(entry.institution),
       highlights: [],
@@ -183,15 +200,32 @@ const SECTION_BUILDERS = {
   experience,
   projects,
   education,
-} satisfies Record<CvSectionId, (resume: Resume) => ResumeSection | null>;
+} satisfies Record<
+  CvSectionId,
+  (resume: Resume, title: string, words: CvWords) => ResumeSection | null
+>;
 
-// Everything a CV draws, already formatted and with empty parts left out.
-// Templates only decide how it looks, so every template reads the same.
-export function resumeContent(resume: Resume): ResumeContent {
+// Everything a CV draws, already formatted, in the order and with the titles
+// the settings choose, and with hidden and empty parts left out. Templates
+// only decide how it looks, so every template reads the same.
+export function resumeContent(
+  resume: Resume,
+  settings: Settings,
+): ResumeContent {
+  const language = cvLanguage(resume);
+  const words = cvWords(language);
   return {
-    header: header(resume),
-    sections: CV_SECTION_IDS.map((id) => SECTION_BUILDERS[id](resume)).filter(
-      (section) => section !== null,
-    ),
+    language,
+    header: header(resume, words),
+    sections: settings.sections
+      .filter((section) => section.visible)
+      .map((section) =>
+        SECTION_BUILDERS[section.id](
+          resume,
+          section.title ?? words.sectionTitles[section.id],
+          words,
+        ),
+      )
+      .filter((section) => section !== null),
   };
 }

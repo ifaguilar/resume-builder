@@ -19,6 +19,7 @@ import type { Resume } from "#/features/resume/resume-schema";
 import {
   DEFAULT_SETTINGS,
   type PageSize,
+  type Settings,
 } from "#/features/resume/settings-schema";
 import { ClassicTemplate } from "#/features/templates/classic/classic-template";
 import { FONT_FAMILY, FONT_FILES } from "#/features/templates/fonts/constants";
@@ -29,19 +30,44 @@ const FIXTURE_NAME = /([^/]+)\.json$/;
 const MULTI_PAGE_FIXTURE = "senior";
 const MULTI_PAGE_FIXTURE_PATH = `/tests/fixtures/${MULTI_PAGE_FIXTURE}.json`;
 
+// A layout far from the default: Education first, a hidden section and a
+// custom title, so order, visibility and titles stay tested.
+const CUSTOM_SECTIONS: Settings["sections"] = [
+  { id: "summary", visible: true },
+  { id: "education", visible: true },
+  { id: "skills", visible: true },
+  { id: "experience", visible: true, title: "Work History" },
+  { id: "projects", visible: false },
+];
+
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
   import: "default",
 });
 
-async function renderPages(resume: Resume, pageSize: PageSize) {
+async function renderPages(resume: Resume, settings: Settings) {
   const pdf = await renderToBuffer(
-    <ClassicTemplate
-      resume={resume}
-      settings={{ ...DEFAULT_SETTINGS, pageSize }}
-    />,
+    <ClassicTemplate resume={resume} settings={settings} />,
   );
   return extractText(pdf);
+}
+
+async function readTextLayer(resume: Resume, settings: Settings) {
+  const pages = await renderPages(resume, settings);
+  const expected = expectedWords(resume, settings);
+  const extracted = pagesToWords(pages);
+  return {
+    findings: [
+      ...findSplitWords(expected, extracted),
+      ...findMissingWords(expected, extracted),
+      ...findDetachedBullets(pages),
+    ],
+    text: pagesToText(pages),
+  };
+}
+
+function snapshotPath(name: string, pageSize: PageSize): string {
+  return `./__snapshots__/ats/${name}-${pageSize.toLowerCase()}.txt`;
 }
 
 beforeAll(() => {
@@ -67,17 +93,25 @@ describe("ClassicTemplate text layer", () => {
   it.each(cases)(
     "%s on %s reads every word whole and in order",
     async (name, pageSize, resume) => {
-      const pages = await renderPages(resume, pageSize);
-      const expected = expectedWords(resume);
-      const extracted = pagesToWords(pages);
+      const { findings, text } = await readTextLayer(resume, {
+        ...DEFAULT_SETTINGS,
+        pageSize,
+      });
+      expect(findings).toEqual([]);
+      await expect(text).toMatchFileSnapshot(snapshotPath(name, pageSize));
+    },
+  );
 
-      expect([
-        ...findSplitWords(expected, extracted),
-        ...findMissingWords(expected, extracted),
-        ...findDetachedBullets(pages),
-      ]).toEqual([]);
-      await expect(pagesToText(pages)).toMatchFileSnapshot(
-        `./__snapshots__/ats/${name}-${pageSize.toLowerCase()}.txt`,
+  it.each(PAGE_SIZES)(
+    `${MULTI_PAGE_FIXTURE} with custom sections on %s reads every word`,
+    async (pageSize) => {
+      const { findings, text } = await readTextLayer(
+        fixtures[MULTI_PAGE_FIXTURE_PATH] ?? {},
+        { ...DEFAULT_SETTINGS, pageSize, sections: CUSTOM_SECTIONS },
+      );
+      expect(findings).toEqual([]);
+      await expect(text).toMatchFileSnapshot(
+        snapshotPath(`${MULTI_PAGE_FIXTURE}-custom-sections`, pageSize),
       );
     },
   );
@@ -87,7 +121,10 @@ describe("ClassicTemplate text layer", () => {
     async (pageSize) => {
       const resume = fixtures[MULTI_PAGE_FIXTURE_PATH];
       expect(resume).toBeDefined();
-      const pages = await renderPages(resume ?? {}, pageSize);
+      const pages = await renderPages(resume ?? {}, {
+        ...DEFAULT_SETTINGS,
+        pageSize,
+      });
       expect(pages.length).toBeGreaterThan(1);
     },
   );

@@ -1,17 +1,17 @@
 Lucía Peñalosa Ibáñez
 Ingeniera de Software
-Logroño, La Rioja, Spain +34 600 000 000 lucia.penalosa@example.es
+Logroño, La Rioja, España +34 600 000 000 lucia.penalosa@example.es
 luciapenalosa.example.es
-SUMMARY
+PERFIL PROFESIONAL
 Ingeniera con cinco años de experiencia en aplicaciones web accesibles y diseño de sistemas.
-SKILLS
+HABILIDADES
 • Desarrollo web: React, Accesibilidad, Diseño de interfaces
-• Languages: Español (Nativo), Inglés (C1)
-EXPERIENCE
-Desarrolladora sénior Feb 2022 - Present
+• Idiomas: Español (Nativo), Inglés (C1)
+EXPERIENCIA LABORAL
+Desarrolladora sénior feb 2022 - actualidad
 Compañía Ejemplo S.L. Madrid
 • Reduje el tiempo de carga en un 40 %
 • Lideré la migración a TypeScript
-EDUCATION
-Grado in Ingeniería Informática 2019
+FORMACIÓN ACADÉMICA
+Grado en Ingeniería Informática 2019
 Universidad Autónoma de Ejemplo

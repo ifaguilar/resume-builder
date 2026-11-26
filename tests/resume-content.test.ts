@@ -2,14 +2,22 @@ import { describe, expect, it } from "vitest";
 
 import { CV_SECTION_IDS } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
-import { SECTION_TITLES } from "#/features/templates/constants";
+import {
+  DEFAULT_SETTINGS,
+  type Settings,
+} from "#/features/resume/settings-schema";
+import { CV_WORDS } from "#/features/templates/constants";
 import {
   type ResumeSection,
   resumeContent,
 } from "#/features/templates/resume-content";
 
+const SECTION_TITLES = CV_WORDS.en.sectionTitles;
+
 function section(resume: Resume, id: ResumeSection["id"]) {
-  return resumeContent(resume).sections.find((item) => item.id === id);
+  return resumeContent(resume, DEFAULT_SETTINGS).sections.find(
+    (item) => item.id === id,
+  );
 }
 
 const FULL_RESUME: Resume = {
@@ -22,34 +30,38 @@ const FULL_RESUME: Resume = {
 
 describe("resumeContent", () => {
   it("gives an empty resume an empty header and no sections", () => {
-    expect(resumeContent({})).toEqual({
+    expect(resumeContent({}, DEFAULT_SETTINGS)).toEqual({
+      language: "en",
       header: { name: "", label: "", contacts: [] },
       sections: [],
     });
   });
 
   it("orders sections and titles them", () => {
-    const { sections } = resumeContent(FULL_RESUME);
+    const { sections } = resumeContent(FULL_RESUME, DEFAULT_SETTINGS);
     expect(sections.map(({ id, title }) => [id, title])).toEqual(
       CV_SECTION_IDS.map((id) => [id, SECTION_TITLES[id]]),
     );
   });
 
   it("lists contacts in order with their links", () => {
-    const { header } = resumeContent({
-      basics: {
-        name: " Ana Pérez ",
-        label: "Engineer",
-        location: { city: "Austin", countryCode: "US" },
-        phone: "+1 (555) 010-2000",
-        email: "ana@example.com",
-        url: "https://ana.example/",
-        profiles: [
-          { network: "GitHub", url: "https://github.com/ana" },
-          { network: "LinkedIn", url: "" },
-        ],
+    const { header } = resumeContent(
+      {
+        basics: {
+          name: " Ana Pérez ",
+          label: "Engineer",
+          location: { city: "Austin", countryCode: "US" },
+          phone: "+1 (555) 010-2000",
+          email: "ana@example.com",
+          url: "https://ana.example/",
+          profiles: [
+            { network: "GitHub", url: "https://github.com/ana" },
+            { network: "LinkedIn", url: "" },
+          ],
+        },
       },
-    });
+      DEFAULT_SETTINGS,
+    );
     expect(header).toEqual({
       name: "Ana Pérez",
       label: "Engineer",
@@ -139,5 +151,88 @@ describe("resumeContent", () => {
       title: SECTION_TITLES.skills,
       items: [{ label: "Languages", value: "German" }],
     });
+  });
+});
+
+function sectionsWith(sections: Settings["sections"]): Settings {
+  return { ...DEFAULT_SETTINGS, sections };
+}
+
+describe("resumeContent with section settings", () => {
+  it("follows the saved order", () => {
+    const settings = sectionsWith([
+      { id: "summary", visible: true },
+      { id: "education", visible: true },
+      { id: "skills", visible: true },
+      { id: "projects", visible: true },
+      { id: "experience", visible: true },
+    ]);
+    expect(
+      resumeContent(FULL_RESUME, settings).sections.map(({ id }) => id),
+    ).toEqual(["summary", "education", "skills", "projects", "experience"]);
+  });
+
+  it("leaves hidden sections out, the summary included", () => {
+    const settings = sectionsWith(
+      CV_SECTION_IDS.map((id) => ({
+        id,
+        visible: id !== "summary" && id !== "projects",
+      })),
+    );
+    expect(
+      resumeContent(FULL_RESUME, settings).sections.map(({ id }) => id),
+    ).toEqual(["skills", "experience", "education"]);
+  });
+
+  it("uses a custom title, in any CV language", () => {
+    const settings = sectionsWith(
+      CV_SECTION_IDS.map((id) =>
+        id === "experience"
+          ? { id, visible: true, title: "Work History" }
+          : { id, visible: true },
+      ),
+    );
+    for (const language of ["en", "es"]) {
+      const { sections } = resumeContent(
+        { ...FULL_RESUME, meta: { language } },
+        settings,
+      );
+      expect(sections.find(({ id }) => id === "experience")?.title).toBe(
+        "Work History",
+      );
+    }
+  });
+});
+
+describe("resumeContent in Spanish", () => {
+  const SPANISH: Resume = {
+    basics: { location: { city: "Logroño", countryCode: "ES" } },
+    work: [{ position: "Desarrolladora", startDate: "2023-09" }],
+    education: [{ studyType: "Grado", area: "Ingeniería Informática" }],
+    skills: [{ name: "Web", keywords: ["React"] }],
+    languages: [{ language: "Inglés", fluency: "C1" }],
+    meta: { language: "es-MX" },
+  };
+  const content = resumeContent(SPANISH, DEFAULT_SETTINGS);
+
+  it("says it is Spanish", () => {
+    expect(content.language).toBe("es");
+  });
+
+  it("titles sections in Spanish", () => {
+    expect(content.sections.map(({ title }) => title)).toEqual([
+      "Habilidades",
+      "Experiencia laboral",
+      "Formación académica",
+    ]);
+  });
+
+  it("writes dates, places, degrees and labels in Spanish", () => {
+    expect(content.header.contacts).toEqual([{ text: "Logroño, España" }]);
+    expect(content.sections).toMatchObject([
+      { items: [{ label: "Web" }, { label: "Idiomas", value: "Inglés (C1)" }] },
+      { entries: [{ date: "sept 2023 - actualidad" }] },
+      { entries: [{ title: "Grado en Ingeniería Informática" }] },
+    ]);
   });
 });

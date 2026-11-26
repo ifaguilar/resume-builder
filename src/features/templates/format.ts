@@ -2,11 +2,10 @@ import { countryName } from "#/features/resume/countries";
 import { parsePartialDate } from "#/features/resume/partial-date";
 import type { Location } from "#/features/resume/resume-schema";
 import {
+  type CvWords,
   DATE_RANGE_SEPARATOR,
   LIST_SEPARATOR,
   PLACE_SEPARATOR,
-  PRESENT_LABEL,
-  TEMPLATE_LOCALE,
 } from "#/features/templates/constants";
 
 const URL_SCHEME = /^https?:\/\//i;
@@ -22,26 +21,27 @@ export function cleanText(value: unknown): string {
 }
 
 // Formatting a Temporal date through Intl is slow, so names are cached.
-const monthNames = new Map<number, string>();
+const monthNames = new Map<string, string>();
 
-function monthName(year: number, month: number): string {
-  const cached = monthNames.get(month);
+function monthName(year: number, month: number, locale: string): string {
+  const key = `${locale}-${month}`;
+  const cached = monthNames.get(key);
   if (cached !== undefined) return cached;
   const name = Temporal.PlainDate.from({
     year,
     month,
     day: FIRST_DAY,
-  }).toLocaleString(TEMPLATE_LOCALE, { month: "short" });
-  monthNames.set(month, name);
+  }).toLocaleString(locale, { month: "short" });
+  monthNames.set(key, name);
   return name;
 }
 
-export function formatDate(value: unknown): string {
+export function formatDate(value: unknown, locale: string): string {
   const text = cleanText(value);
   const date = parsePartialDate(text);
   if (date === undefined) return text;
   if (date.month === undefined) return String(date.year);
-  return `${monthName(date.year, date.month)} ${date.year}`;
+  return `${monthName(date.year, date.month, locale)} ${date.year}`;
 }
 
 export function formatYear(value: unknown): string {
@@ -50,22 +50,29 @@ export function formatYear(value: unknown): string {
   return date === undefined ? text : String(date.year);
 }
 
-export function formatDateRange(start: unknown, end: unknown): string {
-  const from = formatDate(start);
-  const to = formatDate(end);
+export function formatDateRange(
+  start: unknown,
+  end: unknown,
+  words: CvWords,
+): string {
+  const from = formatDate(start, words.locale);
+  const to = formatDate(end, words.locale);
   if (from === "") return to;
-  return [from, to === "" ? PRESENT_LABEL : to].join(DATE_RANGE_SEPARATOR);
+  return [from, to === "" ? words.present : to].join(DATE_RANGE_SEPARATOR);
 }
 
 // Street address and postal code stay off the CV on purpose.
-export function formatPlace(location: Location | string | undefined): string {
+export function formatPlace(
+  location: Location | string | undefined,
+  locale: string,
+): string {
   if (typeof location === "string") return location.trim();
   if (typeof location !== "object") return "";
   const code = cleanText(location.countryCode);
   return [
     cleanText(location.city),
     cleanText(location.region),
-    code === "" ? "" : countryName(code, TEMPLATE_LOCALE),
+    code === "" ? "" : countryName(code, locale),
   ]
     .filter((part) => part !== "")
     .join(PLACE_SEPARATOR);

@@ -11,7 +11,7 @@ SKILLS
 • Languages and Frameworks: Go, Rust, Java, TypeScript, gRPC, SQL
 • Infrastructure: Kubernetes, Terraform, PostgreSQL, ClickHouse, OpenTelemetry, AWS
 • Languages: English (Native speaker), Dutch (Professional)
-EXPERIENCE
+WORK EXPERIENCE
 Staff Software Engineer Mar 2020 - Present
 Northwind Data Remote
 • Scaled ingestion to two million events per second by redesigning partitioning and backpressure across 40

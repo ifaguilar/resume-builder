@@ -7,7 +7,7 @@ Recent computer science graduate who builds accessible web interfaces with React
 SKILLS
 • Frontend: React, TypeScript, CSS
 • Languages: English (Native speaker)
-EXPERIENCE
+WORK EXPERIENCE
 Frontend Intern Jun 2024 - Aug 2024
 Brightleaf Studio
 • Rebuilt the booking form with accessible error messages

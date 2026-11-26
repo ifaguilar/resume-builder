@@ -42,6 +42,13 @@ export const CV_SECTION_IDS = [
   "education",
 ] as const;
 export type CvSectionId = (typeof CV_SECTION_IDS)[number];
+// Stays right under the header; the other sections can be reordered.
+export const FIXED_SECTION_ID = "summary" satisfies CvSectionId;
+
+// The languages a CV can be written in, as `meta.language` stores them.
+export const CV_LANGUAGES = ["en", "es"] as const;
+export type CvLanguage = (typeof CV_LANGUAGES)[number];
+export const DEFAULT_CV_LANGUAGE: CvLanguage = "en";
 
 export const TEMPLATE_IDS = ["classic"] as const;
 export const THEME_IDS = ["default"] as const;

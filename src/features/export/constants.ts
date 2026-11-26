@@ -8,8 +8,7 @@ export const JSON_MIME_TYPE = "application/json";
 export const JSON_INDENT = 2;
 export const JSON_FINAL_NEWLINE = "\n";
 
-export const PDF_FILE_SUFFIX = "-Resume.pdf";
-export const PDF_FALLBACK_FILE_NAME = "Resume.pdf";
+export const PDF_EXTENSION = ".pdf";
 // Characters Windows, macOS or Linux reject in file names.
 export const FILE_NAME_UNSAFE = /[\\/:*?"<>|\p{Cc}]/gu;
 export const FILE_NAME_WHITESPACE = /\s+/;
