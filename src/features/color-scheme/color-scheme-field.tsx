@@ -4,10 +4,10 @@ import { use, useId } from "react";
 import { parseColorScheme } from "#/features/color-scheme/color-scheme";
 import { ColorSchemeContext } from "#/features/color-scheme/color-scheme-context";
 import {
-  COLOR_SCHEME_LEGEND,
   COLOR_SCHEMES,
   type ColorScheme,
 } from "#/features/color-scheme/constants";
+import { m } from "#/paraglide/messages.js";
 import {
   Field,
   FieldLabel,
@@ -18,10 +18,10 @@ import {
 import { RadioGroup, RadioGroupItem } from "#/shared/components/ui/radio-group";
 
 const SCHEME_OPTIONS = {
-  light: { label: "Light", Icon: SunIcon },
-  dark: { label: "Dark", Icon: MoonIcon },
-  system: { label: "System", Icon: MonitorIcon },
-} satisfies Record<ColorScheme, { label: string; Icon: LucideIcon }>;
+  light: { label: m.color_scheme_light, Icon: SunIcon },
+  dark: { label: m.color_scheme_dark, Icon: MoonIcon },
+  system: { label: m.color_scheme_system, Icon: MonitorIcon },
+} satisfies Record<ColorScheme, { label: () => string; Icon: LucideIcon }>;
 
 export function ColorSchemeField() {
   const { scheme, setScheme } = use(ColorSchemeContext);
@@ -29,7 +29,7 @@ export function ColorSchemeField() {
 
   return (
     <FieldSet>
-      <FieldLegend variant="label">{COLOR_SCHEME_LEGEND}</FieldLegend>
+      <FieldLegend variant="label">{m.color_scheme_legend()}</FieldLegend>
       <RadioGroup
         value={scheme}
         onValueChange={(next) => setScheme(parseColorScheme(next))}
@@ -41,7 +41,7 @@ export function ColorSchemeField() {
             <FieldLabel key={option} htmlFor={`${id}-${option}`}>
               <Field orientation="horizontal">
                 <Icon className="size-4 text-muted-foreground" aria-hidden />
-                <FieldTitle className="flex-1">{label}</FieldTitle>
+                <FieldTitle className="flex-1">{label()}</FieldTitle>
                 <RadioGroupItem value={option} id={`${id}-${option}`} />
               </Field>
             </FieldLabel>

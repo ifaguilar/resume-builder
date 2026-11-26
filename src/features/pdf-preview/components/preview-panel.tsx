@@ -1,9 +1,9 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
-import { PREVIEW_LOADING_MESSAGE } from "#/features/pdf-preview/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { Settings } from "#/features/resume/settings-schema";
+import { m } from "#/paraglide/messages.js";
 
 const PdfPreview = lazy(
   () => import("#/features/pdf-preview/components/pdf-preview"),
@@ -12,7 +12,7 @@ const PdfPreview = lazy(
 function PreviewSkeleton() {
   return (
     <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-      {PREVIEW_LOADING_MESSAGE}
+      {m.preview_loading()}
     </div>
   );
 }

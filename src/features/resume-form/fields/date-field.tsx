@@ -15,13 +15,9 @@ import {
 } from "react";
 
 import {
-  BACK_TO_MONTHS_LABEL,
-  chooseYearLabel,
   MAX_PICKER_YEAR,
   MIN_PICKER_YEAR,
   MONTHS_PER_YEAR,
-  NEXT_YEARS_LABEL,
-  PREVIOUS_YEARS_LABEL,
   YEAR_RANGE_SEPARATOR,
   YEARS_PER_PAGE,
 } from "#/features/resume-form/constants";
@@ -40,6 +36,7 @@ import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-wa
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { DATE_RANGE_YEARS } from "#/features/resume/constants";
 import { parsePartialDate } from "#/features/resume/partial-date";
+import { m } from "#/paraglide/messages.js";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { Button } from "#/shared/components/ui/button";
 import {
@@ -215,8 +212,8 @@ export function DateField({
             {value
               ? formatDisplayDate(value)
               : isEnd
-                ? "Present"
-                : "Pick a date"}
+                ? m.form_date_present()
+                : m.form_date_pick()}
           </span>
           <CalendarIcon className="text-muted-foreground" />
         </PopoverTrigger>
@@ -227,7 +224,7 @@ export function DateField({
         >
           {view === "months" ? (
             <div className="flex items-center justify-between p-2">
-              <IconTooltip label="Previous year">
+              <IconTooltip label={m.form_date_previous_year()}>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -241,13 +238,13 @@ export function DateField({
                 variant="ghost"
                 size="sm"
                 className="font-semibold tabular-nums"
-                aria-label={chooseYearLabel(shownYear)}
+                aria-label={m.form_date_choose_year({ year: shownYear })}
                 onClick={showYears}
               >
                 <span aria-live="polite">{shownYear}</span>
                 <ChevronDownIcon className="text-muted-foreground" />
               </Button>
-              <IconTooltip label="Next year">
+              <IconTooltip label={m.form_date_next_year()}>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -260,7 +257,7 @@ export function DateField({
             </div>
           ) : (
             <div className="flex items-center justify-between p-2">
-              <IconTooltip label={PREVIOUS_YEARS_LABEL}>
+              <IconTooltip label={m.form_date_previous_years()}>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -274,7 +271,7 @@ export function DateField({
                 variant="ghost"
                 size="sm"
                 className="font-semibold tabular-nums"
-                aria-label={BACK_TO_MONTHS_LABEL}
+                aria-label={m.form_date_back_to_months()}
                 onClick={() => showMonths(shownYear)}
               >
                 <span aria-live="polite">
@@ -283,7 +280,7 @@ export function DateField({
                   {pageEnd}
                 </span>
               </Button>
-              <IconTooltip label={NEXT_YEARS_LABEL}>
+              <IconTooltip label={m.form_date_next_years()}>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -360,7 +357,7 @@ export function DateField({
           <Separator />
           <div className="flex items-center justify-between p-2">
             <Button variant="ghost" size="sm" onClick={() => select(undefined)}>
-              {isEnd ? "Present" : "Clear"}
+              {isEnd ? m.form_date_present() : m.form_date_clear()}
             </Button>
             {today ? (
               <Button
@@ -368,7 +365,7 @@ export function DateField({
                 size="sm"
                 onClick={() => select(toMonthValue(today.year, today.month))}
               >
-                This month
+                {m.form_date_this_month()}
               </Button>
             ) : null}
           </div>

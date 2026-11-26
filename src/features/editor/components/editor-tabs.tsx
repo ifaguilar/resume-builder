@@ -35,7 +35,7 @@ export function EditorTabs({
         <TabsList className="w-full">
           {EDITOR_TABS.map((tab) => (
             <TabsTrigger key={tab} value={tab}>
-              {EDITOR_TAB_LABELS[tab]}
+              {EDITOR_TAB_LABELS[tab]()}
             </TabsTrigger>
           ))}
         </TabsList>

@@ -52,10 +52,10 @@ function outOfRangeMessage(
   today: Temporal.PlainDate,
 ): string | undefined {
   if (date.year < today.year - DATE_RANGE_YEARS) {
-    return WARNING_MESSAGES.dateTooOld;
+    return WARNING_MESSAGES.dateTooOld();
   }
   if (date.year > today.year + DATE_RANGE_YEARS) {
-    return WARNING_MESSAGES.dateTooFar;
+    return WARNING_MESSAGES.dateTooFar();
   }
   return undefined;
 }
@@ -91,7 +91,7 @@ export function dateWarnings(
         } else if (pastOnly.includes(key) && isFutureDate(date, today)) {
           warnings.push({
             path: [section, index, key],
-            message: WARNING_MESSAGES.futureDate,
+            message: WARNING_MESSAGES.futureDate(),
           });
         }
       }
@@ -99,7 +99,7 @@ export function dateWarnings(
       if (isInRange && start && end && compareDates(end, start) < 0) {
         warnings.push({
           path: [section, index, END_KEY],
-          message: WARNING_MESSAGES.endBeforeStart,
+          message: WARNING_MESSAGES.endBeforeStart(),
         });
       }
     });

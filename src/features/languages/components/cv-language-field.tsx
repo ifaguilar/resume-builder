@@ -2,15 +2,13 @@ import { TriangleAlertIcon } from "lucide-react";
 import { useId } from "react";
 
 import {
-  CV_LANGUAGE_LEGEND,
-  CV_LANGUAGE_TIP,
   CV_LANGUAGES,
   type CvLanguage,
   NO_CV_LANGUAGE,
-  unsupportedLanguage,
 } from "#/features/languages/constants";
 import { cvLanguageSample } from "#/features/languages/cv-language";
 import { languageName } from "#/features/languages/language-name";
+import { m } from "#/paraglide/messages.js";
 import {
   Field,
   FieldContent,
@@ -35,12 +33,14 @@ export function CvLanguageField({
 
   return (
     <FieldSet>
-      <FieldLegend variant="label">{CV_LANGUAGE_LEGEND}</FieldLegend>
-      <FieldDescription>{CV_LANGUAGE_TIP}</FieldDescription>
+      <FieldLegend variant="label">
+        {m.languages_cv_language_legend()}
+      </FieldLegend>
+      <FieldDescription>{m.languages_cv_language_tip()}</FieldDescription>
       {unsupported === undefined ? null : (
         <p className="flex items-center gap-2 text-sm text-warning">
           <TriangleAlertIcon className="size-4 shrink-0" aria-hidden />
-          {unsupportedLanguage(unsupported)}
+          {m.languages_cv_language_unsupported({ value: unsupported })}
         </p>
       )}
       <RadioGroup

@@ -1,3 +1,5 @@
+import { m } from "#/paraglide/messages.js";
+
 export const JSON_RESUME_SCHEMA_VERSION = "1.11.0";
 
 // The official "iso8601" definition: YYYY, YYYY-MM or YYYY-MM-DD.
@@ -10,18 +12,17 @@ export const DATE_PART_SEPARATOR = "-";
 export const DATE_RANGE_YEARS = 100;
 
 export const WARNING_MESSAGES = {
-  email: "Enter a valid email address, like name@example.com",
-  url: "Use a full web address starting with https://",
-  date: "Use YYYY, YYYY-MM or YYYY-MM-DD",
-  nonexistentDate: "This date doesn't exist",
-  futureDate: "This date is in the future",
-  endBeforeStart: "The end date is before the start date",
-  dateTooOld: `This date is more than ${DATE_RANGE_YEARS} years ago`,
-  dateTooFar: `This date is more than ${DATE_RANGE_YEARS} years from now`,
-  location: "Use text or an address",
-  notAnObject: "A resume must be a JSON object",
-  unknownKey: (key: string) =>
-    `"${key}" is not part of JSON Resume. It will be kept; consider moving it under "custom".`,
+  email: () => m.resume_warning_email(),
+  url: () => m.resume_warning_url(),
+  date: () => m.resume_warning_date(),
+  nonexistentDate: () => m.resume_warning_nonexistent_date(),
+  futureDate: () => m.resume_warning_future_date(),
+  endBeforeStart: () => m.resume_warning_end_before_start(),
+  dateTooOld: () => m.resume_warning_date_too_old({ years: DATE_RANGE_YEARS }),
+  dateTooFar: () => m.resume_warning_date_too_far({ years: DATE_RANGE_YEARS }),
+  location: () => m.resume_warning_location(),
+  notAnObject: () => m.resume_warning_not_an_object(),
+  unknownKey: (key: string) => m.resume_warning_unknown_key({ key }),
 } as const;
 
 export const LOCATION_PART_KEYS = [

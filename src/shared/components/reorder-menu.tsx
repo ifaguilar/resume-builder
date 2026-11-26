@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { use, useState } from "react";
 
+import { m } from "#/paraglide/messages.js";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { SortableItemContext } from "#/shared/components/sortable-item-context";
 import { Button } from "#/shared/components/ui/button";
@@ -72,19 +73,19 @@ export function ReorderMenu({ label }: { label: string }) {
       <DropdownMenuContent className="w-auto">
         <DropdownMenuItem disabled={isFirst} onClick={() => move(index - 1)}>
           <ArrowUpIcon />
-          Move up
+          {m.shared_move_up()}
         </DropdownMenuItem>
         <DropdownMenuItem disabled={isLast} onClick={() => move(index + 1)}>
           <ArrowDownIcon />
-          Move down
+          {m.shared_move_down()}
         </DropdownMenuItem>
         <DropdownMenuItem disabled={isFirst} onClick={() => move(0)}>
           <ArrowUpToLineIcon />
-          Move to top
+          {m.shared_move_to_top()}
         </DropdownMenuItem>
         <DropdownMenuItem disabled={isLast} onClick={() => move(count - 1)}>
           <ArrowDownToLineIcon />
-          Move to bottom
+          {m.shared_move_to_bottom()}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

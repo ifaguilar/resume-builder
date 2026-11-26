@@ -1,7 +1,7 @@
 import { useId } from "react";
 
-import { UI_LANGUAGE_LEGEND } from "#/features/languages/constants";
 import { languageName } from "#/features/languages/language-name";
+import { m } from "#/paraglide/messages.js";
 import { getLocale, locales, setLocale } from "#/paraglide/runtime.js";
 import {
   Field,
@@ -19,7 +19,9 @@ export function UiLanguageField() {
 
   return (
     <FieldSet>
-      <FieldLegend variant="label">{UI_LANGUAGE_LEGEND}</FieldLegend>
+      <FieldLegend variant="label">
+        {m.languages_ui_language_legend()}
+      </FieldLegend>
       <RadioGroup
         value={getLocale()}
         onValueChange={(next) => {

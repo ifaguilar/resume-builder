@@ -1,15 +1,12 @@
 import { FileDown } from "lucide-react";
 import { useState } from "react";
 
-import {
-  PDF_EXPORT_ERROR_MESSAGE,
-  PDF_EXPORT_ERROR_TITLE,
-} from "#/features/export/constants";
 import { downloadFile } from "#/features/export/download";
 import { pdfFileName } from "#/features/export/file-name";
 import { cvLanguage, documentWord } from "#/features/languages/cv-language";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
+import { m } from "#/paraglide/messages.js";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
 import { Button } from "#/shared/components/ui/button";
 
@@ -41,8 +38,8 @@ export function ExportPdfButton({
       );
     } catch {
       setNotice({
-        title: PDF_EXPORT_ERROR_TITLE,
-        message: PDF_EXPORT_ERROR_MESSAGE,
+        title: m.export_pdf_error_title(),
+        message: m.export_pdf_error_message(),
       });
     } finally {
       setBusy(false);
@@ -59,7 +56,7 @@ export function ExportPdfButton({
         onClick={() => void exportPdf()}
       >
         <FileDown data-icon="inline-start" aria-hidden />
-        Export PDF
+        {m.export_pdf_button()}
       </Button>
       <NoticeDialog notice={notice} onClose={() => setNotice(null)} />
     </>

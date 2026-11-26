@@ -7,7 +7,7 @@ import {
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
-import { example } from "#/features/resume-form/constants";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -15,6 +15,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { EducationEntry } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const EMPTY_EDUCATION_ENTRY: EducationEntry = {};
 
@@ -30,8 +31,8 @@ const EducationEntryFields = withFieldGroup({
         <group.AppField name="institution">
           {(field) => (
             <field.TextField
-              label="Institution"
-              placeholder="e.g. University of Texas"
+              label={m.form_institution_label()}
+              placeholder={m.form_institution_placeholder()}
             />
           )}
         </group.AppField>
@@ -39,7 +40,7 @@ const EducationEntryFields = withFieldGroup({
           <group.AppField name="studyType">
             {(field) => (
               <field.AutocompleteField
-                label="Degree"
+                label={m.form_degree_label()}
                 placeholder={placeholder}
                 suggestions={suggestions}
               />
@@ -48,8 +49,8 @@ const EducationEntryFields = withFieldGroup({
           <group.AppField name="area">
             {(field) => (
               <field.TextField
-                label="Field of study"
-                placeholder="e.g. Computer Science"
+                label={m.form_study_area_label()}
+                placeholder={m.form_study_area_placeholder()}
               />
             )}
           </group.AppField>
@@ -57,7 +58,7 @@ const EducationEntryFields = withFieldGroup({
         <group.AppField name="endDate">
           {(field) => (
             <field.DateField
-              label="Graduation date (or expected)"
+              label={m.form_graduation_date_label()}
               kind="single"
               allowFuture
             />
@@ -83,9 +84,7 @@ export const EducationSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No education yet."
-                addLabel="Add education"
-                entryLabel="education entry"
+                messages={ENTRY_MESSAGES.education}
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -100,10 +99,10 @@ export const EducationSection = withForm({
                           <EntryHeader
                             title={entryTitle(
                               [entry?.studyType, entry?.institution],
-                              "New education",
+                              ENTRY_MESSAGES.education.untitled(),
                             )}
                             entry={entry}
-                            entryLabel="education entry"
+                            messages={ENTRY_MESSAGES.education}
                             onRemove={remove}
                           />
                         )}
@@ -116,7 +115,9 @@ export const EducationSection = withForm({
                       form={form}
                       fields={`education[${index}]`}
                       suggestions={words.degreeSuggestions}
-                      placeholder={example(words.degreeExample)}
+                      placeholder={m.form_example({
+                        text: words.degreeExample,
+                      })}
                     />
                   </EntryCard>
                 )}

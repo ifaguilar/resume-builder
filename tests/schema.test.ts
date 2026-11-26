@@ -191,7 +191,7 @@ describe("validateResume", () => {
     "warns once when the input is %j",
     (input) => {
       expect(warningsOf(input)).toEqual([
-        { path: [], message: WARNING_MESSAGES.notAnObject },
+        { path: [], message: WARNING_MESSAGES.notAnObject() },
       ]);
     },
   );
@@ -234,7 +234,7 @@ describe("validateResume", () => {
 
   it("warns about a bad email", () => {
     expect(warningsOf({ basics: { email: "not-an-email" } })).toEqual([
-      { path: ["basics", "email"], message: WARNING_MESSAGES.email },
+      { path: ["basics", "email"], message: WARNING_MESSAGES.email() },
     ]);
   });
 
@@ -250,7 +250,7 @@ describe("validateResume", () => {
     "warns about the url %s",
     (url) => {
       expect(warningsOf({ basics: { url } })).toEqual([
-        { path: ["basics", "url"], message: WARNING_MESSAGES.url },
+        { path: ["basics", "url"], message: WARNING_MESSAGES.url() },
       ]);
     },
   );
@@ -259,7 +259,7 @@ describe("validateResume", () => {
     "warns about the malformed date %s",
     (startDate) => {
       expect(warningsOf({ work: [{ startDate }] })).toEqual([
-        { path: ["work", 0, "startDate"], message: WARNING_MESSAGES.date },
+        { path: ["work", 0, "startDate"], message: WARNING_MESSAGES.date() },
       ]);
     },
   );
@@ -270,7 +270,7 @@ describe("validateResume", () => {
       expect(warningsOf({ awards: [{ date }] })).toEqual([
         {
           path: ["awards", 0, "date"],
-          message: WARNING_MESSAGES.nonexistentDate,
+          message: WARNING_MESSAGES.nonexistentDate(),
         },
       ]);
     },
@@ -304,7 +304,7 @@ describe("validateResume", () => {
     expect(warningsOf({ education: [{ location: 5 }] })).toEqual([
       {
         path: ["education", 0, "location"],
-        message: WARNING_MESSAGES.location,
+        message: WARNING_MESSAGES.location(),
       },
     ]);
   });

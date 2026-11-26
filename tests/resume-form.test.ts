@@ -5,7 +5,6 @@ import {
   countryName,
   listCountries,
 } from "#/features/languages/countries";
-import { warningCount } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   filledBulletIndexes,
@@ -46,6 +45,7 @@ import { withHttps } from "#/features/resume-form/with-https";
 import { WARNING_MESSAGES } from "#/features/resume/constants";
 import { formatLocation } from "#/features/resume/format-location";
 import type { Resume } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
@@ -83,12 +83,12 @@ describe("resumeWarningsValidator", () => {
     const result = resumeWarningsValidator({ value });
 
     expect(result?.fields).toEqual({
-      "basics.email": [{ message: WARNING_MESSAGES.email }],
-      "work[1].startDate": [{ message: WARNING_MESSAGES.date }],
+      "basics.email": [{ message: WARNING_MESSAGES.email() }],
+      "work[1].startDate": [{ message: WARNING_MESSAGES.date() }],
     });
     expect(result?.form).toEqual([
-      { path: ["basics", "email"], message: WARNING_MESSAGES.email },
-      { path: ["work", 1, "startDate"], message: WARNING_MESSAGES.date },
+      { path: ["basics", "email"], message: WARNING_MESSAGES.email() },
+      { path: ["work", 1, "startDate"], message: WARNING_MESSAGES.date() },
     ]);
   });
 
@@ -98,8 +98,8 @@ describe("resumeWarningsValidator", () => {
     const result = resumeWarningsValidator({ value });
 
     expect(result?.fields["work[0].startDate"]).toEqual([
-      { message: WARNING_MESSAGES.date },
-      { message: WARNING_MESSAGES.nonexistentDate },
+      { message: WARNING_MESSAGES.date() },
+      { message: WARNING_MESSAGES.nonexistentDate() },
     ]);
   });
 
@@ -484,12 +484,12 @@ describe("list keys", () => {
   });
 });
 
-describe("warningCount", () => {
+describe("form_warning_count", () => {
   it.each([
     [0, "0 warnings"],
     [1, "1 warning"],
     [2, "2 warnings"],
   ])("writes %i as %s", (count, text) => {
-    expect(warningCount(count)).toBe(text);
+    expect(m.form_warning_count({ count })).toBe(text);
   });
 });

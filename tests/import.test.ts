@@ -17,7 +17,7 @@ describe("fromJson", () => {
     (text) => {
       expect(fromJson(text)).toEqual({
         ok: false,
-        message: IMPORT_ERROR_MESSAGES.notJson,
+        message: IMPORT_ERROR_MESSAGES.notJson(),
       });
     },
   );
@@ -27,7 +27,7 @@ describe("fromJson", () => {
     (value) => {
       expect(fromJson(json(value))).toEqual({
         ok: false,
-        message: IMPORT_ERROR_MESSAGES.notAResume,
+        message: IMPORT_ERROR_MESSAGES.notAResume(),
       });
     },
   );

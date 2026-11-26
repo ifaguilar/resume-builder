@@ -1,33 +1,23 @@
+import { m } from "#/paraglide/messages.js";
+
 export const sections = [
-  {
-    id: "basics",
-    title: "Basics",
-    intro: "Who you are and how recruiters reach you.",
-  },
-  {
-    id: "skills",
-    title: "Skills",
-    intro: "The tools and methods the job asks for.",
-  },
+  { id: "basics", title: m.form_basics_title, intro: m.form_basics_intro },
+  { id: "skills", title: m.form_skills_title, intro: m.form_skills_intro },
   {
     id: "languages",
-    title: "Languages",
-    intro: "Languages you could use at work.",
+    title: m.form_languages_title,
+    intro: m.form_languages_intro,
   },
-  {
-    id: "work",
-    title: "Work",
-    intro: "Most recent first. Focus on the last 10 years.",
-  },
+  { id: "work", title: m.form_work_title, intro: m.form_work_intro },
   {
     id: "projects",
-    title: "Projects",
-    intro: "Work that shows your skills, especially early in your career.",
+    title: m.form_projects_title,
+    intro: m.form_projects_intro,
   },
   {
     id: "education",
-    title: "Education",
-    intro: "Your highest degree first.",
+    title: m.form_education_title,
+    intro: m.form_education_intro,
   },
 ] as const;
 

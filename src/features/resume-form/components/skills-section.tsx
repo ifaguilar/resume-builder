@@ -4,6 +4,7 @@ import {
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -11,6 +12,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Skill } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const EMPTY_SKILL: Skill = {};
 
@@ -21,15 +23,18 @@ const SkillFields = withFieldGroup({
       <>
         <group.AppField name="name">
           {(field) => (
-            <field.TextField label="Category" placeholder="e.g. Frontend" />
+            <field.TextField
+              label={m.form_category_label()}
+              placeholder={m.form_category_placeholder()}
+            />
           )}
         </group.AppField>
         <group.AppField name="keywords">
           {(field) => (
             <field.KeywordsField
-              label="Skills"
-              placeholder="e.g. React, TypeScript, CSS"
-              description="Use the same words as the job posting."
+              label={m.form_skills_label()}
+              placeholder={m.form_skills_placeholder()}
+              description={m.form_skills_tip()}
             />
           )}
         </group.AppField>
@@ -50,9 +55,7 @@ export const SkillsSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No skill categories yet."
-                addLabel="Add category"
-                entryLabel="category"
+                messages={ENTRY_MESSAGES.category}
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -65,9 +68,12 @@ export const SkillsSection = withForm({
                       >
                         {(entry) => (
                           <EntryHeader
-                            title={entryTitle([entry?.name], "New category")}
+                            title={entryTitle(
+                              [entry?.name],
+                              ENTRY_MESSAGES.category.untitled(),
+                            )}
                             entry={entry}
-                            entryLabel="category"
+                            messages={ENTRY_MESSAGES.category}
                             onRemove={remove}
                           />
                         )}

@@ -4,6 +4,7 @@ import {
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -11,6 +12,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { WorkEntry } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const EMPTY_WORK_ENTRY: WorkEntry = {};
 
@@ -22,39 +24,46 @@ const WorkEntryFields = withFieldGroup({
         <group.AppField name="position">
           {(field) => (
             <field.TextField
-              label="Position"
-              placeholder="e.g. Frontend Developer"
+              label={m.form_position_label()}
+              placeholder={m.form_position_placeholder()}
             />
           )}
         </group.AppField>
         <group.AppField name="name">
           {(field) => (
-            <field.TextField label="Company" placeholder="e.g. Acme Inc." />
+            <field.TextField
+              label={m.form_company_label()}
+              placeholder={m.form_company_placeholder()}
+            />
           )}
         </group.AppField>
         <group.AppField name="location">
           {(field) => (
             <field.LocationField
-              label="Location"
-              placeholder="e.g. Austin, TX or Remote"
+              label={m.form_work_location_label()}
+              placeholder={m.form_work_location_placeholder()}
             />
           )}
         </group.AppField>
         <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2">
           <group.AppField name="startDate">
-            {(field) => <field.DateField label="Start date" kind="start" />}
+            {(field) => (
+              <field.DateField label={m.form_start_date_label()} kind="start" />
+            )}
           </group.AppField>
           <group.AppField name="endDate">
-            {(field) => <field.DateField label="End date" kind="end" />}
+            {(field) => (
+              <field.DateField label={m.form_end_date_label()} kind="end" />
+            )}
           </group.AppField>
         </div>
         <group.AppField name="highlights">
           {(field) => (
             <field.HighlightsField
-              label="Achievements"
-              addLabel="Add bullet"
-              placeholder="e.g. Cut page load time by 40% by moving images to a CDN"
-              description="Three to five bullets. Start with a verb and show the result, with a number when you can."
+              label={m.form_achievements_label()}
+              addLabel={m.form_add_bullet()}
+              placeholder={m.form_work_achievements_placeholder()}
+              description={m.form_work_achievements_tip()}
             />
           )}
         </group.AppField>
@@ -75,9 +84,7 @@ export const WorkSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No work experience yet."
-                addLabel="Add work entry"
-                entryLabel="work entry"
+                messages={ENTRY_MESSAGES.work}
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -92,10 +99,10 @@ export const WorkSection = withForm({
                           <EntryHeader
                             title={entryTitle(
                               [entry?.position, entry?.name],
-                              "New work entry",
+                              ENTRY_MESSAGES.work.untitled(),
                             )}
                             entry={entry}
-                            entryLabel="work entry"
+                            messages={ENTRY_MESSAGES.work}
                             onRemove={remove}
                           />
                         )}

@@ -17,7 +17,3 @@ export const FILE_NAME_WORD_SEPARATOR = "-";
 
 // Revoking a download's URL in the same task can cancel it in Firefox.
 export const DOWNLOAD_URL_REVOKE_DELAY_MS = 1000;
-
-export const PDF_EXPORT_ERROR_TITLE = "The PDF couldn't be created";
-export const PDF_EXPORT_ERROR_MESSAGE =
-  "Something went wrong while rendering it. Your resume is safe; try again.";

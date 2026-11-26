@@ -1,3 +1,4 @@
+import { APP_NAME } from "#/features/editor/constants";
 import { ExportJsonButton } from "#/features/export/components/export-json-button";
 import { ExportPdfButton } from "#/features/export/components/export-pdf-button";
 import { ImportJsonButton } from "#/features/import/components/import-json-button";
@@ -17,7 +18,7 @@ export function AppHeader({
 }) {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
-      <h1 className="text-base font-semibold">Resume Builder</h1>
+      <h1 className="text-base font-semibold">{APP_NAME}</h1>
       <div className="flex items-center gap-2">
         <ButtonGroup>
           <ImportJsonButton form={form} onImport={onImport} />

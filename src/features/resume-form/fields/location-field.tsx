@@ -10,6 +10,7 @@ import {
 } from "#/features/resume-form/to-optional-text";
 import { formatLocation } from "#/features/resume/format-location";
 import type { Location } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 import { Button } from "#/shared/components/ui/button";
 import {
   Field,
@@ -43,8 +44,8 @@ export function LocationField({
         className="gap-1.5 data-[invalid=true]:text-warning"
       >
         <FieldTitle>{label}</FieldTitle>
-        <p>{text || "Empty address"}</p>
-        <FieldDescription>Saved as a structured address.</FieldDescription>
+        <p>{text || m.form_location_empty_address()}</p>
+        <FieldDescription>{m.form_location_structured()}</FieldDescription>
         <Button
           variant="outline"
           size="sm"
@@ -52,7 +53,7 @@ export function LocationField({
           onClick={() => field.handleChange(toOptionalText(text))}
           {...focusProps}
         >
-          Convert to text
+          {m.form_location_convert()}
         </Button>
         <FieldWarnings warnings={warnings} />
       </Field>

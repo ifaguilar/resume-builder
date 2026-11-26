@@ -4,6 +4,7 @@ import {
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -11,6 +12,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Project } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const EMPTY_PROJECT: Project = {};
 
@@ -21,42 +23,45 @@ const ProjectFields = withFieldGroup({
       <>
         <group.AppField name="name">
           {(field) => (
-            <field.TextField label="Name" placeholder="e.g. Budget tracker" />
+            <field.TextField
+              label={m.form_project_name_label()}
+              placeholder={m.form_project_name_placeholder()}
+            />
           )}
         </group.AppField>
         <group.AppField name="description">
           {(field) => (
             <field.TextareaField
-              label="Description"
-              placeholder="e.g. A web app that helps students track monthly spending."
-              description="One sentence: what it is and who it's for."
+              label={m.form_project_description_label()}
+              placeholder={m.form_project_description_placeholder()}
+              description={m.form_project_description_tip()}
             />
           )}
         </group.AppField>
         <group.AppField name="url">
           {(field) => (
             <field.TextField
-              label="URL"
+              label={m.form_project_url_label()}
               type="url"
-              placeholder="e.g. https://github.com/ana-torres/project"
+              placeholder={m.form_project_url_placeholder()}
             />
           )}
         </group.AppField>
         <group.AppField name="highlights">
           {(field) => (
             <field.HighlightsField
-              label="Achievements"
-              addLabel="Add bullet"
-              placeholder="e.g. Grew to 2,000 monthly users in six months"
-              description="What you built and what it achieved, with numbers when you can."
+              label={m.form_achievements_label()}
+              addLabel={m.form_add_bullet()}
+              placeholder={m.form_project_achievements_placeholder()}
+              description={m.form_project_achievements_tip()}
             />
           )}
         </group.AppField>
         <group.AppField name="keywords">
           {(field) => (
             <field.KeywordsField
-              label="Technologies"
-              placeholder="e.g. React, Node.js"
+              label={m.form_technologies_label()}
+              placeholder={m.form_technologies_placeholder()}
             />
           )}
         </group.AppField>
@@ -77,9 +82,7 @@ export const ProjectsSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No projects yet."
-                addLabel="Add project"
-                entryLabel="project"
+                messages={ENTRY_MESSAGES.project}
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -92,9 +95,12 @@ export const ProjectsSection = withForm({
                       >
                         {(entry) => (
                           <EntryHeader
-                            title={entryTitle([entry?.name], "New project")}
+                            title={entryTitle(
+                              [entry?.name],
+                              ENTRY_MESSAGES.project.untitled(),
+                            )}
                             entry={entry}
-                            entryLabel="project"
+                            messages={ENTRY_MESSAGES.project}
                             onRemove={remove}
                           />
                         )}

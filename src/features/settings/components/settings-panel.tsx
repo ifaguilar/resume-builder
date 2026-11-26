@@ -8,10 +8,7 @@ import {
   unsupportedCvLanguage,
 } from "#/features/languages/cv-language";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
-import {
-  APP_GROUP_TITLE,
-  DOCUMENT_GROUP_TITLE,
-} from "#/features/settings/constants";
+import { m } from "#/paraglide/messages.js";
 import { ScrollArea } from "#/shared/components/ui/scroll-area";
 
 export function SettingsPanel({ form }: { form: ResumeForm }) {
@@ -21,7 +18,9 @@ export function SettingsPanel({ form }: { form: ResumeForm }) {
     <ScrollArea className="@container/form h-full bg-background">
       <div className="flex flex-col gap-4 p-2 @lg/form:p-4">
         <section className="flex flex-col gap-4 px-3 py-4 @lg/form:px-5">
-          <h2 className="text-base font-semibold">{DOCUMENT_GROUP_TITLE}</h2>
+          <h2 className="text-base font-semibold">
+            {m.settings_document_title()}
+          </h2>
           <CvLanguageField
             value={cvLanguage({ meta })}
             unsupported={unsupportedCvLanguage({ meta })}
@@ -29,7 +28,7 @@ export function SettingsPanel({ form }: { form: ResumeForm }) {
           />
         </section>
         <section className="flex flex-col gap-4 px-3 py-4 @lg/form:px-5">
-          <h2 className="text-base font-semibold">{APP_GROUP_TITLE}</h2>
+          <h2 className="text-base font-semibold">{m.settings_app_title()}</h2>
           <UiLanguageField />
           <ColorSchemeField />
         </section>

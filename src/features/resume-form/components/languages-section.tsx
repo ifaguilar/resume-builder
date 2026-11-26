@@ -7,7 +7,7 @@ import {
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
-import { example } from "#/features/resume-form/constants";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -15,6 +15,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Language } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 const EMPTY_LANGUAGE: Language = {};
 
@@ -29,13 +30,16 @@ const LanguageFields = withFieldGroup({
       <div className="grid grid-cols-1 gap-x-4 gap-y-6 @2xl/form:grid-cols-[1fr_2fr]">
         <group.AppField name="language">
           {(field) => (
-            <field.TextField label="Language" placeholder="e.g. Spanish" />
+            <field.TextField
+              label={m.form_language_label()}
+              placeholder={m.form_language_placeholder()}
+            />
           )}
         </group.AppField>
         <group.AppField name="fluency">
           {(field) => (
             <field.AutocompleteField
-              label="Fluency"
+              label={m.form_fluency_label()}
               placeholder={placeholder}
               suggestions={suggestions}
             />
@@ -61,9 +65,7 @@ export const LanguagesSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No languages yet."
-                addLabel="Add language"
-                entryLabel="language"
+                messages={ENTRY_MESSAGES.language}
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -78,10 +80,10 @@ export const LanguagesSection = withForm({
                           <EntryHeader
                             title={entryTitle(
                               [entry?.language],
-                              "New language",
+                              ENTRY_MESSAGES.language.untitled(),
                             )}
                             entry={entry}
-                            entryLabel="language"
+                            messages={ENTRY_MESSAGES.language}
                             onRemove={remove}
                           />
                         )}
@@ -94,7 +96,9 @@ export const LanguagesSection = withForm({
                       form={form}
                       fields={`languages[${index}]`}
                       suggestions={words.fluencySuggestions}
-                      placeholder={example(words.fluencyExample)}
+                      placeholder={m.form_example({
+                        text: words.fluencyExample,
+                      })}
                     />
                   </EntryCard>
                 )}
