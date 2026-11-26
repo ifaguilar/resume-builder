@@ -15,6 +15,7 @@ import type {
   WorkEntry,
 } from "#/features/resume/resume-schema";
 import type { ResumeWarning } from "#/features/resume/validate-resume";
+import { isRecord } from "#/shared/lib/is-record";
 
 type DatedEntry = WorkEntry | EducationEntry | Project;
 type DateKey = keyof DatedEntry & ("startDate" | "endDate");
@@ -32,10 +33,6 @@ const DATE_RULES: readonly {
   { section: "education", pastOnly: [START_KEY] },
   { section: "projects", pastOnly: [START_KEY, END_KEY] },
 ];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 function dateAt(entry: Record<string, unknown>, key: DateKey) {
   const value = entry[key];
