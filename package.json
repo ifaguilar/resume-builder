@@ -52,6 +52,7 @@
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
     "oxlint-tsgolint": "^7.0.2005",
+    "pdfjs-dist": "^6.5.438",
     "shadcn": "^4.23.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
