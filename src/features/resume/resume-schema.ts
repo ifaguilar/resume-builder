@@ -45,7 +45,6 @@ export const profileSchema = z.strictObject({
 export const basicsSchema = z.strictObject({
   name: text,
   label: text,
-  pronouns: text,
   image: text,
   email,
   phone: text,
@@ -56,17 +55,25 @@ export const basicsSchema = z.strictObject({
   custom,
 });
 
+const skillReference = z.union([
+  z.string(),
+  z.strictObject({ name: text, level: text, keywords: textList }),
+]);
+const skillReferences = z.array(skillReference).optional();
+
 export const workSchema = z.strictObject({
   name: text,
   location: entryLocation,
   description: text,
   position: text,
+  type: text,
   url,
   startDate: partialDate,
   endDate: partialDate,
   summary: text,
   highlights: textList,
   keywords: textList,
+  skills: skillReferences,
   custom,
 });
 
@@ -79,6 +86,7 @@ export const volunteerSchema = z.strictObject({
   endDate: partialDate,
   summary: text,
   highlights: textList,
+  skills: skillReferences,
   custom,
 });
 
@@ -93,6 +101,7 @@ export const educationSchema = z.strictObject({
   score: text,
   courses: textList,
   summary: text,
+  skills: skillReferences,
   custom,
 });
 
@@ -136,6 +145,7 @@ export const publicationSchema = z.strictObject({
 
 export const skillSchema = z.strictObject({
   name: text,
+  id: text,
   level: text,
   keywords: textList,
   custom,
@@ -144,6 +154,7 @@ export const skillSchema = z.strictObject({
 export const languageSchema = z.strictObject({
   language: text,
   fluency: text,
+  scale: z.strictObject({ framework: text, level: text }).optional(),
   custom,
 });
 
@@ -175,6 +186,7 @@ export const projectSchema = z.strictObject({
   roles: textList,
   entity: text,
   type: text,
+  skills: skillReferences,
   custom,
 });
 
@@ -182,6 +194,8 @@ export const metaSchema = z.strictObject({
   canonical: url,
   version: text,
   lastModified: text,
+  language: text,
+  translations: z.array(z.strictObject({ language: text, url })).optional(),
 });
 
 export const resumeSchema = z.strictObject({
