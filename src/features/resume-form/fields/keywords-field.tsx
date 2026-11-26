@@ -22,10 +22,12 @@ import {
   addKeywords,
   replaceKeyword,
 } from "#/features/resume-form/fields/keyword-list";
+import { StoredValueCard } from "#/features/resume-form/fields/stored-value-card";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { moveItem, removeItem } from "#/features/resume-form/list-keys";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { isListOrMissing, textValue } from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
@@ -44,17 +46,40 @@ function findExisting(
   current: readonly string[],
   candidates: readonly string[],
 ): string | undefined {
-  const keys = new Set(current.map((keyword) => keyword.toLowerCase()));
+  const keys = new Set(
+    current.map((keyword) => textValue(keyword).toLowerCase()),
+  );
   return candidates
     .map((candidate) => candidate.trim())
     .find((keyword) => keys.has(keyword.toLowerCase()));
 }
 
-export function KeywordsField({
-  label,
-  placeholder,
-  description,
-}: KeywordsFieldProps) {
+export function KeywordsField(props: KeywordsFieldProps) {
+  const field = useFieldContext<string[] | undefined>();
+  const { warnings } = useVisibleWarnings(field);
+  const value: unknown = field.state.value;
+  if (isListOrMissing(value)) return <KeywordList {...props} />;
+
+  const keywords =
+    typeof value === "string"
+      ? addKeywords([], value.split(KEYWORD_SEPARATOR))
+      : undefined;
+  return (
+    <StoredValueCard
+      label={props.label}
+      value={value}
+      warnings={warnings}
+      onConvert={
+        keywords
+          ? () => field.handleChange(keywords.length > 0 ? keywords : undefined)
+          : undefined
+      }
+      onClear={() => field.handleChange(undefined)}
+    />
+  );
+}
+
+function KeywordList({ label, placeholder, description }: KeywordsFieldProps) {
   const field = useFieldContext<string[] | undefined>();
   const { warnings, isInvalid, focusProps } = useVisibleWarnings(field);
   const items = field.state.value ?? [];
@@ -100,7 +125,7 @@ export function KeywordsField({
   }
 
   function edit(index: number, text: string, refocus: boolean) {
-    if (text.trim() === items[index]) return;
+    if (text.trim() === textValue(items[index])) return;
     const { items: next, count } = replaceKeyword(items, index, text);
     if (count === 0 && text.trim() !== "") {
       announce(m.form_keyword_exists({ keyword: text.trim() }));
@@ -124,7 +149,7 @@ export function KeywordsField({
     keys.move(from, to);
     announce(
       m.form_keyword_moved({
-        keyword: items[from] ?? "",
+        keyword: textValue(items[from]),
         position: to + 1,
         count: items.length,
       }),
@@ -152,7 +177,7 @@ export function KeywordsField({
                 inputs.current[index] = element;
               }}
               label={m.form_keyword_label({ list: label, position: index + 1 })}
-              value={items[index] ?? ""}
+              value={textValue(items[index])}
               onCommit={(text, refocus) => edit(index, text, refocus)}
               onRemove={() => remove(index)}
               onFocus={focusProps.onFocus}

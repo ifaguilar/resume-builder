@@ -4,11 +4,9 @@ import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
-import {
-  toOptionalText,
-  toTrimmedText,
-} from "#/features/resume-form/to-optional-text";
+import { toOptionalText } from "#/features/resume-form/to-optional-text";
 import { withHttps } from "#/features/resume-form/with-https";
+import { textValue } from "#/features/resume/stored-value";
 import {
   Field,
   FieldDescription,
@@ -45,7 +43,7 @@ export function TextField({
         id={id}
         name={field.name}
         type={type}
-        value={field.state.value ?? ""}
+        value={textValue(field.state.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
         aria-invalid={isInvalid || undefined}
@@ -55,11 +53,7 @@ export function TextField({
         }
         onFocus={focusProps.onFocus}
         onBlur={() => {
-          const value = toTrimmedText(field.state.value);
-          commitIfChanged(
-            field,
-            type === "url" && value ? withHttps(value) : value,
-          );
+          commitIfChanged(field, type === "url" ? withHttps : undefined);
           focusProps.onBlur();
         }}
       />

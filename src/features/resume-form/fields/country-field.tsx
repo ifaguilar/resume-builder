@@ -9,6 +9,7 @@ import {
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
+import { textValue } from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { getLocale } from "#/paraglide/runtime.js";
 import {
@@ -32,7 +33,7 @@ export function CountryField({ label, placeholder }: CountryFieldProps) {
   const { warnings, isInvalid, focusProps } = useVisibleWarnings(field);
   const id = useId();
   const anchor = useComboboxAnchor();
-  const code = field.state.value;
+  const code = textValue(field.state.value);
   const selected: Country | null = code
     ? (COUNTRIES.find((country) => country.code === code) ?? {
         code,

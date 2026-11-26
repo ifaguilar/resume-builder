@@ -230,6 +230,8 @@
   "form_location_empty_address": "Adresse vide",
   "form_location_structured": "Enregistrée comme adresse structurée.",
   "form_location_convert": "Convertir en texte",
+  "form_stored_value_convert": "Convertir en liste",
+  "form_stored_value_clear": "Effacer",
 
   "form_date_present": "Aujourd’hui",
   "form_date_pick": "Choisir une date",

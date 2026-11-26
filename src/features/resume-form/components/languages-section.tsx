@@ -10,11 +10,19 @@ import { SectionWarnings } from "#/features/resume-form/components/section-warni
 import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
+  StoredValue,
+  StoredValueCard,
+} from "#/features/resume-form/fields/stored-value-card";
+import {
   resumeFormOptions,
   withFieldGroup,
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Language } from "#/features/resume/resume-schema";
+import {
+  isListOrMissing,
+  isRecordOrMissing,
+} from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 
 const EMPTY_LANGUAGE: Language = {};
@@ -61,6 +69,15 @@ export const LanguagesSection = withForm({
         <SectionWarnings store={form.store} section="languages" />
         <form.Field name="languages" mode="array">
           {(field) => {
+            const value: unknown = field.state.value;
+            if (!isListOrMissing(value)) {
+              return (
+                <StoredValueCard
+                  value={value}
+                  onClear={() => field.handleChange(undefined)}
+                />
+              );
+            }
             const entries = field.state.value ?? [];
             return (
               <EntryList
@@ -91,15 +108,19 @@ export const LanguagesSection = withForm({
                     }
                   >
                     {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
-                    <LanguageFields
-                      key={index}
-                      form={form}
-                      fields={`languages[${index}]`}
-                      suggestions={words.fluencySuggestions}
-                      placeholder={m.form_example({
-                        text: words.fluencyExample,
-                      })}
-                    />
+                    {isRecordOrMissing(entries[index]) ? (
+                      <LanguageFields
+                        key={index}
+                        form={form}
+                        fields={`languages[${index}]`}
+                        suggestions={words.fluencySuggestions}
+                        placeholder={m.form_example({
+                          text: words.fluencyExample,
+                        })}
+                      />
+                    ) : (
+                      <StoredValue value={entries[index]} />
+                    )}
                   </EntryCard>
                 )}
               </EntryList>

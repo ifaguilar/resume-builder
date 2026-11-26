@@ -1,7 +1,8 @@
 import { KEYWORD_SEPARATOR } from "#/features/resume-form/constants";
+import { textValue } from "#/features/resume/stored-value";
 
-function keywordKey(keyword: string): string {
-  return keyword.toLowerCase();
+function keywordKey(keyword: unknown): string {
+  return textValue(keyword).toLowerCase();
 }
 
 export function addKeywords(

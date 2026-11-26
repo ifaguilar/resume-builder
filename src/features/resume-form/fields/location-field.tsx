@@ -4,12 +4,10 @@ import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
-import {
-  toOptionalText,
-  toTrimmedText,
-} from "#/features/resume-form/to-optional-text";
+import { toOptionalText } from "#/features/resume-form/to-optional-text";
 import { formatLocation } from "#/features/resume/format-location";
 import type { Location } from "#/features/resume/resume-schema";
+import { textValue } from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { Button } from "#/shared/components/ui/button";
 import {
@@ -19,6 +17,7 @@ import {
   FieldTitle,
 } from "#/shared/components/ui/field";
 import { Input } from "#/shared/components/ui/input";
+import { isRecord } from "#/shared/lib/is-record";
 
 type LocationFieldProps = {
   label: string;
@@ -36,7 +35,7 @@ export function LocationField({
   const id = useId();
   const value = field.state.value;
 
-  if (typeof value === "object") {
+  if (isRecord(value)) {
     const text = formatLocation(value);
     return (
       <Field
@@ -69,7 +68,7 @@ export function LocationField({
       <Input
         id={id}
         name={field.name}
-        value={value ?? ""}
+        value={textValue(value)}
         placeholder={placeholder}
         aria-invalid={isInvalid || undefined}
         className="border-foreground/15 bg-background shadow-xs hover:bg-background aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
@@ -78,7 +77,7 @@ export function LocationField({
         }
         onFocus={focusProps.onFocus}
         onBlur={() => {
-          commitIfChanged(field, toTrimmedText(value));
+          commitIfChanged(field);
           focusProps.onBlur();
         }}
       />

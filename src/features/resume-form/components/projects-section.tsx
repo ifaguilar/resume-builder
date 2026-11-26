@@ -7,11 +7,19 @@ import { SectionWarnings } from "#/features/resume-form/components/section-warni
 import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
+  StoredValue,
+  StoredValueCard,
+} from "#/features/resume-form/fields/stored-value-card";
+import {
   resumeFormOptions,
   withFieldGroup,
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Project } from "#/features/resume/resume-schema";
+import {
+  isListOrMissing,
+  isRecordOrMissing,
+} from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 
 const EMPTY_PROJECT: Project = {};
@@ -78,6 +86,15 @@ export const ProjectsSection = withForm({
         <SectionWarnings store={form.store} section="projects" />
         <form.Field name="projects" mode="array">
           {(field) => {
+            const value: unknown = field.state.value;
+            if (!isListOrMissing(value)) {
+              return (
+                <StoredValueCard
+                  value={value}
+                  onClear={() => field.handleChange(undefined)}
+                />
+              );
+            }
             const entries = field.state.value ?? [];
             return (
               <EntryList
@@ -108,11 +125,15 @@ export const ProjectsSection = withForm({
                     }
                   >
                     {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
-                    <ProjectFields
-                      key={index}
-                      form={form}
-                      fields={`projects[${index}]`}
-                    />
+                    {isRecordOrMissing(entries[index]) ? (
+                      <ProjectFields
+                        key={index}
+                        form={form}
+                        fields={`projects[${index}]`}
+                      />
+                    ) : (
+                      <StoredValue value={entries[index]} />
+                    )}
                   </EntryCard>
                 )}
               </EntryList>
