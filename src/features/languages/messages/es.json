@@ -230,6 +230,8 @@
   "form_location_empty_address": "Dirección vacía",
   "form_location_structured": "Guardada como dirección estructurada.",
   "form_location_convert": "Convertir en texto",
+  "form_stored_value_convert": "Convertir en lista",
+  "form_stored_value_clear": "Borrar",
 
   "form_date_present": "Actualidad",
   "form_date_pick": "Elegir una fecha",

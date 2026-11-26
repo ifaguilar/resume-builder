@@ -10,10 +10,8 @@ import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
-import {
-  toOptionalText,
-  toTrimmedText,
-} from "#/features/resume-form/to-optional-text";
+import { toOptionalText } from "#/features/resume-form/to-optional-text";
+import { textValue } from "#/features/resume/stored-value";
 import { PopupScrollArea } from "#/shared/components/popup-scroll-area";
 import {
   Field,
@@ -50,7 +48,7 @@ export function AutocompleteField({
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Autocomplete.Root
         items={suggestions}
-        value={field.state.value ?? ""}
+        value={textValue(field.state.value)}
         onValueChange={(value) => field.handleChange(toOptionalText(value))}
         openOnInputClick
       >
@@ -77,7 +75,7 @@ export function AutocompleteField({
             }}
             onFocus={focusProps.onFocus}
             onBlur={() => {
-              commitIfChanged(field, toTrimmedText(field.state.value));
+              commitIfChanged(field);
               focusProps.onBlur();
             }}
           />

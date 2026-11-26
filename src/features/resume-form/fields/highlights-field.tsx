@@ -19,10 +19,12 @@ import {
   toBulletLines,
 } from "#/features/resume-form/fields/bullet-list";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
+import { StoredValueCard } from "#/features/resume-form/fields/stored-value-card";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { moveItem, removeItem } from "#/features/resume-form/list-keys";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { isListOrMissing, textValue } from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
@@ -41,7 +43,29 @@ type HighlightsFieldProps = {
 
 type PendingFocus = { index: number; caret: "start" | "end" };
 
-export function HighlightsField({
+export function HighlightsField(props: HighlightsFieldProps) {
+  const field = useFieldContext<string[] | undefined>();
+  const { warnings } = useVisibleWarnings(field);
+  const value: unknown = field.state.value;
+  if (isListOrMissing(value)) return <BulletList {...props} />;
+
+  const lines = typeof value === "string" ? toBulletLines(value) : undefined;
+  return (
+    <StoredValueCard
+      label={props.label}
+      value={value}
+      warnings={warnings}
+      onConvert={
+        lines
+          ? () => field.handleChange(lines.length > 0 ? lines : undefined)
+          : undefined
+      }
+      onClear={() => field.handleChange(undefined)}
+    />
+  );
+}
+
+function BulletList({
   label,
   addLabel,
   description,
@@ -92,8 +116,8 @@ export function HighlightsField({
   }
 
   function trim(index: number) {
-    const text = items[index];
-    if (text !== undefined && text.trim() !== text) update(index, text.trim());
+    const text = textValue(items[index]);
+    if (text.trim() !== text) update(index, text.trim());
   }
 
   // Empty bullets are dropped only once focus leaves the whole list, so moving
@@ -184,7 +208,7 @@ export function HighlightsField({
                   position: index + 1,
                 })}
                 position={index + 1}
-                value={items[index] ?? ""}
+                value={textValue(items[index])}
                 placeholder={index === 0 ? placeholder : undefined}
                 onChange={(text) => update(index, text)}
                 onKeyDown={(event) => handleKeyDown(index, event)}

@@ -1,3 +1,5 @@
+import { isBlankText, textValue } from "#/features/resume/stored-value";
+
 const LIST_MARKER = /^\s*(?:[•·▪◦‣∙*-]|\d+[.)])\s+/;
 const LINE_BREAK = /\r?\n/;
 
@@ -6,7 +8,7 @@ export function splitBullet(
   index: number,
   caret: number,
 ): string[] {
-  const text = items[index] ?? "";
+  const text = textValue(items[index]);
   return [
     ...items.slice(0, index),
     text.slice(0, caret).trimEnd(),
@@ -16,7 +18,7 @@ export function splitBullet(
 }
 
 export function filledBulletIndexes(items: readonly string[]): number[] {
-  return items.flatMap((item, index) => (item.trim() === "" ? [] : [index]));
+  return items.flatMap((item, index) => (isBlankText(item) ? [] : [index]));
 }
 
 export function toBulletLines(pasted: string): string[] {
@@ -33,7 +35,7 @@ export function pasteBullets(
   pasted: string,
 ): { items: string[]; lastIndex: number } {
   const lines = toBulletLines(pasted);
-  const text = items[index] ?? "";
+  const text = textValue(items[index]);
   const before = text.slice(0, selection.start);
   const after = text.slice(selection.end);
   if (before.trim() !== "" && after.trim() === "") {

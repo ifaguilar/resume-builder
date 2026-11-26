@@ -127,6 +127,18 @@ describe("formatPlace", () => {
     expect(formatPlace(" Remote ", EN.locale)).toBe("Remote");
     expect(formatPlace(undefined, EN.locale)).toBe("");
   });
+
+  it("survives imported values of the wrong type", () => {
+    const places: Parameters<typeof formatPlace>[0][] = JSON.parse(
+      '[null, 42, ["Remote"], { "city": 5, "countryCode": "Spain" }]',
+    );
+    expect(places.map((place) => formatPlace(place, EN.locale))).toEqual([
+      "",
+      "42",
+      "",
+      "5, Spain",
+    ]);
+  });
 });
 
 describe("displayUrl", () => {

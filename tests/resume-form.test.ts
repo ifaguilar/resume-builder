@@ -5,6 +5,7 @@ import {
   countryName,
   listCountries,
 } from "#/features/languages/countries";
+import { ENTRY_TITLE_SEPARATOR } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   filledBulletIndexes,
@@ -12,6 +13,7 @@ import {
   splitBullet,
   toBulletLines,
 } from "#/features/resume-form/fields/bullet-list";
+import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed";
 import {
   formatDisplayDate,
   formatLongMonthYear,
@@ -36,10 +38,7 @@ import {
 } from "#/features/resume-form/list-keys";
 import { resumeWarningsValidator } from "#/features/resume-form/resume-warnings-validator";
 import { toFieldName } from "#/features/resume-form/to-field-name";
-import {
-  toOptionalText,
-  toTrimmedText,
-} from "#/features/resume-form/to-optional-text";
+import { toOptionalText } from "#/features/resume-form/to-optional-text";
 import { hasInput, sectionOf } from "#/features/resume-form/warning-paths";
 import { withHttps } from "#/features/resume-form/with-https";
 import { WARNING_MESSAGES } from "#/features/resume/constants";
@@ -236,6 +235,11 @@ describe("countries", () => {
     expect(countryName("QQ", "en")).toBe("QQ");
   });
 
+  it("keeps a code that isn't a region as typed", () => {
+    expect(countryName("Spain", "en")).toBe("Spain");
+    expect(countryName("34", "en")).toBe("34");
+  });
+
   it("sorts countries by name", () => {
     const names = listCountries("en").map((country) => country.name);
     expect(names).toEqual(names.toSorted((a, b) => a.localeCompare(b, "en")));
@@ -422,14 +426,77 @@ describe("moveYear", () => {
   });
 });
 
-describe("toTrimmedText", () => {
+// What a text field holds after leaving it, and whether anything was written.
+function leave(value: unknown, transform?: (text: string) => string) {
+  const field = {
+    state: { value },
+    handleChange(next: string | undefined) {
+      field.state.value = next;
+      writes += 1;
+    },
+  };
+  let writes = 0;
+  commitIfChanged(field, transform);
+  return { value: field.state.value, writes };
+}
+
+describe("commitIfChanged", () => {
   it.each([
-    ["  Ana  ", "Ana"],
-    ["   ", undefined],
-    ["", undefined],
-    [undefined, undefined],
-  ])("%j becomes %j", (value, expected) => {
-    expect(toTrimmedText(value)).toBe(expected);
+    ["  Ana  ", "Ana", 1],
+    ["Ana", "Ana", 0],
+    ["   ", undefined, 1],
+    ["", undefined, 1],
+    [undefined, undefined, 0],
+  ])("%j becomes %j", (value, expected, writes) => {
+    expect(leave(value)).toEqual({ value: expected, writes });
+  });
+
+  it.each([42, { city: "Madrid" }, null, true])(
+    "keeps %j as stored",
+    (value) => {
+      expect(leave(value)).toEqual({ value, writes: 0 });
+    },
+  );
+
+  it("applies the transform to edited text only", () => {
+    expect(leave(" example.com ", withHttps).value).toBe("https://example.com");
+    expect(leave("   ", withHttps).value).toBeUndefined();
+    expect(leave(42, withHttps)).toEqual({ value: 42, writes: 0 });
+  });
+});
+
+describe("values of the wrong type in lists", () => {
+  // Read the way an imported file is read, so no type is asserted.
+  const items: string[] = JSON.parse('["Lead", 5, {}, null, "  ", ""]');
+
+  it("titles an entry with numbers as typed", () => {
+    expect(entryTitle([42, " Acme "], "Untitled")).toBe(
+      ["42", "Acme"].join(ENTRY_TITLE_SEPARATOR),
+    );
+    expect(entryTitle([{}, null], "Untitled")).toBe("Untitled");
+  });
+
+  it("drops only blank text bullets", () => {
+    expect(filledBulletIndexes(items)).toEqual([0, 1, 2, 3]);
+  });
+
+  it("splits a number bullet as text", () => {
+    const numbers: string[] = JSON.parse("[2030]");
+    expect(splitBullet(numbers, 0, 2)).toEqual(["20", "30"]);
+  });
+
+  it("adds keywords next to items of the wrong type, keeping them", () => {
+    const keywords: string[] = JSON.parse('[1, {}, "Git"]');
+    expect(addKeywords(keywords, ["1", "git", "Docker"])).toEqual([
+      1,
+      {},
+      "Git",
+      "Docker",
+    ]);
+    expect(replaceKeyword(keywords, 2, "Git, Docker")).toEqual({
+      items: [1, {}, "Git", "Docker"],
+      count: 2,
+    });
   });
 });
 

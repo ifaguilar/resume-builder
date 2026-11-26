@@ -1,3 +1,5 @@
+import { useStore } from "@tanstack/react-form";
+
 import {
   EntryCard,
   EntryHeader,
@@ -8,11 +10,19 @@ import { SectionWarnings } from "#/features/resume-form/components/section-warni
 import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
+  StoredValue,
+  StoredValueCard,
+} from "#/features/resume-form/fields/stored-value-card";
+import {
   resumeFormOptions,
   withFieldGroup,
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Profile } from "#/features/resume/resume-schema";
+import {
+  isListOrMissing,
+  isRecordOrMissing,
+} from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { FieldGroup } from "#/shared/components/ui/field";
 
@@ -48,6 +58,23 @@ const ProfileFields = withFieldGroup({
 export const BasicsSection = withForm({
   ...resumeFormOptions,
   render: function BasicsSection({ form }) {
+    const basics: unknown = useStore(
+      form.store,
+      (state) => state.values.basics,
+    );
+    // Typing into a field would replace a `basics` that isn't an object.
+    if (!isRecordOrMissing(basics)) {
+      return (
+        <FieldGroup className="flex flex-col gap-6">
+          <SectionWarnings store={form.store} section="basics" />
+          <StoredValueCard
+            value={basics}
+            onClear={() => form.setFieldValue("basics", undefined)}
+          />
+        </FieldGroup>
+      );
+    }
+
     return (
       <FieldGroup className="flex flex-col gap-6">
         <SectionWarnings store={form.store} section="basics" />
@@ -148,6 +175,15 @@ export const BasicsSection = withForm({
           <LabeledGroup title={m.form_profiles_title()}>
             <form.Field name="basics.profiles" mode="array">
               {(field) => {
+                const value: unknown = field.state.value;
+                if (!isListOrMissing(value)) {
+                  return (
+                    <StoredValueCard
+                      value={value}
+                      onClear={() => field.handleChange(undefined)}
+                    />
+                  );
+                }
                 const profiles = field.state.value ?? [];
                 return (
                   <EntryList
@@ -180,11 +216,15 @@ export const BasicsSection = withForm({
                         }
                       >
                         {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
-                        <ProfileFields
-                          key={index}
-                          form={form}
-                          fields={`basics.profiles[${index}]`}
-                        />
+                        {isRecordOrMissing(profiles[index]) ? (
+                          <ProfileFields
+                            key={index}
+                            form={form}
+                            fields={`basics.profiles[${index}]`}
+                          />
+                        ) : (
+                          <StoredValue value={profiles[index]} />
+                        )}
                       </EntryCard>
                     )}
                   </EntryList>

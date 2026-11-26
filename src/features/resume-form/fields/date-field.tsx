@@ -36,6 +36,7 @@ import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-wa
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { DATE_RANGE_YEARS } from "#/features/resume/constants";
 import { parsePartialDate } from "#/features/resume/partial-date";
+import { textValue } from "#/features/resume/stored-value";
 import { m } from "#/paraglide/messages.js";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { Button } from "#/shared/components/ui/button";
@@ -80,7 +81,7 @@ export function DateField({
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<View>("months");
-  const value = field.state.value;
+  const value = textValue(field.state.value);
   const date = parsePartialDate(value);
   const [shownYear, setShownYear] = useState(() => date?.year ?? currentYear());
 
