@@ -2,9 +2,11 @@ import type { MotionProps, Transition } from "motion/react";
 
 import {
   FADE_DURATION_MS,
+  ICON_POP_SCALE,
   LIST_DURATION_MS,
   LIST_EASING,
   MS_PER_SECOND,
+  VIEW_ENTER_SCALE,
 } from "#/shared/constants";
 
 export const listTransition: Transition = {
@@ -42,4 +44,18 @@ const listItemEnter = {
 export const listItemPresence = {
   ...listItemEnter,
   exit: { opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" },
+} satisfies MotionProps;
+
+// A view replacing another in the same place, such as a picker's grid.
+export const viewEnter = {
+  initial: { opacity: 0, scale: VIEW_ENTER_SCALE },
+  animate: { opacity: 1, scale: 1 },
+  transition: fadeTransition,
+} satisfies MotionProps;
+
+export const popInOut = {
+  initial: { opacity: 0, scale: ICON_POP_SCALE },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: ICON_POP_SCALE },
+  transition: fadeTransition,
 } satisfies MotionProps;

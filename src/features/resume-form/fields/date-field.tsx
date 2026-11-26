@@ -5,6 +5,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react";
+import { PresenceContext } from "motion/react";
+import * as motion from "motion/react-m";
 import {
   type ComponentProps,
   type KeyboardEvent,
@@ -51,6 +53,7 @@ import {
   PopoverTrigger,
 } from "#/shared/components/ui/popover";
 import { Separator } from "#/shared/components/ui/separator";
+import { viewEnter } from "#/shared/lib/motion-transitions";
 
 const MONTHS = Array.from({ length: MONTHS_PER_YEAR }, (_, index) => index + 1);
 
@@ -81,6 +84,7 @@ export function DateField({
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<View>("months");
+  const [viewSwitched, setViewSwitched] = useState(false);
   const value = textValue(field.state.value);
   const date = parsePartialDate(value);
   const [shownYear, setShownYear] = useState(() => date?.year ?? currentYear());
@@ -139,6 +143,7 @@ export function DateField({
       setActiveMonth(initialFocusMonth(current, year, now));
       setToday(now);
       setView("months");
+      setViewSwitched(false);
     }
     setIsOpen(open);
   }
@@ -170,6 +175,7 @@ export function DateField({
   function showYears() {
     setActiveYear(shownYear);
     setView("years");
+    setViewSwitched(true);
     pendingFocus.current = "years";
   }
 
@@ -177,6 +183,7 @@ export function DateField({
     setShownYear(year);
     if (today) setActiveMonth(initialFocusMonth(date, year, today));
     setView("months");
+    setViewSwitched(true);
     pendingFocus.current = "months";
   }
 
@@ -294,67 +301,76 @@ export function DateField({
             </div>
           )}
           <Separator />
-          {/* A click on a disabled cell or a gap would move focus to the
+          {/* Inside a list row, the list's AnimatePresence initial={false}
+              would block this grid's enter animation; null lifts it. */}
+          <PresenceContext value={null}>
+            {/* A click on a disabled cell or a gap would move focus to the
               popup and leave the arrow keys with no cell to start from. */}
-          <div
-            role="presentation"
-            className="grid grid-cols-3 gap-1 p-2"
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            {view === "months"
-              ? MONTHS.map((month) => {
-                  const isSelected =
-                    date?.year === shownYear && date.month === month;
-                  const isThisMonth =
-                    today?.year === shownYear && today.month === month;
-                  const isDisabled = isFutureMonth(month) && !isSelected;
-                  return (
-                    <GridCell
-                      key={month}
-                      ref={(element) => {
-                        monthButtons.current[month - 1] = element;
-                      }}
-                      tabIndex={month === activeMonth ? 0 : -1}
-                      onFocus={() => setActiveMonth(month)}
-                      onKeyDown={handleMonthKeyDown}
-                      isDisabled={isDisabled}
-                      isSelected={isSelected}
-                      isCurrent={isThisMonth}
-                      aria-label={formatLongMonthYear(shownYear, month)}
-                      onClick={() => {
-                        if (!isDisabled) select(toMonthValue(shownYear, month));
-                      }}
-                    >
-                      {formatShortMonth(month)}
-                    </GridCell>
-                  );
-                })
-              : pageYears.map((year) => {
-                  const isSelected = date?.year === year;
-                  const isThisYear = today?.year === year;
-                  const isDisabled = year < minYear || year > maxYear;
-                  return (
-                    <GridCell
-                      key={year}
-                      ref={(element) => {
-                        yearButtons.current.set(year, element);
-                      }}
-                      tabIndex={year === activeYear ? 0 : -1}
-                      onFocus={() => setActiveYear(year)}
-                      onKeyDown={handleYearKeyDown}
-                      isDisabled={isDisabled}
-                      isSelected={isSelected}
-                      isCurrent={isThisYear}
-                      className="tabular-nums"
-                      onClick={() => {
-                        if (!isDisabled) showMonths(year);
-                      }}
-                    >
-                      {year}
-                    </GridCell>
-                  );
-                })}
-          </div>
+            <motion.div
+              key={view}
+              {...viewEnter}
+              // The popup animates its own opening; only a switch animates here.
+              initial={viewSwitched ? viewEnter.initial : false}
+              role="presentation"
+              className="grid grid-cols-3 gap-1 p-2"
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              {view === "months"
+                ? MONTHS.map((month) => {
+                    const isSelected =
+                      date?.year === shownYear && date.month === month;
+                    const isThisMonth =
+                      today?.year === shownYear && today.month === month;
+                    const isDisabled = isFutureMonth(month) && !isSelected;
+                    return (
+                      <GridCell
+                        key={month}
+                        ref={(element) => {
+                          monthButtons.current[month - 1] = element;
+                        }}
+                        tabIndex={month === activeMonth ? 0 : -1}
+                        onFocus={() => setActiveMonth(month)}
+                        onKeyDown={handleMonthKeyDown}
+                        isDisabled={isDisabled}
+                        isSelected={isSelected}
+                        isCurrent={isThisMonth}
+                        aria-label={formatLongMonthYear(shownYear, month)}
+                        onClick={() => {
+                          if (!isDisabled)
+                            select(toMonthValue(shownYear, month));
+                        }}
+                      >
+                        {formatShortMonth(month)}
+                      </GridCell>
+                    );
+                  })
+                : pageYears.map((year) => {
+                    const isSelected = date?.year === year;
+                    const isThisYear = today?.year === year;
+                    const isDisabled = year < minYear || year > maxYear;
+                    return (
+                      <GridCell
+                        key={year}
+                        ref={(element) => {
+                          yearButtons.current.set(year, element);
+                        }}
+                        tabIndex={year === activeYear ? 0 : -1}
+                        onFocus={() => setActiveYear(year)}
+                        onKeyDown={handleYearKeyDown}
+                        isDisabled={isDisabled}
+                        isSelected={isSelected}
+                        isCurrent={isThisYear}
+                        className="tabular-nums"
+                        onClick={() => {
+                          if (!isDisabled) showMonths(year);
+                        }}
+                      >
+                        {year}
+                      </GridCell>
+                    );
+                  })}
+            </motion.div>
+          </PresenceContext>
           <Separator />
           <div className="flex items-center justify-between p-2">
             <Button variant="ghost" size="sm" onClick={() => select(undefined)}>

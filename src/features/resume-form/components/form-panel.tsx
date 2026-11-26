@@ -1,4 +1,6 @@
 import { TriangleAlertIcon } from "lucide-react";
+import { AnimatePresence } from "motion/react";
+import * as motion from "motion/react-m";
 
 import { BasicsSection } from "#/features/resume-form/components/basics-section";
 import { EducationSection } from "#/features/resume-form/components/education-section";
@@ -24,6 +26,7 @@ import {
 } from "#/shared/components/ui/accordion";
 import { Badge } from "#/shared/components/ui/badge";
 import { ScrollArea } from "#/shared/components/ui/scroll-area";
+import { popInOut } from "#/shared/lib/motion-transitions";
 
 const SECTION_COMPONENTS = {
   basics: BasicsSection,
@@ -66,15 +69,23 @@ export function FormPanel({ form }: { form: ResumeForm }) {
                         <span className="text-base font-semibold">
                           {section.title()}
                         </span>
-                        {count > 0 ? (
-                          <Badge
-                            variant="outline"
-                            className="border-warning/40 bg-warning/10 text-warning"
-                          >
-                            <TriangleAlertIcon aria-hidden />
-                            {m.form_warning_count({ count })}
-                          </Badge>
-                        ) : null}
+                        <AnimatePresence initial={false}>
+                          {count > 0 ? (
+                            <motion.span
+                              key="warnings"
+                              className="inline-flex"
+                              {...popInOut}
+                            >
+                              <Badge
+                                variant="outline"
+                                className="border-warning/40 bg-warning/10 text-warning"
+                              >
+                                <TriangleAlertIcon aria-hidden />
+                                {m.form_warning_count({ count })}
+                              </Badge>
+                            </motion.span>
+                          ) : null}
+                        </AnimatePresence>
                       </span>
                       <span className="text-sm font-normal text-muted-foreground">
                         {section.intro()}
