@@ -2,23 +2,17 @@ import type { CvWords } from "#/features/languages/constants";
 import { countryName } from "#/features/languages/countries";
 import { parsePartialDate } from "#/features/resume/partial-date";
 import type { Location } from "#/features/resume/resume-schema";
+import { cleanText } from "#/features/resume/stored-value";
 import {
   DATE_RANGE_SEPARATOR,
   LIST_SEPARATOR,
   PLACE_SEPARATOR,
 } from "#/features/templates/constants";
+import { isRecord } from "#/shared/lib/is-record";
 
 const URL_SCHEME = /^https?:\/\//i;
 const TRAILING_SLASH = /\/$/;
 const FIRST_DAY = 1;
-
-// Imported drafts can hold values of the wrong type. Numbers (like a year
-// typed as 2030) render as typed; anything else renders as nothing instead of
-// breaking the whole preview.
-export function cleanText(value: unknown): string {
-  if (typeof value === "number") return String(value);
-  return typeof value === "string" ? value.trim() : "";
-}
 
 // Formatting a Temporal date through Intl is slow, so dates are cached.
 const monthDates = new Map<string, string>();
@@ -68,8 +62,7 @@ export function formatPlace(
   location: Location | string | undefined,
   locale: string,
 ): string {
-  if (typeof location === "string") return location.trim();
-  if (typeof location !== "object") return "";
+  if (!isRecord(location)) return cleanText(location);
   const code = cleanText(location.countryCode);
   return [
     cleanText(location.city),

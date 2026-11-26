@@ -3,6 +3,7 @@ import {
   FULL_DATE_PATTERN,
   PARTIAL_DATE_PATTERN,
 } from "#/features/resume/constants";
+import { textValue } from "#/features/resume/stored-value";
 
 export type PartialDate = { year: number; month?: number; day?: number };
 
@@ -23,13 +24,10 @@ export function isRealCalendarDate(value: string): boolean {
   }
 }
 
-export function parsePartialDate(
-  value: string | undefined,
-): PartialDate | undefined {
-  if (value === undefined || !PARTIAL_DATE_PATTERN.test(value)) {
-    return undefined;
-  }
-  const [year, month, day] = value.split(DATE_PART_SEPARATOR).map(Number);
+export function parsePartialDate(value: unknown): PartialDate | undefined {
+  const text = textValue(value);
+  if (!PARTIAL_DATE_PATTERN.test(text)) return undefined;
+  const [year, month, day] = text.split(DATE_PART_SEPARATOR).map(Number);
   if (year === undefined) return undefined;
   return { year, month, day };
 }

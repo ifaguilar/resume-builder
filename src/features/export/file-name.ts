@@ -4,7 +4,7 @@ import {
   FILE_NAME_WORD_SEPARATOR,
   PDF_EXTENSION,
 } from "#/features/export/constants";
-import { cleanText } from "#/features/templates/format";
+import { cleanText } from "#/features/resume/stored-value";
 
 // Recruiters see the file name, so it carries the candidate's name and the
 // word they use for the document ("Resume" or "CV").

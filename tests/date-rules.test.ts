@@ -34,6 +34,9 @@ describe("parsePartialDate", () => {
     ["Sept 2023", undefined],
     ["2023-13", undefined],
     [undefined, undefined],
+    [2030, { year: 2030, month: undefined, day: undefined }],
+    [{ year: 2020 }, undefined],
+    [null, undefined],
   ])("parses %j", (value, expected) => {
     expect(parsePartialDate(value)).toEqual(expected);
   });

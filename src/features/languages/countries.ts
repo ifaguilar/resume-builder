@@ -260,7 +260,13 @@ export function countryName(code: string, locale: string): string {
     type: "region",
     fallback: "code",
   });
-  return names.of(code) ?? code;
+  // An imported code that isn't a region ("Spain") prints as typed.
+  try {
+    return names.of(code) ?? code;
+  } catch (error) {
+    if (error instanceof RangeError) return code;
+    throw error;
+  }
 }
 
 export function listCountries(locale: string): Country[] {

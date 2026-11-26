@@ -236,6 +236,11 @@ describe("countries", () => {
     expect(countryName("QQ", "en")).toBe("QQ");
   });
 
+  it("keeps a code that isn't a region as typed", () => {
+    expect(countryName("Spain", "en")).toBe("Spain");
+    expect(countryName("34", "en")).toBe("34");
+  });
+
   it("sorts countries by name", () => {
     const names = listCountries("en").map((country) => country.name);
     expect(names).toEqual(names.toSorted((a, b) => a.localeCompare(b, "en")));

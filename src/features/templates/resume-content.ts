@@ -3,6 +3,7 @@ import { cvLanguage, cvWords } from "#/features/languages/cv-language";
 import type { CvSectionId } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { Settings } from "#/features/resume/settings-schema";
+import { cleanText, entriesOf } from "#/features/resume/stored-value";
 import {
   LIST_SEPARATOR,
   MAILTO_PREFIX,
@@ -10,13 +11,13 @@ import {
 } from "#/features/templates/constants";
 import {
   cleanList,
-  cleanText,
   displayUrl,
   formatDateRange,
   formatList,
   formatPlace,
   formatYear,
 } from "#/features/templates/format";
+import { isRecord } from "#/shared/lib/is-record";
 
 const PHONE_LINK_JUNK = /[^\d+]/g;
 
@@ -55,13 +56,17 @@ export type ResumeContent = {
   sections: ResumeSection[];
 };
 
+function basicsOf(resume: Resume): NonNullable<Resume["basics"]> {
+  return isRecord(resume.basics) ? resume.basics : {};
+}
+
 function header(resume: Resume, words: CvWords): ResumeHeader {
-  const basics = resume.basics ?? {};
+  const basics = basicsOf(resume);
   const place = formatPlace(basics.location, words.locale);
   const phone = cleanText(basics.phone);
   const email = cleanText(basics.email);
   const website = cleanText(basics.url);
-  const profileUrls = (basics.profiles ?? [])
+  const profileUrls = entriesOf(basics.profiles)
     .map((profile) => cleanText(profile.url))
     .filter((url) => url !== "");
 
@@ -105,7 +110,7 @@ function entrySection(
 }
 
 function summary(resume: Resume, title: string): ResumeSection | null {
-  const text = cleanText(resume.basics?.summary);
+  const text = cleanText(basicsOf(resume).summary);
   return text ? { id: "summary", title, text } : null;
 }
 
@@ -114,13 +119,13 @@ function skills(
   title: string,
   words: CvWords,
 ): ResumeSection | null {
-  const items = (resume.skills ?? [])
+  const items = entriesOf(resume.skills)
     .map((skill) => ({
       label: cleanText(skill.name),
       value: formatList(skill.keywords),
     }))
     .filter((item) => item.label || item.value);
-  const languages = (resume.languages ?? [])
+  const languages = entriesOf(resume.languages)
     .map((entry) => {
       const language = cleanText(entry.language);
       const fluency = cleanText(entry.fluency);
@@ -141,7 +146,7 @@ function experience(
   return entrySection(
     "experience",
     title,
-    (resume.work ?? []).map((work) => {
+    entriesOf(resume.work).map((work) => {
       const place = formatPlace(work.location, words.locale);
       return {
         title: cleanText(work.position),
@@ -162,7 +167,7 @@ function projects(
   return entrySection(
     "projects",
     title,
-    (resume.projects ?? []).map((project) => {
+    entriesOf(resume.projects).map((project) => {
       const url = cleanText(project.url);
       return {
         title: cleanText(project.name),
@@ -183,7 +188,7 @@ function education(
   return entrySection(
     "education",
     title,
-    (resume.education ?? []).map((entry) => ({
+    entriesOf(resume.education).map((entry) => ({
       title: [cleanText(entry.studyType), cleanText(entry.area)]
         .filter((part) => part !== "")
         .join(words.degreeAreaJoiner),
