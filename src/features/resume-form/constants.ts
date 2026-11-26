@@ -116,3 +116,15 @@ export const EDITED_ENTRY_KEYS = {
 } as const;
 
 export type EntrySectionId = keyof typeof EDITED_ENTRY_KEYS;
+
+const UI_PLURAL_RULES = new Intl.PluralRules("en");
+
+const WARNING_COUNT: Record<"one" | "other", (count: number) => string> = {
+  one: (count) => `${count} warning`,
+  other: (count) => `${count} warnings`,
+};
+
+export function warningCount(count: number): string {
+  const category = UI_PLURAL_RULES.select(count) === "one" ? "one" : "other";
+  return WARNING_COUNT[category](count);
+}

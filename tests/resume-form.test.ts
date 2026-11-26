@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { warningCount } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   filledBulletIndexes,
@@ -421,5 +422,15 @@ describe("list keys", () => {
     expect(splitBullet(items, 0, 3).length - items.length).toBe(1);
     const pasted = pasteBullets(items, 1, { start: 7, end: 7 }, "- One\n- Two");
     expect(pasted.items.length - items.length).toBe(2);
+  });
+});
+
+describe("warningCount", () => {
+  it.each([
+    [0, "0 warnings"],
+    [1, "1 warning"],
+    [2, "2 warnings"],
+  ])("writes %i as %s", (count, text) => {
+    expect(warningCount(count)).toBe(text);
   });
 });
