@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import { PlusIcon, Trash2Icon } from "lucide-react";
+import * as motion from "motion/react-m";
 import {
   type ClipboardEvent,
   type KeyboardEvent,
@@ -33,6 +34,7 @@ import { SortableItemContext } from "#/shared/components/sortable-item-context";
 import { SortableItem, SortableList } from "#/shared/components/sortable-list";
 import { Button } from "#/shared/components/ui/button";
 import { Textarea } from "#/shared/components/ui/textarea";
+import { listItemPresence } from "#/shared/lib/motion-transitions";
 
 type HighlightsFieldProps = {
   label: string;
@@ -185,11 +187,7 @@ function BulletList({
       description={description}
       className="flex flex-col gap-2"
     >
-      <div
-        ref={listRef}
-        className="flex flex-col gap-2"
-        onBlur={dropEmptyOnLeave}
-      >
+      <div ref={listRef} className="flex flex-col" onBlur={dropEmptyOnLeave}>
         <SortableList onMove={move}>
           {keys.keys.map((key, index) => (
             <SortableItem
@@ -200,8 +198,15 @@ function BulletList({
               onMove={move}
             >
               <BulletRow
+                // A removed row unmounts only after its exit animation, when
+                // another row may already use its index.
                 textareaRef={(element) => {
                   textareas.current[index] = element;
+                  return () => {
+                    if (textareas.current[index] === element) {
+                      textareas.current[index] = null;
+                    }
+                  };
                 }}
                 label={m.form_bullet_label({
                   list: label,
@@ -268,12 +273,14 @@ function BulletRow({
   const item = use(SortableItemContext);
 
   return (
-    <div
+    <motion.div
       ref={item?.ref}
+      {...listItemPresence}
+      inert={item?.isPresent === false}
       // During a drag, dnd-kit leaves a hidden copy of this row where it will
       // land; the data-dnd-placeholder styles turn that copy into a drop slot.
       className={cn(
-        "flex items-start gap-1 rounded-lg data-dnd-placeholder:visible! data-dnd-placeholder:border-transparent data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:shadow-none data-dnd-placeholder:ring-0 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
+        "mb-2 flex items-start gap-1 rounded-lg data-dnd-placeholder:visible! data-dnd-placeholder:border-transparent data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:shadow-none data-dnd-placeholder:ring-0 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
         item?.isDragging &&
           "relative z-10 bg-background shadow-lg ring-1 ring-primary/30",
       )}
@@ -299,6 +306,6 @@ function BulletRow({
           <Trash2Icon />
         </RemoveButton>
       </IconTooltip>
-    </div>
+    </motion.div>
   );
 }

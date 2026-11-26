@@ -1,4 +1,4 @@
-import type { Transition } from "motion/react";
+import type { MotionProps, Transition } from "motion/react";
 
 import {
   FADE_DURATION_MS,
@@ -20,3 +20,26 @@ export const fadeTransition: Transition = {
 export function cssEasing(curve: readonly number[]): string {
   return `cubic-bezier(${curve.join(", ")})`;
 }
+
+// For entry cards: a new card's first field gets focus at once, and a card
+// still growing would make that scroll jump.
+export const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: listTransition,
+} satisfies MotionProps;
+
+// Reorders are animated by dnd-kit, not here.
+const listItemEnter = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: "auto" },
+  transition: listTransition,
+} satisfies MotionProps;
+
+// Only for rows whose content comes from props, which stay frozen while the
+// row leaves. A row that reads the form by index would show the next entry.
+// The margin collapses too, so the rows below slide instead of jumping.
+export const listItemPresence = {
+  ...listItemEnter,
+  exit: { opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" },
+} satisfies MotionProps;
