@@ -14,6 +14,7 @@ import {
   toOptionalText,
   toTrimmedText,
 } from "#/features/resume-form/to-optional-text";
+import { PopupScrollArea } from "#/shared/components/popup-scroll-area";
 import {
   Field,
   FieldDescription,
@@ -92,17 +93,19 @@ export function AutocompleteField({
             className="isolate z-50"
           >
             <Autocomplete.Popup className="relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) overflow-hidden rounded-2xl bg-popover text-popover-foreground shadow-2xl ring-1 ring-foreground/5 duration-100 data-empty:hidden data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
-              <Autocomplete.List className="no-scrollbar max-h-[min(--spacing(72),var(--available-height))] scroll-py-1 overflow-y-auto overscroll-contain p-1">
-                {(suggestion: string) => (
-                  <Autocomplete.Item
-                    key={suggestion}
-                    value={suggestion}
-                    className="relative flex w-full cursor-default items-center gap-2.5 rounded-xl py-2 pr-8 pl-3 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground"
-                  >
-                    {suggestion}
-                  </Autocomplete.Item>
-                )}
-              </Autocomplete.List>
+              <PopupScrollArea className="max-h-[min(--spacing(72),var(--available-height))] scroll-py-1">
+                <Autocomplete.List className="p-1">
+                  {(suggestion: string) => (
+                    <Autocomplete.Item
+                      key={suggestion}
+                      value={suggestion}
+                      className="relative flex w-full cursor-default items-center gap-2.5 rounded-xl py-2 pr-8 pl-3 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground"
+                    >
+                      {suggestion}
+                    </Autocomplete.Item>
+                  )}
+                </Autocomplete.List>
+              </PopupScrollArea>
             </Autocomplete.Popup>
           </Autocomplete.Positioner>
         </Autocomplete.Portal>

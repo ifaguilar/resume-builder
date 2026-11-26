@@ -156,6 +156,18 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Not inherited, unlike scrollbar-color. */
+    scrollbar-width: thin;
+  }
+
+  /* Native scrollbars match the ScrollArea thumb. */
+  :root {
+    color-scheme: light;
+    scrollbar-color: --alpha(var(--color-muted-foreground) / 40%) transparent;
+  }
+
+  .dark {
+    color-scheme: dark;
   }
 
   body {
