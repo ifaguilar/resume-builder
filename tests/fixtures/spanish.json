@@ -52,6 +52,10 @@
     }
   ],
   "meta": {
-    "version": "v1.0.0"
+    "version": "v1.0.0",
+    "language": "es",
+    "translations": [
+      { "language": "en", "url": "https://example.org/resume.en.json" }
+    ]
   }
 }

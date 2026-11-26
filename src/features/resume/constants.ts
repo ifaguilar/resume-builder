@@ -1,4 +1,4 @@
-export const JSON_RESUME_SCHEMA_VERSION = "1.7.0";
+export const JSON_RESUME_SCHEMA_VERSION = "1.11.0";
 
 // The official "iso8601" definition: YYYY, YYYY-MM or YYYY-MM-DD.
 export const PARTIAL_DATE_PATTERN =

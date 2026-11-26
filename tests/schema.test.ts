@@ -254,6 +254,35 @@ describe("validateResume", () => {
     ).toEqual([]);
   });
 
+  it("accepts skill references as names or skill objects", () => {
+    expect(
+      warningsOf({
+        work: [{ skills: ["go", { name: "Rust", level: "Expert" }] }],
+        projects: [{ skills: [{ keywords: ["tokio"] }] }],
+      }),
+    ).toEqual([]);
+  });
+
+  it("reports an unknown key inside a skill reference object", () => {
+    expect(
+      warningsOf({ work: [{ skills: [{ name: "Go", years: 5 }] }] }),
+    ).toEqual([
+      {
+        path: ["work", 0, "skills", 0, "years"],
+        message: WARNING_MESSAGES.unknownKey("years"),
+      },
+    ]);
+  });
+
+  it("warns about basics.pronouns, which the schema no longer has", () => {
+    expect(warningsOf({ basics: { pronouns: "they/them" } })).toEqual([
+      {
+        path: ["basics", "pronouns"],
+        message: WARNING_MESSAGES.unknownKey("pronouns"),
+      },
+    ]);
+  });
+
   it("reports wrong types at their path", () => {
     expect(warningsOf({ work: [{ highlights: "Did things" }] })).toEqual([
       { path: ["work", 0, "highlights"], message: expect.any(String) },

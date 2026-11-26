@@ -3,7 +3,6 @@
   "basics": {
     "name": "Morgan Achterberg",
     "label": "Staff Software Engineer",
-    "pronouns": "they/them",
     "image": "",
     "email": "morgan@example.org",
     "phone": "+1 555 010 7788",
@@ -34,11 +33,16 @@
       "location": "Remote",
       "description": "Analytics platform",
       "position": "Staff Software Engineer",
+      "type": "full-time",
       "url": "https://northwind.example.com",
       "startDate": "2020-03-01",
       "summary": "Tech lead for the ingestion platform.",
       "highlights": ["Scaled ingestion to two million events per second"],
       "keywords": ["Go", "Kafka"],
+      "skills": [
+        "distributed-systems",
+        { "name": "Go", "level": "Expert", "keywords": ["gRPC"] }
+      ],
       "custom": {
         "resumeBuilder": { "teamSize": 8 }
       }
@@ -121,6 +125,7 @@
   "skills": [
     {
       "name": "Distributed Systems",
+      "id": "distributed-systems",
       "level": "Expert",
       "keywords": ["Kafka", "Raft"]
     }
@@ -132,7 +137,8 @@
     },
     {
       "language": "Dutch",
-      "fluency": "Professional"
+      "fluency": "Professional",
+      "scale": { "framework": "CEFR", "level": "C1" }
     }
   ],
   "interests": [
@@ -162,7 +168,8 @@
       "url": "https://flowgate.example.com",
       "roles": ["Maintainer"],
       "entity": "Personal",
-      "type": "application"
+      "type": "application",
+      "skills": ["distributed-systems"]
     }
   ],
   "meta": {
