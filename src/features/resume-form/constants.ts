@@ -25,6 +25,34 @@ export const END_KEY = "End";
 export const KEYWORD_COMMIT_KEYS: readonly string[] = [ENTER_KEY, ","];
 export const KEYWORD_SEPARATOR = ",";
 
+export function keywordInputLabel(label: string, position: number): string {
+  return `${label} ${position}`;
+}
+
+export function addKeywordLabel(label: string): string {
+  return `Add to ${label}`;
+}
+
+export function reorderKeywordLabel(keyword: string): string {
+  return `Reorder ${keyword}`;
+}
+
+export function removeKeywordLabel(keyword: string): string {
+  return `Remove ${keyword}`;
+}
+
+export function keywordMoved(
+  keyword: string,
+  position: number,
+  count: number,
+): string {
+  return `Moved ${keyword} to position ${position} of ${count}.`;
+}
+
+export function keywordExists(keyword: string): string {
+  return `${keyword} is already in the list.`;
+}
+
 export const ENTRY_TITLE_SEPARATOR = " · ";
 
 export const HTTPS_PREFIX = "https://";

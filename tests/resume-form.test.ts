@@ -16,7 +16,10 @@ import {
   moveMonth,
   toMonthValue,
 } from "#/features/resume-form/fields/date-picker-utils";
-import { addKeywords } from "#/features/resume-form/fields/keyword-list";
+import {
+  addKeywords,
+  replaceKeyword,
+} from "#/features/resume-form/fields/keyword-list";
 import { hasContent } from "#/features/resume-form/has-content";
 import {
   createKeys,
@@ -360,6 +363,26 @@ describe("keywords", () => {
     expect(
       addKeywords(["React"], ["react", "REACT", " Vue ", "vue", ""]),
     ).toEqual(["React", "Vue"]);
+  });
+
+  it.each([
+    ["an edit in place", 1, "Redis", ["Go", "Redis", "SQL"], 1],
+    ["a comma split in place", 1, "Rust, Zig", ["Go", "Rust", "Zig", "SQL"], 2],
+    ["a repeat of another keyword", 1, " sql ", ["Go", "SQL"], 0],
+    ["a cleared keyword", 1, "  ", ["Go", "SQL"], 0],
+    ["a new case of itself", 1, "RUST", ["Go", "RUST", "SQL"], 1],
+    [
+      "a split with a repeat",
+      0,
+      "Go, sql, Kotlin",
+      ["Go", "Kotlin", "Rust", "SQL"],
+      2,
+    ],
+  ])("replaces with %s", (_, index, text, items, count) => {
+    expect(replaceKeyword(["Go", "Rust", "SQL"], index, text)).toEqual({
+      items,
+      count,
+    });
   });
 });
 
