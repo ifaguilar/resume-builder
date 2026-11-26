@@ -1,32 +1,59 @@
-import { XIcon } from "lucide-react";
-import { type KeyboardEvent, useId, useState } from "react";
-
+import { cn } from "cn";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import {
-  BACKSPACE_KEY,
+  type KeyboardEvent,
+  type Ref,
+  use,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { LabeledGroup } from "#/features/resume-form/components/labeled-group";
+import { RemoveButton } from "#/features/resume-form/components/remove-button";
+import {
+  addKeywordLabel,
+  ENTER_KEY,
+  ESCAPE_KEY,
   KEYWORD_COMMIT_KEYS,
   KEYWORD_SEPARATOR,
+  keywordExists,
+  keywordInputLabel,
+  keywordMoved,
+  removeKeywordLabel,
+  reorderKeywordLabel,
 } from "#/features/resume-form/constants";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
-import { addKeywords } from "#/features/resume-form/fields/keyword-list";
+import {
+  addKeywords,
+  replaceKeyword,
+} from "#/features/resume-form/fields/keyword-list";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
+import { moveItem, removeItem } from "#/features/resume-form/list-keys";
+import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
-import { Badge } from "#/shared/components/ui/badge";
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "#/shared/components/ui/field";
-import {
-  InputGroup,
-  InputGroupInput,
-} from "#/shared/components/ui/input-group";
+import { ReorderMenu } from "#/shared/components/reorder-menu";
+import { SortableItemContext } from "#/shared/components/sortable-item-context";
+import { SortableItem, SortableList } from "#/shared/components/sortable-list";
+import { Input } from "#/shared/components/ui/input";
 
 type KeywordsFieldProps = {
   label: string;
   placeholder?: string;
   description?: string;
 };
+
+function findExisting(
+  current: readonly string[],
+  candidates: readonly string[],
+): string | undefined {
+  const keys = new Set(current.map((keyword) => keyword.toLowerCase()));
+  return candidates
+    .map((candidate) => candidate.trim())
+    .find((keyword) => keys.has(keyword.toLowerCase()));
+}
 
 export function KeywordsField({
   label,
@@ -35,86 +62,199 @@ export function KeywordsField({
 }: KeywordsFieldProps) {
   const field = useFieldContext<string[] | undefined>();
   const { warnings, isInvalid, focusProps } = useVisibleWarnings(field);
-  const id = useId();
+  const items = field.state.value ?? [];
+  const keys = useListKeys(items.length);
+  const announce = use(AnnounceContext);
   const [draft, setDraft] = useState("");
-  const keywords = field.state.value ?? [];
+  const inputs = useRef<(HTMLInputElement | null)[]>([]);
+  const addInput = useRef<HTMLInputElement>(null);
+  // The row to focus after a keyboard edit or a removal unmounts the focused
+  // input; past the last row, it's the add input.
+  const pendingFocus = useRef<number | null>(null);
 
-  function commit(candidates: string[]) {
-    const next = addKeywords(keywords, candidates);
-    if (next.length !== keywords.length) field.handleChange(next);
+  useEffect(() => {
+    const index = pendingFocus.current;
+    if (index === null) return;
+    pendingFocus.current = null;
+    const target =
+      index < items.length ? inputs.current[index] : addInput.current;
+    target?.focus();
+  });
+
+  function add(candidates: string[]) {
+    const existing = findExisting(items, candidates);
+    if (existing) announce(keywordExists(existing));
+    const next = addKeywords(items, candidates);
+    if (next.length === items.length) return;
+    field.handleChange(next);
+    keys.insert(items.length, next.length - items.length);
   }
 
-  function handleChange(text: string) {
+  function handleDraftChange(text: string) {
     const parts = text.split(KEYWORD_SEPARATOR);
     const last = parts.pop() ?? "";
-    if (parts.length > 0) commit(parts);
+    if (parts.length > 0) add(parts);
     setDraft(last);
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (KEYWORD_COMMIT_KEYS.includes(event.key)) {
-      event.preventDefault();
-      commit([draft]);
-      setDraft("");
-    } else if (
-      event.key === BACKSPACE_KEY &&
-      draft === "" &&
-      keywords.length > 0
-    ) {
-      field.handleChange(keywords.slice(0, -1));
-    }
+  function handleDraftKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (!KEYWORD_COMMIT_KEYS.includes(event.key)) return;
+    event.preventDefault();
+    add([draft]);
+    setDraft("");
+  }
+
+  function edit(index: number, text: string, refocus: boolean) {
+    if (text.trim() === items[index]) return;
+    const { items: next, count } = replaceKeyword(items, index, text);
+    if (count === 0 && text.trim() !== "") announce(keywordExists(text.trim()));
+    field.handleChange(next.length > 0 ? next : undefined);
+    if (count === 1) return;
+    if (refocus) pendingFocus.current = count > 1 ? index + count - 1 : index;
+    keys.remove(index);
+    if (count > 1) keys.insert(index, count);
+  }
+
+  function remove(index: number) {
+    const next = removeItem(items, index);
+    pendingFocus.current = index;
+    field.handleChange(next.length > 0 ? next : undefined);
+    keys.remove(index);
+  }
+
+  function move(from: number, to: number) {
+    field.handleChange(moveItem(items, from, to));
+    keys.move(from, to);
+    announce(keywordMoved(items[from] ?? "", to + 1, items.length));
   }
 
   return (
-    <Field
-      data-invalid={isInvalid || undefined}
-      className="gap-1.5 data-[invalid=true]:text-warning"
+    <LabeledGroup
+      variant="field"
+      title={label}
+      description={description}
+      className="flex flex-col gap-1.5"
     >
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <InputGroup className="h-auto min-h-9 flex-wrap gap-1 border-foreground/15 bg-background px-1.5 py-1 shadow-xs hover:bg-background has-[[data-slot][aria-invalid=true]]:border-warning has-[[data-slot][aria-invalid=true]]:ring-warning/20 dark:bg-input/30 dark:hover:bg-input/50 dark:has-[[data-slot][aria-invalid=true]]:ring-warning/40">
-        {keywords.map((keyword) => (
-          <Badge
-            key={keyword}
-            variant="secondary"
-            className="h-6 max-w-full pr-1"
-            title={keyword}
+      <SortableList onMove={move}>
+        {keys.keys.map((key, index) => (
+          <SortableItem
+            key={key}
+            id={key}
+            index={index}
+            count={items.length}
+            onMove={move}
           >
-            <span className="truncate">{keyword}</span>
-            <IconTooltip label={`Remove ${keyword}`}>
-              <button
-                type="button"
-                // A 24px hit area around the small icon, without making the chip taller.
-                className="relative shrink-0 rounded-full text-muted-foreground before:absolute before:-inset-1.5 hover:bg-destructive/10 hover:text-destructive focus-visible:text-destructive"
-                onClick={() =>
-                  field.handleChange(
-                    keywords.filter((item) => item !== keyword),
-                  )
-                }
-              >
-                <XIcon className="size-3" />
-              </button>
-            </IconTooltip>
-          </Badge>
+            <KeywordRow
+              inputRef={(element) => {
+                inputs.current[index] = element;
+              }}
+              label={keywordInputLabel(label, index + 1)}
+              value={items[index] ?? ""}
+              onCommit={(text, refocus) => edit(index, text, refocus)}
+              onRemove={() => remove(index)}
+              onFocus={focusProps.onFocus}
+              onBlur={focusProps.onBlur}
+            />
+          </SortableItem>
         ))}
-        <InputGroupInput
-          id={id}
-          name={field.name}
-          value={draft}
-          placeholder={keywords.length === 0 ? placeholder : undefined}
+      </SortableList>
+      <div className="flex items-center gap-1">
+        <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
+          <PlusIcon className="size-4" />
+        </span>
+        <Input
+          ref={addInput}
+          aria-label={addKeywordLabel(label)}
           aria-invalid={isInvalid || undefined}
-          className="h-7 min-w-24 px-1.5"
-          onChange={(event) => handleChange(event.target.value)}
-          onKeyDown={handleKeyDown}
+          value={draft}
+          placeholder={placeholder}
+          className="h-8 min-w-0 border-foreground/15 bg-background shadow-xs aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
+          onChange={(event) => handleDraftChange(event.target.value)}
+          onKeyDown={handleDraftKeyDown}
           onFocus={focusProps.onFocus}
           onBlur={() => {
-            commit([draft]);
+            add([draft]);
             setDraft("");
             focusProps.onBlur();
           }}
         />
-      </InputGroup>
-      {description ? <FieldDescription>{description}</FieldDescription> : null}
+        <span className="size-8 shrink-0" />
+      </div>
       <FieldWarnings warnings={warnings} />
-    </Field>
+    </LabeledGroup>
+  );
+}
+
+type KeywordRowProps = {
+  inputRef: Ref<HTMLInputElement>;
+  label: string;
+  value: string;
+  onCommit: (text: string, refocus: boolean) => void;
+  onRemove: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+};
+
+function KeywordRow({
+  inputRef,
+  label,
+  value,
+  onCommit,
+  onRemove,
+  onFocus,
+  onBlur,
+}: KeywordRowProps) {
+  const item = use(SortableItemContext);
+  const [text, setText] = useState(value);
+  // A saved edit stores the trimmed text, which the input then shows.
+  const [shownValue, setShownValue] = useState(value);
+  if (shownValue !== value) {
+    setShownValue(value);
+    setText(value);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === ENTER_KEY) {
+      event.preventDefault();
+      onCommit(text, true);
+    } else if (event.key === ESCAPE_KEY) {
+      setText(value);
+    }
+  }
+
+  return (
+    <div
+      ref={item?.ref}
+      // During a drag, dnd-kit leaves a hidden copy of this row where it will
+      // land; the data-dnd-placeholder styles turn that copy into a drop slot.
+      className={cn(
+        "flex items-center gap-1 rounded-lg data-dnd-placeholder:visible! data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
+        item?.isDragging &&
+          "relative z-10 bg-background shadow-lg ring-1 ring-primary/30",
+      )}
+    >
+      <ReorderMenu label={reorderKeywordLabel(value)} />
+      <Input
+        ref={inputRef}
+        aria-label={label}
+        value={text}
+        className={cn(
+          "h-8 min-w-0 border-foreground/15 bg-background shadow-xs dark:bg-input/30",
+          item?.isDragging && "border-transparent shadow-none",
+        )}
+        onChange={(event) => setText(event.target.value)}
+        onKeyDown={handleKeyDown}
+        onFocus={onFocus}
+        onBlur={() => {
+          onCommit(text, false);
+          onBlur();
+        }}
+      />
+      <IconTooltip label={removeKeywordLabel(value)}>
+        <RemoveButton onClick={onRemove}>
+          <Trash2Icon />
+        </RemoveButton>
+      </IconTooltip>
+    </div>
   );
 }

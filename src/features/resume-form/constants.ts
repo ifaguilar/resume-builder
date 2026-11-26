@@ -25,6 +25,34 @@ export const END_KEY = "End";
 export const KEYWORD_COMMIT_KEYS: readonly string[] = [ENTER_KEY, ","];
 export const KEYWORD_SEPARATOR = ",";
 
+export function keywordInputLabel(label: string, position: number): string {
+  return `${label} ${position}`;
+}
+
+export function addKeywordLabel(label: string): string {
+  return `Add to ${label}`;
+}
+
+export function reorderKeywordLabel(keyword: string): string {
+  return `Reorder ${keyword}`;
+}
+
+export function removeKeywordLabel(keyword: string): string {
+  return `Remove ${keyword}`;
+}
+
+export function keywordMoved(
+  keyword: string,
+  position: number,
+  count: number,
+): string {
+  return `Moved ${keyword} to position ${position} of ${count}.`;
+}
+
+export function keywordExists(keyword: string): string {
+  return `${keyword} is already in the list.`;
+}
+
 export const ENTRY_TITLE_SEPARATOR = " · ";
 
 export const HTTPS_PREFIX = "https://";
@@ -127,4 +155,15 @@ const WARNING_COUNT: Record<"one" | "other", (count: number) => string> = {
 export function warningCount(count: number): string {
   const category = UI_PLURAL_RULES.select(count) === "one" ? "one" : "other";
   return WARNING_COUNT[category](count);
+}
+
+export const YEARS_PER_PAGE = 12;
+export const YEAR_GRID_COLUMNS = 3;
+export const YEAR_RANGE_SEPARATOR = " – ";
+export const PREVIOUS_YEARS_LABEL = "Previous years";
+export const NEXT_YEARS_LABEL = "Next years";
+export const BACK_TO_MONTHS_LABEL = "Back to months";
+
+export function chooseYearLabel(year: number): string {
+  return `Choose year, ${year}`;
 }
