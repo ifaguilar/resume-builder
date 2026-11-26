@@ -11,7 +11,7 @@ A free, open-source, local-first resume builder. The user edits a [JSON Resume](
 
 ## Tech stack
 
-TanStack Start (React 19, TypeScript 7, TanStack Router and Form), Zod 4, `@react-pdf/renderer`, shadcn/ui on Base UI, Tailwind CSS 4, Temporal for dates, Vitest, oxlint, oxfmt, pnpm.
+TanStack Start (React 19, TypeScript 7, TanStack Router and Form), Zod 4, `@react-pdf/renderer`, Paraglide JS (UI translations), shadcn/ui on Base UI, Tailwind CSS 4, Temporal for dates, Vitest, oxlint, oxfmt, pnpm.
 
 ## Commands
 
@@ -40,6 +40,7 @@ tests/              Vitest suites and fixtures
 
 - Kebab-case filenames, absolute `#/` imports, no barrel files.
 - No magic numbers or strings: named constants in the feature's `constants.ts`.
+- UI text is a message in `features/languages/messages/{locale}.json` (keys start with the feature), called by name: `m.design_page_title()`.
 - Comments only for a non-obvious why.
 - Tailwind classes inline; a component for a repeated look, `cn()` for conditions.
 - Dates use Temporal, never `Date`.
