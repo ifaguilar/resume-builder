@@ -8,14 +8,14 @@ import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import type { ReactNode } from "react";
 
-import { SortableItemContext } from "#/features/resume-form/components/sortable-item-context";
+import { SortableItemContext } from "#/shared/components/sortable-item-context";
 import {
   DRAG_ACTIVATION_DISTANCE_PX,
   MIN_SORTABLE_ITEMS,
   TOUCH_DRAG_DELAY_MS,
   TOUCH_DRAG_TOLERANCE_PX,
   TOUCH_POINTER_TYPE,
-} from "#/features/resume-form/constants";
+} from "#/shared/constants";
 
 // No keyboard sensor: keyboard users reorder through the grip's menu, which
 // needs Enter and Space to open.
@@ -67,7 +67,7 @@ export function SortableList({ onMove, children }: SortableListProps) {
 }
 
 type SortableItemProps = {
-  id: number;
+  id: number | string;
   index: number;
   count: number;
   onMove: (from: number, to: number) => void;

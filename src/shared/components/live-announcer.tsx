@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback, useState } from "react";
 
-import { AnnounceContext } from "#/features/resume-form/components/announce-context";
+import { AnnounceContext } from "#/shared/components/announce-context";
 
 export function LiveAnnouncer({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState("");

@@ -8,9 +8,8 @@ import {
 } from "lucide-react";
 import { use, useState } from "react";
 
-import { SortableItemContext } from "#/features/resume-form/components/sortable-item-context";
-import { MIN_SORTABLE_ITEMS } from "#/features/resume-form/constants";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
+import { SortableItemContext } from "#/shared/components/sortable-item-context";
 import { Button } from "#/shared/components/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "#/shared/components/ui/dropdown-menu";
+import { MIN_SORTABLE_ITEMS } from "#/shared/constants";
 
 export function ReorderMenu({ label }: { label: string }) {
   const item = use(SortableItemContext);

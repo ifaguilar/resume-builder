@@ -1,13 +1,10 @@
 import { PlusIcon } from "lucide-react";
 import { type ReactNode, use, useEffect, useRef } from "react";
 
-import { AnnounceContext } from "#/features/resume-form/components/announce-context";
 import { AddEntryButtonContext } from "#/features/resume-form/components/entry-list-context";
-import {
-  SortableItem,
-  SortableList,
-} from "#/features/resume-form/components/sortable-list";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { AnnounceContext } from "#/shared/components/announce-context";
+import { SortableItem, SortableList } from "#/shared/components/sortable-list";
 import { Button } from "#/shared/components/ui/button";
 
 type EntryListProps = {
