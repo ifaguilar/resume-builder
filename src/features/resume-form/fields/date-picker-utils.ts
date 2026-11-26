@@ -12,6 +12,8 @@ import {
   MONTH_GRID_COLUMNS,
   MONTH_NAMES_REFERENCE_YEAR,
   MONTHS_PER_YEAR,
+  YEAR_GRID_COLUMNS,
+  YEARS_PER_PAGE,
 } from "#/features/resume-form/constants";
 import { DATE_PART_SEPARATOR } from "#/features/resume/constants";
 import {
@@ -105,4 +107,40 @@ export function formatDisplayDate(value: string): string {
   return day === undefined
     ? `${monthName} ${year}`
     : `${monthName} ${day}, ${year}`;
+}
+
+// Pages end on the current year, so the first page a work date opens on has
+// no future years.
+export function yearPageStart(year: number, anchorYear: number): number {
+  const firstOfAnchorPage = anchorYear - YEARS_PER_PAGE + 1;
+  const pages = Math.floor((year - firstOfAnchorPage) / YEARS_PER_PAGE);
+  return firstOfAnchorPage + pages * YEARS_PER_PAGE;
+}
+
+const YEAR_STEP_BY_KEY: Record<string, number> = {
+  [ARROW_LEFT_KEY]: -1,
+  [ARROW_RIGHT_KEY]: 1,
+  [ARROW_UP_KEY]: -YEAR_GRID_COLUMNS,
+  [ARROW_DOWN_KEY]: YEAR_GRID_COLUMNS,
+};
+
+export function moveYear(
+  year: number,
+  key: string,
+  {
+    anchorYear,
+    minYear,
+    maxYear,
+  }: { anchorYear: number; minYear: number; maxYear: number },
+): number | undefined {
+  const pageStart = yearPageStart(year, anchorYear);
+  let next: number | undefined;
+  if (key === HOME_KEY) next = pageStart;
+  else if (key === END_KEY) next = pageStart + YEARS_PER_PAGE - 1;
+  else {
+    const step = YEAR_STEP_BY_KEY[key];
+    next = step === undefined ? undefined : year + step;
+  }
+  if (next === undefined) return undefined;
+  return Math.min(Math.max(next, minYear), maxYear);
 }

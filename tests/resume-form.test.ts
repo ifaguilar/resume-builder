@@ -14,7 +14,9 @@ import {
   formatShortMonth,
   initialFocusMonth,
   moveMonth,
+  moveYear,
   toMonthValue,
+  yearPageStart,
 } from "#/features/resume-form/fields/date-picker-utils";
 import {
   addKeywords,
@@ -383,6 +385,40 @@ describe("keywords", () => {
       items,
       count,
     });
+  });
+});
+
+describe("yearPageStart", () => {
+  it.each([
+    [2026, 2015],
+    [2015, 2015],
+    [2014, 2003],
+    [2027, 2027],
+    [2038, 2027],
+    [1926, 1919],
+  ])("puts %i on the page starting at %i", (year, start) => {
+    expect(yearPageStart(year, 2026)).toBe(start);
+  });
+});
+
+describe("moveYear", () => {
+  const bounds = { anchorYear: 2026, minYear: 1926, maxYear: 2026 };
+
+  it.each([
+    [2020, "ArrowRight", 2021],
+    [2020, "ArrowLeft", 2019],
+    [2020, "ArrowDown", 2023],
+    [2020, "ArrowUp", 2017],
+    [2015, "ArrowLeft", 2014],
+    [2016, "ArrowUp", 2013],
+    [2020, "Home", 2015],
+    [2020, "End", 2026],
+    [2026, "ArrowRight", 2026],
+    [2025, "ArrowDown", 2026],
+    [1927, "ArrowUp", 1926],
+    [2020, "Tab", undefined],
+  ])("%i %s", (year, key, expected) => {
+    expect(moveYear(year, key, bounds)).toBe(expected);
   });
 });
 

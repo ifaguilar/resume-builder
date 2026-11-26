@@ -1,11 +1,29 @@
 import { cn } from "cn";
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react";
+import {
+  type ComponentProps,
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 
 import {
+  BACK_TO_MONTHS_LABEL,
+  chooseYearLabel,
   MAX_PICKER_YEAR,
   MIN_PICKER_YEAR,
   MONTHS_PER_YEAR,
+  NEXT_YEARS_LABEL,
+  PREVIOUS_YEARS_LABEL,
+  YEAR_RANGE_SEPARATOR,
+  YEARS_PER_PAGE,
 } from "#/features/resume-form/constants";
 import {
   formatDisplayDate,
@@ -13,7 +31,9 @@ import {
   formatShortMonth,
   initialFocusMonth,
   moveMonth,
+  moveYear,
   toMonthValue,
+  yearPageStart,
 } from "#/features/resume-form/fields/date-picker-utils";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
@@ -35,6 +55,8 @@ import {
 import { Separator } from "#/shared/components/ui/separator";
 
 const MONTHS = Array.from({ length: MONTHS_PER_YEAR }, (_, index) => index + 1);
+
+type View = "months" | "years";
 
 type DateFieldProps = {
   label: string;
@@ -60,6 +82,7 @@ export function DateField({
   });
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
+  const [view, setView] = useState<View>("months");
   const value = field.state.value;
   const date = parsePartialDate(value);
   const [shownYear, setShownYear] = useState(() => date?.year ?? currentYear());
@@ -67,14 +90,18 @@ export function DateField({
   // Set when the picker opens: reading the clock during render isn't pure,
   // and year navigation shouldn't move the focus.
   const [activeMonth, setActiveMonth] = useState(1);
+  const [activeYear, setActiveYear] = useState(shownYear);
   const [today, setToday] = useState<Temporal.PlainDate>();
   const monthButtons = useRef<(HTMLButtonElement | null)[]>([]);
-  const focusActiveMonth = useRef(false);
+  const yearButtons = useRef(new Map<number, HTMLButtonElement | null>());
+  const pendingFocus = useRef<View | null>(null);
 
   useEffect(() => {
-    if (!focusActiveMonth.current) return;
-    focusActiveMonth.current = false;
-    monthButtons.current[activeMonth - 1]?.focus();
+    const target = pendingFocus.current;
+    if (!target) return;
+    pendingFocus.current = null;
+    if (target === "months") monthButtons.current[activeMonth - 1]?.focus();
+    else yearButtons.current.get(activeYear)?.focus();
   });
 
   const isEnd = kind === "end";
@@ -89,6 +116,13 @@ export function DateField({
         date?.year ?? today.year,
       )
     : MAX_PICKER_YEAR;
+  const anchorYear = today?.year ?? shownYear;
+  const pageStart = yearPageStart(activeYear, anchorYear);
+  const pageEnd = pageStart + YEARS_PER_PAGE - 1;
+  const pageYears = Array.from(
+    { length: YEARS_PER_PAGE },
+    (_, index) => pageStart + index,
+  );
 
   function isFutureMonth(month: number): boolean {
     if (allowFuture || !today) return false;
@@ -106,6 +140,7 @@ export function DateField({
       setShownYear(year);
       setActiveMonth(initialFocusMonth(current, year, now));
       setToday(now);
+      setView("months");
     }
     setIsOpen(open);
   }
@@ -119,7 +154,38 @@ export function DateField({
     event.preventDefault();
     setShownYear(next.year);
     setActiveMonth(next.month);
-    focusActiveMonth.current = true;
+    pendingFocus.current = "months";
+  }
+
+  function handleYearKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    const next = moveYear(activeYear, event.key, {
+      anchorYear,
+      minYear,
+      maxYear,
+    });
+    if (next === undefined) return;
+    event.preventDefault();
+    setActiveYear(next);
+    pendingFocus.current = "years";
+  }
+
+  function showYears() {
+    setActiveYear(shownYear);
+    setView("years");
+    pendingFocus.current = "years";
+  }
+
+  function showMonths(year: number) {
+    setShownYear(year);
+    if (today) setActiveMonth(initialFocusMonth(date, year, today));
+    setView("months");
+    pendingFocus.current = "months";
+  }
+
+  function turnYearPage(direction: -1 | 1) {
+    setActiveYear((year) =>
+      Math.min(Math.max(year + direction * YEARS_PER_PAGE, minYear), maxYear),
+    );
   }
 
   function select(next: string | undefined) {
@@ -159,74 +225,137 @@ export function DateField({
           className="w-72 gap-0 p-0"
           initialFocus={() => monthButtons.current[activeMonth - 1] ?? true}
         >
-          <div className="flex items-center justify-between p-2">
-            <IconTooltip label="Previous year">
+          {view === "months" ? (
+            <div className="flex items-center justify-between p-2">
+              <IconTooltip label="Previous year">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  disabled={shownYear <= minYear}
+                  onClick={() => setShownYear((year) => year - 1)}
+                >
+                  <ChevronLeftIcon />
+                </Button>
+              </IconTooltip>
               <Button
                 variant="ghost"
-                size="icon-sm"
-                disabled={shownYear <= minYear}
-                onClick={() => setShownYear((year) => year - 1)}
+                size="sm"
+                className="font-semibold tabular-nums"
+                aria-label={chooseYearLabel(shownYear)}
+                onClick={showYears}
               >
-                <ChevronLeftIcon />
+                <span aria-live="polite">{shownYear}</span>
+                <ChevronDownIcon className="text-muted-foreground" />
               </Button>
-            </IconTooltip>
-            <span className="font-semibold tabular-nums" aria-live="polite">
-              {shownYear}
-            </span>
-            <IconTooltip label="Next year">
+              <IconTooltip label="Next year">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  disabled={shownYear >= maxYear}
+                  onClick={() => setShownYear((year) => year + 1)}
+                >
+                  <ChevronRightIcon />
+                </Button>
+              </IconTooltip>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-2">
+              <IconTooltip label={PREVIOUS_YEARS_LABEL}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  disabled={pageStart <= minYear}
+                  onClick={() => turnYearPage(-1)}
+                >
+                  <ChevronLeftIcon />
+                </Button>
+              </IconTooltip>
               <Button
                 variant="ghost"
-                size="icon-sm"
-                disabled={shownYear >= maxYear}
-                onClick={() => setShownYear((year) => year + 1)}
+                size="sm"
+                className="font-semibold tabular-nums"
+                aria-label={BACK_TO_MONTHS_LABEL}
+                onClick={() => showMonths(shownYear)}
               >
-                <ChevronRightIcon />
+                <span aria-live="polite">
+                  {pageStart}
+                  {YEAR_RANGE_SEPARATOR}
+                  {pageEnd}
+                </span>
               </Button>
-            </IconTooltip>
-          </div>
+              <IconTooltip label={NEXT_YEARS_LABEL}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  disabled={pageEnd >= maxYear}
+                  onClick={() => turnYearPage(1)}
+                >
+                  <ChevronRightIcon />
+                </Button>
+              </IconTooltip>
+            </div>
+          )}
           <Separator />
-          {/* A click on a disabled month or a gap would move focus to the
-              popup and leave the arrow keys with no month to start from. */}
+          {/* A click on a disabled cell or a gap would move focus to the
+              popup and leave the arrow keys with no cell to start from. */}
           <div
             role="presentation"
             className="grid grid-cols-3 gap-1 p-2"
             onMouseDown={(event) => event.preventDefault()}
           >
-            {MONTHS.map((month) => {
-              const isSelected =
-                date?.year === shownYear && date.month === month;
-              const isThisMonth =
-                today?.year === shownYear && today.month === month;
-              const isDisabled = isFutureMonth(month) && !isSelected;
-              return (
-                <Button
-                  key={month}
-                  ref={(element) => {
-                    monthButtons.current[month - 1] = element;
-                  }}
-                  tabIndex={month === activeMonth ? 0 : -1}
-                  onFocus={() => setActiveMonth(month)}
-                  onKeyDown={handleMonthKeyDown}
-                  // Not Base UI's `disabled`: it skips our onKeyDown on a
-                  // disabled button, so arrow keys would stop on a future month.
-                  aria-disabled={isDisabled || undefined}
-                  variant={isSelected ? "default" : "ghost"}
-                  // The popup focuses a month even when opened by a click,
-                  // where :focus-visible would hide where the arrow keys start.
-                  className={cn(
-                    "focus:border-ring focus:ring-[3px] focus:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
-                    isThisMonth && !isSelected && "font-semibold text-primary",
-                  )}
-                  aria-label={formatLongMonthYear(shownYear, month)}
-                  aria-pressed={isSelected}
-                  onClick={() => {
-                    if (!isDisabled) select(toMonthValue(shownYear, month));
-                  }}
-                >
-                  {formatShortMonth(month)}
-                </Button>
-              );
-            })}
+            {view === "months"
+              ? MONTHS.map((month) => {
+                  const isSelected =
+                    date?.year === shownYear && date.month === month;
+                  const isThisMonth =
+                    today?.year === shownYear && today.month === month;
+                  const isDisabled = isFutureMonth(month) && !isSelected;
+                  return (
+                    <GridCell
+                      key={month}
+                      ref={(element) => {
+                        monthButtons.current[month - 1] = element;
+                      }}
+                      tabIndex={month === activeMonth ? 0 : -1}
+                      onFocus={() => setActiveMonth(month)}
+                      onKeyDown={handleMonthKeyDown}
+                      isDisabled={isDisabled}
+                      isSelected={isSelected}
+                      isCurrent={isThisMonth}
+                      aria-label={formatLongMonthYear(shownYear, month)}
+                      onClick={() => {
+                        if (!isDisabled) select(toMonthValue(shownYear, month));
+                      }}
+                    >
+                      {formatShortMonth(month)}
+                    </GridCell>
+                  );
+                })
+              : pageYears.map((year) => {
+                  const isSelected = date?.year === year;
+                  const isThisYear = today?.year === year;
+                  const isDisabled = year < minYear || year > maxYear;
+                  return (
+                    <GridCell
+                      key={year}
+                      ref={(element) => {
+                        yearButtons.current.set(year, element);
+                      }}
+                      tabIndex={year === activeYear ? 0 : -1}
+                      onFocus={() => setActiveYear(year)}
+                      onKeyDown={handleYearKeyDown}
+                      isDisabled={isDisabled}
+                      isSelected={isSelected}
+                      isCurrent={isThisYear}
+                      className="tabular-nums"
+                      onClick={() => {
+                        if (!isDisabled) showMonths(year);
+                      }}
+                    >
+                      {year}
+                    </GridCell>
+                  );
+                })}
           </div>
           <Separator />
           <div className="flex items-center justify-between p-2">
@@ -248,5 +377,37 @@ export function DateField({
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       <FieldWarnings warnings={warnings} />
     </Field>
+  );
+}
+
+type GridCellProps = ComponentProps<typeof Button> & {
+  isSelected: boolean;
+  isCurrent: boolean;
+  isDisabled: boolean;
+};
+
+function GridCell({
+  isSelected,
+  isCurrent,
+  isDisabled,
+  className,
+  ...props
+}: GridCellProps) {
+  return (
+    <Button
+      // Not Base UI's `disabled`: it skips our onKeyDown on a disabled
+      // button, so arrow keys would stop on it.
+      aria-disabled={isDisabled || undefined}
+      aria-pressed={isSelected}
+      variant={isSelected ? "default" : "ghost"}
+      // The popup focuses a cell even when opened by a click, where
+      // :focus-visible would hide where the arrow keys start.
+      className={cn(
+        "focus:border-ring focus:ring-[3px] focus:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
+        isCurrent && !isSelected && "font-semibold text-primary",
+        className,
+      )}
+      {...props}
+    />
   );
 }

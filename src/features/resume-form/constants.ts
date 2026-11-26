@@ -156,3 +156,14 @@ export function warningCount(count: number): string {
   const category = UI_PLURAL_RULES.select(count) === "one" ? "one" : "other";
   return WARNING_COUNT[category](count);
 }
+
+export const YEARS_PER_PAGE = 12;
+export const YEAR_GRID_COLUMNS = 3;
+export const YEAR_RANGE_SEPARATOR = " – ";
+export const PREVIOUS_YEARS_LABEL = "Previous years";
+export const NEXT_YEARS_LABEL = "Next years";
+export const BACK_TO_MONTHS_LABEL = "Back to months";
+
+export function chooseYearLabel(year: number): string {
+  return `Choose year, ${year}`;
+}
