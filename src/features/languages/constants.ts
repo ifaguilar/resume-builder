@@ -167,14 +167,10 @@ export const CV_LANGUAGE_TIP =
 // the CV can't use.
 export const NO_CV_LANGUAGE = "";
 
-export const CV_LANGUAGE_OPTIONS = [
-  { value: "en", title: "English", sample: "Sep 2023 - Present" },
-  { value: "es", title: "Español", sample: "sept 2023 - actualidad" },
-] as const satisfies readonly {
-  value: CvLanguage;
-  title: string;
-  sample: string;
-}[];
+// A card's sample line: the Experience title and an open range from this
+// month, in the CV's own words.
+export const CV_LANGUAGE_SAMPLE_START = "2023-09";
+export const CV_LANGUAGE_SAMPLE_SEPARATOR = " · ";
 
 export function unsupportedLanguage(value: string): string {
   return `This resume's language is "${value}"; the CV uses English.`;

@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import { CV_LANGUAGES, CV_WORDS } from "#/features/languages/constants";
 import {
   cvLanguage,
+  cvLanguageSample,
   documentWord,
+  languageName,
   unsupportedCvLanguage,
 } from "#/features/languages/cv-language";
 import type { Resume } from "#/features/resume/resume-schema";
@@ -60,6 +62,28 @@ describe("documentWord", () => {
     ["de", "A4", "Lebenslauf"],
   ] as const)("%s on %s is a %s", (language, pageSize, expected) => {
     expect(documentWord(language, pageSize)).toBe(expected);
+  });
+});
+
+describe("languageName", () => {
+  it.each([
+    ["en", "English"],
+    ["es", "Español"],
+    ["fr", "Français"],
+    ["de", "Deutsch"],
+  ] as const)("names %s as %s", (language, expected) => {
+    expect(languageName(language)).toBe(expected);
+  });
+});
+
+describe("cvLanguageSample", () => {
+  it.each([
+    ["en", "Work Experience · Sep 2023 - Present"],
+    ["es", "Experiencia laboral · sept 2023 - actualidad"],
+    ["fr", "Expérience professionnelle · sept. 2023 - aujourd'hui"],
+    ["de", "Berufserfahrung · Sept. 2023 - heute"],
+  ] as const)("writes %s as %s", (language, expected) => {
+    expect(cvLanguageSample(language)).toBe(expected);
   });
 });
 

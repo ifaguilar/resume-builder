@@ -3,12 +3,16 @@ import { useId } from "react";
 
 import {
   CV_LANGUAGE_LEGEND,
-  CV_LANGUAGE_OPTIONS,
   CV_LANGUAGE_TIP,
+  CV_LANGUAGES,
   type CvLanguage,
   NO_CV_LANGUAGE,
   unsupportedLanguage,
 } from "#/features/languages/constants";
+import {
+  cvLanguageSample,
+  languageName,
+} from "#/features/languages/cv-language";
 import {
   Field,
   FieldContent,
@@ -44,26 +48,23 @@ export function CvLanguageField({
       <RadioGroup
         value={unsupported === undefined ? value : NO_CV_LANGUAGE}
         onValueChange={(next) => {
-          const option = CV_LANGUAGE_OPTIONS.find(
-            (item) => item.value === next,
-          );
-          if (option) onChange(option.value);
+          const language = CV_LANGUAGES.find((item) => item === next);
+          if (language) onChange(language);
         }}
         className="grid-cols-1 @lg/form:grid-cols-2"
       >
-        {CV_LANGUAGE_OPTIONS.map((option) => (
-          <FieldLabel key={option.value} htmlFor={`${id}-${option.value}`}>
+        {CV_LANGUAGES.map((language) => (
+          <FieldLabel key={language} htmlFor={`${id}-${language}`}>
             <Field orientation="horizontal">
               <FieldContent>
-                <FieldTitle lang={option.value}>{option.title}</FieldTitle>
-                <FieldDescription lang={option.value} className="tabular-nums">
-                  {option.sample}
+                <FieldTitle lang={language}>
+                  {languageName(language)}
+                </FieldTitle>
+                <FieldDescription lang={language} className="tabular-nums">
+                  {cvLanguageSample(language)}
                 </FieldDescription>
               </FieldContent>
-              <RadioGroupItem
-                value={option.value}
-                id={`${id}-${option.value}`}
-              />
+              <RadioGroupItem value={language} id={`${id}-${language}`} />
             </Field>
           </FieldLabel>
         ))}
