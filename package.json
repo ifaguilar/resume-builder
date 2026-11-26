@@ -23,7 +23,7 @@
     "@base-ui/react": "^1.9.0",
     "@dnd-kit/dom": "^0.5.3",
     "@dnd-kit/react": "^0.5.3",
-    "@react-pdf/renderer": "^4.9.0",
+    "@react-pdf/renderer": "^4.9.1",
     "@react-pdf/tailwind": "^0.2.0",
     "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-router": "^1.170.46",
