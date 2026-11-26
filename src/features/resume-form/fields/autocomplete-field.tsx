@@ -6,6 +6,7 @@ import {
   ESCAPE_KEY,
   POPUP_SIDE_OFFSET_PX,
 } from "#/features/resume-form/constants";
+import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
@@ -75,7 +76,7 @@ export function AutocompleteField({
             }}
             onFocus={focusProps.onFocus}
             onBlur={() => {
-              field.handleChange(toTrimmedText(field.state.value));
+              commitIfChanged(field, toTrimmedText(field.state.value));
               focusProps.onBlur();
             }}
           />
