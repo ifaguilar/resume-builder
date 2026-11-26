@@ -33,6 +33,16 @@ export const LOCATION_PART_KEYS = [
 ] as const;
 export const LOCATION_PART_SEPARATOR = ", ";
 
+// The sections a CV draws under its header, in their default order.
+export const CV_SECTION_IDS = [
+  "summary",
+  "skills",
+  "experience",
+  "projects",
+  "education",
+] as const;
+export type CvSectionId = (typeof CV_SECTION_IDS)[number];
+
 export const TEMPLATE_IDS = ["classic"] as const;
 export const THEME_IDS = ["default"] as const;
 export const DEFAULT_TEMPLATE_ID = TEMPLATE_IDS[0];

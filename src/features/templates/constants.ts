@@ -1,3 +1,4 @@
+import type { CvSectionId } from "#/features/resume/constants";
 import { PDF_FONT_FEATURES } from "#/features/templates/fonts/constants";
 
 export const BODY_SIZE_PT = 10;
@@ -32,7 +33,7 @@ export const SECTION_TITLES = {
   experience: "Experience",
   projects: "Projects",
   education: "Education",
-} as const;
+} as const satisfies Record<CvSectionId, string>;
 
 // A child's fontFeatureSettings replaces the Page's instead of merging, so
 // tabular-nums (['tnum']) alone would turn calt back on for dates.
