@@ -26,9 +26,15 @@ export function updateSection(
   id: CvSectionId,
   change: (section: SectionSetting) => SectionSetting,
 ): SectionSetting[] {
-  return sections.map((section) =>
-    section.id === id ? change(section) : section,
-  );
+  const index = sections.findIndex((section) => section.id === id);
+  const section = sections[index];
+  if (section === undefined) return sections;
+  const next = change(section);
+  // Returning the same list lets React skip an edit that changed nothing.
+  if (next.visible === section.visible && next.title === section.title) {
+    return sections;
+  }
+  return sections.with(index, next);
 }
 
 // Moves within the sections after the fixed first one.

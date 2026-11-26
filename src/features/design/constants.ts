@@ -49,7 +49,6 @@ export function unsupportedLanguage(value: string): string {
 
 export const SECTIONS_GROUP_TITLE = "Sections";
 export const SECTIONS_TIP = "Recent graduates: put Education first.";
-export const SECTION_TITLE_DEBOUNCE_MS = 300;
 
 export const SECTION_NAMES = {
   summary: "Summary",

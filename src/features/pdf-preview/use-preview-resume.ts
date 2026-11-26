@@ -25,8 +25,13 @@ export function usePreviewResume(form: ResumeForm): Resume {
       update.schedule(values);
     });
 
+    // Leaving a changed field shows the edit at once. This document listener
+    // runs after React's root onBlur, so a value trimmed on blur is included.
+    document.addEventListener("focusout", update.flush);
+
     return () => {
       subscription.unsubscribe();
+      document.removeEventListener("focusout", update.flush);
       update.cancel();
     };
   }, [form]);

@@ -4,6 +4,7 @@ import {
   moveSection,
   sectionSetting,
   sectionTitleSetting,
+  updateSection,
 } from "#/features/design/section-settings";
 import {
   DEFAULT_SETTINGS,
@@ -125,5 +126,31 @@ describe("section helpers", () => {
       "experience",
       "projects",
     ]);
+  });
+
+  it("keeps the same list when a change leaves the section as it was", () => {
+    const sections = DEFAULT_SETTINGS.sections;
+    expect(
+      updateSection(sections, "skills", (section) =>
+        sectionSetting(section.id, section.visible, undefined),
+      ),
+    ).toBe(sections);
+  });
+
+  it("returns a new list with the changed section", () => {
+    const sections = DEFAULT_SETTINGS.sections;
+    const next = updateSection(sections, "skills", (section) =>
+      sectionSetting(section.id, false, "Tools"),
+    );
+    expect(next).not.toBe(sections);
+    expect(next.find(({ id }) => id === "skills")).toEqual({
+      id: "skills",
+      visible: false,
+      title: "Tools",
+    });
+    expect(sections.find(({ id }) => id === "skills")).toEqual({
+      id: "skills",
+      visible: true,
+    });
   });
 });
