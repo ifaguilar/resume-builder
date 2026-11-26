@@ -14,8 +14,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
+    "lint": "paraglide-js compile --silent && oxlint",
+    "lint:fix": "paraglide-js compile --silent && oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
   },
@@ -38,6 +38,8 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@inlang/paraglide-js": "^3.2.2",
+    "@inlang/plugin-message-format": "^4.6.2",
     "@jsonresume/schema": "^1.11.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/devtools-vite": "^0.8.6",

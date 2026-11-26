@@ -10,6 +10,9 @@ dist-ssr
 .wrangler
 coverage
 
+# Paraglide's compile cache (src/paraglide/ ignores itself)
+project.inlang/cache/
+
 # Environment
 .env
 .env.*
