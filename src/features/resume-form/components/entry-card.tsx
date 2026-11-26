@@ -1,10 +1,12 @@
 import { cn } from "cn";
+import * as motion from "motion/react-m";
 import { type ReactNode, use } from "react";
 
 import { RemoveEntryButton } from "#/features/resume-form/components/remove-entry-button";
 import type { EntryMessages } from "#/features/resume-form/constants";
 import { ReorderMenu } from "#/shared/components/reorder-menu";
 import { SortableItemContext } from "#/shared/components/sortable-item-context";
+import { fadeIn } from "#/shared/lib/motion-transitions";
 
 type EntryHeaderProps = {
   title: string;
@@ -43,8 +45,9 @@ export function EntryCard({ header, children }: EntryCardProps) {
   const item = use(SortableItemContext);
 
   return (
-    <section
+    <motion.section
       ref={item?.ref}
+      {...fadeIn}
       // During a drag, dnd-kit leaves a hidden copy of this card where it will
       // land; the data-dnd-placeholder styles turn that copy into a drop slot.
       className={cn(
@@ -54,6 +57,6 @@ export function EntryCard({ header, children }: EntryCardProps) {
     >
       {header}
       <div className="flex flex-col gap-6">{children}</div>
-    </section>
+    </motion.section>
   );
 }

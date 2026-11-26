@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import { PlusIcon, Trash2Icon } from "lucide-react";
+import * as motion from "motion/react-m";
 import {
   type KeyboardEvent,
   type Ref,
@@ -35,6 +36,7 @@ import { ReorderMenu } from "#/shared/components/reorder-menu";
 import { SortableItemContext } from "#/shared/components/sortable-item-context";
 import { SortableItem, SortableList } from "#/shared/components/sortable-list";
 import { Input } from "#/shared/components/ui/input";
+import { listItemPresence } from "#/shared/lib/motion-transitions";
 
 type KeywordsFieldProps = {
   label: string;
@@ -163,50 +165,62 @@ function KeywordList({ label, placeholder, description }: KeywordsFieldProps) {
       description={description}
       className="flex flex-col gap-1.5"
     >
-      <SortableList onMove={move}>
-        {keys.keys.map((key, index) => (
-          <SortableItem
-            key={key}
-            id={key}
-            index={index}
-            count={items.length}
-            onMove={move}
-          >
-            <KeywordRow
-              inputRef={(element) => {
-                inputs.current[index] = element;
-              }}
-              label={m.form_keyword_label({ list: label, position: index + 1 })}
-              value={textValue(items[index])}
-              onCommit={(text, refocus) => edit(index, text, refocus)}
-              onRemove={() => remove(index)}
-              onFocus={focusProps.onFocus}
-              onBlur={focusProps.onBlur}
-            />
-          </SortableItem>
-        ))}
-      </SortableList>
-      <div className="flex items-center gap-1">
-        <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
-          <PlusIcon className="size-4" />
-        </span>
-        <Input
-          ref={addInput}
-          aria-label={m.form_add_keyword({ list: label })}
-          aria-invalid={isInvalid || undefined}
-          value={draft}
-          placeholder={placeholder}
-          className="h-8 min-w-0 border-foreground/15 bg-background shadow-xs aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
-          onChange={(event) => handleDraftChange(event.target.value)}
-          onKeyDown={handleDraftKeyDown}
-          onFocus={focusProps.onFocus}
-          onBlur={() => {
-            add([draft]);
-            setDraft("");
-            focusProps.onBlur();
-          }}
-        />
-        <span className="size-8 shrink-0" />
+      <div className="flex flex-col">
+        <SortableList onMove={move}>
+          {keys.keys.map((key, index) => (
+            <SortableItem
+              key={key}
+              id={key}
+              index={index}
+              count={items.length}
+              onMove={move}
+            >
+              <KeywordRow
+                // A removed row unmounts only after its exit animation, when
+                // another row may already use its index.
+                inputRef={(element) => {
+                  inputs.current[index] = element;
+                  return () => {
+                    if (inputs.current[index] === element) {
+                      inputs.current[index] = null;
+                    }
+                  };
+                }}
+                label={m.form_keyword_label({
+                  list: label,
+                  position: index + 1,
+                })}
+                value={textValue(items[index])}
+                onCommit={(text, refocus) => edit(index, text, refocus)}
+                onRemove={() => remove(index)}
+                onFocus={focusProps.onFocus}
+                onBlur={focusProps.onBlur}
+              />
+            </SortableItem>
+          ))}
+        </SortableList>
+        <div className="flex items-center gap-1">
+          <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
+            <PlusIcon className="size-4" />
+          </span>
+          <Input
+            ref={addInput}
+            aria-label={m.form_add_keyword({ list: label })}
+            aria-invalid={isInvalid || undefined}
+            value={draft}
+            placeholder={placeholder}
+            className="h-8 min-w-0 border-foreground/15 bg-background shadow-xs aria-invalid:border-warning aria-invalid:ring-warning/20 dark:bg-input/30 dark:aria-invalid:border-warning/50 dark:aria-invalid:ring-warning/40"
+            onChange={(event) => handleDraftChange(event.target.value)}
+            onKeyDown={handleDraftKeyDown}
+            onFocus={focusProps.onFocus}
+            onBlur={() => {
+              add([draft]);
+              setDraft("");
+              focusProps.onBlur();
+            }}
+          />
+          <span className="size-8 shrink-0" />
+        </div>
       </div>
       <FieldWarnings warnings={warnings} />
     </LabeledGroup>
@@ -251,12 +265,14 @@ function KeywordRow({
   }
 
   return (
-    <div
+    <motion.div
       ref={item?.ref}
+      {...listItemPresence}
+      inert={item?.isPresent === false}
       // During a drag, dnd-kit leaves a hidden copy of this row where it will
       // land; the data-dnd-placeholder styles turn that copy into a drop slot.
       className={cn(
-        "flex items-center gap-1 rounded-lg data-dnd-placeholder:visible! data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
+        "mb-1.5 flex items-center gap-1 rounded-lg data-dnd-placeholder:visible! data-dnd-placeholder:bg-primary/5 data-dnd-placeholder:outline-2 data-dnd-placeholder:-outline-offset-2 data-dnd-placeholder:outline-primary/50 data-dnd-placeholder:outline-dashed data-dnd-placeholder:*:invisible",
         item?.isDragging &&
           "relative z-10 bg-background shadow-lg ring-1 ring-primary/30",
       )}
@@ -283,6 +299,6 @@ function KeywordRow({
           <Trash2Icon />
         </RemoveButton>
       </IconTooltip>
-    </div>
+    </motion.div>
   );
 }

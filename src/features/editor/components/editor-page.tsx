@@ -22,6 +22,7 @@ export function EditorPage({ draft }: { draft: Draft | undefined }) {
     <Editor
       key={current.importCount}
       draft={current.draft}
+      imported={current.importCount > 0}
       onImport={(imported) =>
         setCurrent(({ importCount }) => ({
           draft: imported,

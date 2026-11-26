@@ -1,5 +1,5 @@
 import { FileUpIcon, Upload } from "lucide-react";
-import { type ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, use, useEffect, useRef, useState } from "react";
 
 import {
   IMPORT_ERROR_MESSAGES,
@@ -10,7 +10,9 @@ import { hasContent } from "#/features/resume-form/has-content";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Draft } from "#/features/storage/draft-format";
 import { m } from "#/paraglide/messages.js";
+import { AnnounceContext } from "#/shared/components/announce-context";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
+import { StatusIcon } from "#/shared/components/status-icon";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +25,7 @@ import {
   AlertDialogTitle,
 } from "#/shared/components/ui/alert-dialog";
 import { Button } from "#/shared/components/ui/button";
+import { useFeedback } from "#/shared/lib/use-feedback";
 
 async function readImport(file: File): Promise<ImportResult> {
   try {
@@ -32,13 +35,24 @@ async function readImport(file: File): Promise<ImportResult> {
   }
 }
 
+// An import remounts the whole editor, this button included, so the new
+// button learns from `imported` that it should confirm the import.
 export function ImportJsonButton({
   form,
+  imported,
   onImport,
 }: {
   form: ResumeForm;
+  imported: boolean;
   onImport: (draft: Draft) => void;
 }) {
+  const done = useFeedback(imported);
+  const announce = use(AnnounceContext);
+
+  useEffect(() => {
+    if (imported) announce(m.import_json_done());
+  }, [imported, announce]);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<Draft | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -67,7 +81,7 @@ export function ImportJsonButton({
         size="sm"
         onClick={() => inputRef.current?.click()}
       >
-        <Upload data-icon="inline-start" aria-hidden />
+        <StatusIcon status={done.shown ? "done" : "idle"} icon={<Upload />} />
         {m.import_json_button()}
       </Button>
       <input

@@ -20,6 +20,7 @@ import { useResumeForm } from "#/features/resume-form/use-resume-form";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
 import { SettingsPanel } from "#/features/settings/components/settings-panel";
 import type { Draft } from "#/features/storage/draft-format";
+import { MotionProvider } from "#/shared/components/motion-provider";
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -28,9 +29,11 @@ import { TooltipProvider } from "#/shared/components/ui/tooltip";
 
 export function Editor({
   draft,
+  imported,
   onImport,
 }: {
   draft: Draft | undefined;
+  imported: boolean;
   onImport: (draft: Draft) => void;
 }) {
   const form = useResumeForm(draft?.resume);
@@ -39,46 +42,53 @@ export function Editor({
   const previewResume = usePreviewResume(form);
 
   return (
-    <TooltipProvider>
-      <div className="flex h-dvh flex-col">
-        <AppHeader form={form} settings={settings} onImport={onImport} />
-        <ResizablePanelGroup
-          orientation="horizontal"
-          // The PDF preview is an embedded document, which swallows pointer
-          // events and would stop a drag that moves over it.
-          className="min-h-0 flex-1 has-data-[separator=active]:[&_object]:pointer-events-none"
-          resizeTargetMinimumSize={{
-            fine: RESIZE_TARGET_FINE_PX,
-            coarse: RESIZE_TARGET_COARSE_PX,
-          }}
-        >
-          <ResizablePanel
-            defaultSize={FORM_PANEL_DEFAULT_SIZE_PERCENT}
-            minSize={FORM_PANEL_MIN_SIZE_PX}
+    <MotionProvider>
+      <TooltipProvider>
+        <div className="flex h-dvh flex-col">
+          <AppHeader
+            form={form}
+            settings={settings}
+            imported={imported}
+            onImport={onImport}
+          />
+          <ResizablePanelGroup
+            orientation="horizontal"
+            // The PDF preview is an embedded document, which swallows pointer
+            // events and would stop a drag that moves over it.
+            className="min-h-0 flex-1 has-data-[separator=active]:[&_object]:pointer-events-none"
+            resizeTargetMinimumSize={{
+              fine: RESIZE_TARGET_FINE_PX,
+              coarse: RESIZE_TARGET_COARSE_PX,
+            }}
           >
-            <EditorTabs
-              panels={{
-                content: <FormPanel form={form} />,
-                design: (
-                  <DesignPanel
-                    form={form}
-                    settings={settings}
-                    onSettingsChange={setSettings}
-                  />
-                ),
-                settings: <SettingsPanel form={form} />,
-              }}
-            />
-          </ResizablePanel>
-          <PanelDivider />
-          <ResizablePanel
-            defaultSize={PREVIEW_PANEL_DEFAULT_SIZE_PERCENT}
-            minSize={PREVIEW_PANEL_MIN_SIZE_PX}
-          >
-            <PreviewPanel resume={previewResume} settings={settings} />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    </TooltipProvider>
+            <ResizablePanel
+              defaultSize={FORM_PANEL_DEFAULT_SIZE_PERCENT}
+              minSize={FORM_PANEL_MIN_SIZE_PX}
+            >
+              <EditorTabs
+                panels={{
+                  content: <FormPanel form={form} />,
+                  design: (
+                    <DesignPanel
+                      form={form}
+                      settings={settings}
+                      onSettingsChange={setSettings}
+                    />
+                  ),
+                  settings: <SettingsPanel form={form} />,
+                }}
+              />
+            </ResizablePanel>
+            <PanelDivider />
+            <ResizablePanel
+              defaultSize={PREVIEW_PANEL_DEFAULT_SIZE_PERCENT}
+              minSize={PREVIEW_PANEL_MIN_SIZE_PX}
+            >
+              <PreviewPanel resume={previewResume} settings={settings} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+      </TooltipProvider>
+    </MotionProvider>
   );
 }

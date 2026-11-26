@@ -1,4 +1,5 @@
 import { getRouteApi } from "@tanstack/react-router";
+import * as motion from "motion/react-m";
 import type { ReactNode } from "react";
 
 import {
@@ -12,6 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "#/shared/components/ui/tabs";
+import { fadeTransition } from "#/shared/lib/motion-transitions";
 
 const editorRoute = getRouteApi("/");
 
@@ -44,7 +46,15 @@ export function EditorTabs({
           open sections and field state. */}
       {EDITOR_TABS.map((tab) => (
         <TabsContent key={tab} value={tab} keepMounted className="min-h-0">
-          {panels[tab]}
+          {/* Hidden panels stay at opacity 0, so the one shown next fades in. */}
+          <motion.div
+            className="h-full"
+            initial={false}
+            animate={{ opacity: tab === activeTab ? 1 : 0 }}
+            transition={fadeTransition}
+          >
+            {panels[tab]}
+          </motion.div>
         </TabsContent>
       ))}
     </Tabs>
