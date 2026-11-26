@@ -106,8 +106,8 @@ function warningsOf(input: unknown) {
 }
 
 describe("fixtures", () => {
-  it("finds all three fixtures", () => {
-    expect(Object.keys(fixtures)).toHaveLength(3);
+  it("finds all five fixtures", () => {
+    expect(Object.keys(fixtures)).toHaveLength(5);
   });
 
   it.each(Object.entries(fixtures))("%s has no warnings", (_name, fixture) => {

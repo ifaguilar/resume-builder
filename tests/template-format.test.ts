@@ -13,6 +13,8 @@ import {
 
 const EN = CV_WORDS.en;
 const ES = CV_WORDS.es;
+const FR = CV_WORDS.fr;
+const DE = CV_WORDS.de;
 
 describe("formatDate", () => {
   it.each([
@@ -32,6 +34,16 @@ describe("formatDate", () => {
   it("writes Spanish month names", () => {
     expect(formatDate("2023-09", ES.locale)).toBe("sept 2023");
     expect(formatDate("2024-01", ES.locale)).toBe("ene 2024");
+  });
+
+  it.each([
+    ["2023-09", "sept. 2023", "Sept. 2023"],
+    ["2024-02", "févr. 2024", "Feb. 2024"],
+    ["2024-03", "mars 2024", "März 2024"],
+    ["2024-06", "juin 2024", "Juni 2024"],
+  ])("writes %s in French and German", (value, french, german) => {
+    expect(formatDate(value, FR.locale)).toBe(french);
+    expect(formatDate(value, DE.locale)).toBe(german);
   });
 
   it("keeps month names apart by language", () => {
@@ -68,6 +80,13 @@ describe("formatDateRange", () => {
       "feb 2022 - actualidad",
     );
   });
+
+  it("writes an open range in French and German", () => {
+    expect(formatDateRange("2023-09", undefined, FR)).toBe(
+      "sept. 2023 - aujourd'hui",
+    );
+    expect(formatDateRange("2024-03", undefined, DE)).toBe("März 2024 - heute");
+  });
 });
 
 describe("formatPlace", () => {
@@ -95,6 +114,12 @@ describe("formatPlace", () => {
   it("names the country in the CV language", () => {
     expect(formatPlace({ city: "Logroño", countryCode: "ES" }, ES.locale)).toBe(
       "Logroño, España",
+    );
+    expect(formatPlace({ city: "Lyon", countryCode: "DE" }, FR.locale)).toBe(
+      "Lyon, Allemagne",
+    );
+    expect(formatPlace({ city: "Genf", countryCode: "CH" }, DE.locale)).toBe(
+      "Genf, Schweiz",
     );
   });
 

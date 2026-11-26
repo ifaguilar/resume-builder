@@ -1,11 +1,9 @@
 import {
   CV_LANGUAGES,
-  CV_WORD,
   CV_WORDS,
   type CvLanguage,
   type CvWords,
   DEFAULT_CV_LANGUAGE,
-  RESUME_WORD,
 } from "#/features/languages/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { PageSize } from "#/features/resume/settings-schema";
@@ -41,8 +39,6 @@ export function cvWords(language: CvLanguage): CvWords {
   return CV_WORDS[language];
 }
 
-// The paper size already says where the CV is going: Letter means the US,
-// Canada or Mexico, where an English one is a resume.
 export function documentWord(language: CvLanguage, pageSize: PageSize): string {
-  return language === "en" && pageSize === "LETTER" ? RESUME_WORD : CV_WORD;
+  return CV_WORDS[language].documentWord[pageSize];
 }

@@ -20,20 +20,22 @@ export function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-// Formatting a Temporal date through Intl is slow, so names are cached.
-const monthNames = new Map<string, string>();
+// Formatting a Temporal date through Intl is slow, so dates are cached.
+const monthDates = new Map<string, string>();
 
-function monthName(year: number, month: number, locale: string): string {
-  const key = `${locale}-${month}`;
-  const cached = monthNames.get(key);
+// Month and year together: a month alone gets its stand-alone form, which in
+// German is "Mär" and "Jun" instead of "März 2024" and "Juni 2024".
+function monthDate(year: number, month: number, locale: string): string {
+  const key = `${locale}-${year}-${month}`;
+  const cached = monthDates.get(key);
   if (cached !== undefined) return cached;
-  const name = Temporal.PlainDate.from({
+  const text = Temporal.PlainDate.from({
     year,
     month,
     day: FIRST_DAY,
-  }).toLocaleString(locale, { month: "short" });
-  monthNames.set(key, name);
-  return name;
+  }).toLocaleString(locale, { month: "short", year: "numeric" });
+  monthDates.set(key, text);
+  return text;
 }
 
 export function formatDate(value: unknown, locale: string): string {
@@ -41,7 +43,7 @@ export function formatDate(value: unknown, locale: string): string {
   const date = parsePartialDate(text);
   if (date === undefined) return text;
   if (date.month === undefined) return String(date.year);
-  return `${monthName(date.year, date.month, locale)} ${date.year}`;
+  return monthDate(date.year, date.month, locale);
 }
 
 export function formatYear(value: unknown): string {

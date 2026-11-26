@@ -1,0 +1,26 @@
+Camille Lefèvre-Garçon
+Ingénieure logiciel
+Besançon, Bourgogne-Franche-Comté, France +33 6 00 00 00 00 camille.lefevre@example.fr
+camille-lefevre.example.fr
+PROFIL
+Ingénieure passionnée par l'accessibilité, au cœur des équipes produit depuis six ans. Spécialisée dans les
+interfaces « sans friction » et les systèmes de design.
+COMPÉTENCES
+• Développement web: TypeScript, React, Accessibilité, Tests automatisés
+• Langues: Français (Langue maternelle), Anglais (Courant)
+EXPÉRIENCE PROFESSIONNELLE
+Développeuse principale sept. 2023 - aujourd'hui
+Société Exemple SAS Lyon
+• Réduit le délai de mise en production de 35 % grâce à une chaîne d'intégration continue
+• Encadré une équipe de quatre développeurs sur la refonte du parcours d'achat
+Développeuse front-end févr. 2019 - août 2023
+Œuvre Numérique Paris
+• Conçu une bibliothèque de composants réutilisée par cinq applications
+• Amélioré le score d'accessibilité de 62 à 98
+PROJETS
+Façade juin 2022 - aujourd'hui
+Outil libre de vérification des contrastes. facade.example.fr
+• Utilisé par plus de 2 000 développeurs
+FORMATION
+Master en informatique 2018
+Université Exemple de Lyon

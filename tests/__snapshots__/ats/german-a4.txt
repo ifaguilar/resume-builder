@@ -1,0 +1,26 @@
+Jörg Weiß-Brückner
+Softwareentwickler
+Köln, Nordrhein-Westfalen, Deutschland +49 170 0000000 joerg.weiss@example.de
+joerg-weiss.example.de
+PROFIL
+Softwareentwickler mit acht Jahren Erfahrung in barrierefreien Webanwendungen und verteilten Systemen.
+Überzeugt von „einfach statt clever“.
+KENNTNISSE
+• Webentwicklung: TypeScript, React, Barrierefreiheit, Node.js
+• Sprachen: Deutsch (Muttersprache), Englisch (Verhandlungssicher)
+BERUFSERFAHRUNG
+Leitender Entwickler März 2024 - heute
+Beispiel GmbH Düsseldorf
+• Ladezeiten der Kundenportale um 45 % verkürzt
+• Migration von zwölf Diensten auf TypeScript geleitet
+Softwareentwickler Juni 2017 - Feb. 2024
+Mustermann & Söhne AG München
+• Zahlungsabwicklung für über 300.000 Bestellungen pro Monat entwickelt
+• Auszubildende in testgetriebener Entwicklung geschult
+PROJEKTE
+Größenwahn Nov. 2021 - heute
+Freies Werkzeug zur Prüfung von Schriftgrößen. groessenwahn.example.de
+• Über 1.500 Sterne auf GitHub
+AUSBILDUNG
+Bachelor in Informatik 2017
+Technische Universität Beispielstadt

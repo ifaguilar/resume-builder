@@ -1,17 +1,17 @@
 import type { CvSectionId } from "#/features/resume/constants";
+import type { PageSize } from "#/features/resume/settings-schema";
+import { baseLocale, type Locale, locales } from "#/paraglide/runtime.js";
 
-// The languages a CV can be written in, as `meta.language` stores them.
-export const CV_LANGUAGES = ["en", "es"] as const;
-export type CvLanguage = (typeof CV_LANGUAGES)[number];
-export const DEFAULT_CV_LANGUAGE: CvLanguage = "en";
-
-// US and Canadian recruiters call the job document a resume and expect a CV
-// to be the long academic kind; most other countries, Spanish included, say CV.
-export const RESUME_WORD = "Resume";
-export const CV_WORD = "CV";
+// One list for the CV and the UI: the locales in project.inlang/settings.json.
+// A CV language is stored in `meta.language` by its base subtag.
+export const CV_LANGUAGES = locales;
+export type CvLanguage = Locale;
+export const DEFAULT_CV_LANGUAGE: CvLanguage = baseLocale;
 
 export type CvWords = {
   locale: string;
+  // The document's name in the PDF file name and title, by paper size.
+  documentWord: Record<PageSize, string>;
   sectionTitles: Record<CvSectionId, string>;
   present: string;
   degreeAreaJoiner: string;
@@ -27,6 +27,9 @@ export type CvWords = {
 export const CV_WORDS = {
   en: {
     locale: "en-US",
+    // US and Canadian recruiters call the job document a resume and expect a
+    // CV to be the long academic kind; Letter means the CV goes there.
+    documentWord: { LETTER: "Resume", A4: "CV" },
     sectionTitles: {
       summary: "Summary",
       skills: "Skills",
@@ -58,6 +61,7 @@ export const CV_WORDS = {
   },
   es: {
     locale: "es",
+    documentWord: { LETTER: "CV", A4: "CV" },
     sectionTitles: {
       summary: "Perfil profesional",
       skills: "Habilidades",
@@ -87,6 +91,72 @@ export const CV_WORDS = {
       "Certificado profesional",
     ],
     degreeExample: "Grado",
+  },
+  fr: {
+    locale: "fr",
+    documentWord: { LETTER: "CV", A4: "CV" },
+    sectionTitles: {
+      summary: "Profil",
+      skills: "Compétences",
+      experience: "Expérience professionnelle",
+      projects: "Projets",
+      education: "Formation",
+    },
+    // A straight apostrophe, the form parsers match for an open-ended date.
+    present: "aujourd'hui",
+    degreeAreaJoiner: " en ",
+    languagesLabel: "Langues",
+    fluencySuggestions: [
+      "Notions",
+      "Intermédiaire",
+      "Courant",
+      "Bilingue",
+      "Langue maternelle",
+    ],
+    fluencyExample: "Courant",
+    degreeSuggestions: [
+      "Baccalauréat",
+      "BTS",
+      "BUT",
+      "Licence",
+      "Master",
+      "MBA",
+      "Doctorat",
+      "Certificat professionnel",
+    ],
+    degreeExample: "Licence",
+  },
+  de: {
+    locale: "de",
+    documentWord: { LETTER: "Lebenslauf", A4: "Lebenslauf" },
+    sectionTitles: {
+      summary: "Profil",
+      skills: "Kenntnisse",
+      experience: "Berufserfahrung",
+      projects: "Projekte",
+      education: "Ausbildung",
+    },
+    present: "heute",
+    degreeAreaJoiner: " in ",
+    languagesLabel: "Sprachen",
+    fluencySuggestions: [
+      "Grundkenntnisse",
+      "Gute Kenntnisse",
+      "Fließend",
+      "Verhandlungssicher",
+      "Muttersprache",
+    ],
+    fluencyExample: "Fließend",
+    degreeSuggestions: [
+      "Abitur",
+      "Berufsausbildung",
+      "Bachelor",
+      "Master",
+      "MBA",
+      "Promotion",
+      "Zertifikat",
+    ],
+    degreeExample: "Bachelor",
   },
 } as const satisfies Record<CvLanguage, CvWords>;
 
