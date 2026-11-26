@@ -11,7 +11,7 @@ export const PAGE_SIZE_OPTIONS = [
     value: "LETTER",
     title: "US Letter",
     dimensions: "8.5 × 11 in",
-    regions: "US, Canada, Mexico and Central America",
+    regions: "US, Canada, Mexico and parts of Latin America",
   },
   {
     value: "A4",
@@ -49,7 +49,6 @@ export function unsupportedLanguage(value: string): string {
 
 export const SECTIONS_GROUP_TITLE = "Sections";
 export const SECTIONS_TIP = "Recent graduates: put Education first.";
-export const SECTION_TITLE_DEBOUNCE_MS = 300;
 
 export const SECTION_NAMES = {
   summary: "Summary",

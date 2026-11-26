@@ -21,7 +21,7 @@ import {
   type PageSize,
   type Settings,
 } from "#/features/resume/settings-schema";
-import { ClassicTemplate } from "#/features/templates/classic/classic-template";
+import { DefaultTemplate } from "#/features/templates/default/default-template";
 import { FONT_FAMILY, FONT_FILES } from "#/features/templates/fonts/constants";
 
 const PUBLIC_DIR = new URL("../public", import.meta.url);
@@ -47,7 +47,7 @@ const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
 
 async function renderPages(resume: Resume, settings: Settings) {
   const pdf = await renderToBuffer(
-    <ClassicTemplate resume={resume} settings={settings} />,
+    <DefaultTemplate resume={resume} settings={settings} />,
   );
   return extractText(pdf);
 }
@@ -82,7 +82,7 @@ beforeAll(() => {
   Font.registerHyphenationCallback((word) => [word]);
 });
 
-describe("ClassicTemplate text layer", () => {
+describe("DefaultTemplate text layer", () => {
   const cases = Object.entries(fixtures).flatMap(([path, resume]) =>
     PAGE_SIZES.map(
       (pageSize) =>

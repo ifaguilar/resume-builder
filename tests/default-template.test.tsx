@@ -6,7 +6,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { PAGE_SIZES } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
-import { ClassicTemplate } from "#/features/templates/classic/classic-template";
+import { DefaultTemplate } from "#/features/templates/default/default-template";
 import { FONT_FAMILY, FONT_FILES } from "#/features/templates/fonts/constants";
 
 const PDF_SIGNATURE = "%PDF";
@@ -33,7 +33,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("ClassicTemplate", () => {
+describe("DefaultTemplate", () => {
   const cases = [
     ...Object.entries(fixtures),
     ["empty", {}] as const,
@@ -48,7 +48,7 @@ describe("ClassicTemplate", () => {
       const warn = vi.spyOn(console, "warn");
       const error = vi.spyOn(console, "error");
       const pdf = await renderToBuffer(
-        <ClassicTemplate
+        <DefaultTemplate
           resume={resume}
           settings={{ ...DEFAULT_SETTINGS, pageSize }}
         />,

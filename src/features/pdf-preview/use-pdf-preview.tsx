@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createLatestRender } from "#/features/pdf-preview/latest-render";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { Settings } from "#/features/resume/settings-schema";
-import { ClassicTemplate } from "#/features/templates/classic/classic-template";
+import { DefaultTemplate } from "#/features/templates/default/default-template";
 
 type PreviewInput = { resume: Resume; settings: Settings };
 type PreviewRender = ReturnType<typeof createLatestRender<PreviewInput, Blob>>;
@@ -20,7 +20,7 @@ export function usePdfPreview(resume: Resume, settings: Settings) {
 
   useEffect(() => {
     const preview = createLatestRender<PreviewInput, Blob>({
-      render: (input) => pdf(<ClassicTemplate {...input} />).toBlob(),
+      render: (input) => pdf(<DefaultTemplate {...input} />).toBlob(),
       onResult: (blob) => {
         setUrl(URL.createObjectURL(blob));
         setError(false);

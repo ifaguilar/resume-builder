@@ -1,3 +1,5 @@
+import { TriangleAlertIcon } from "lucide-react";
+
 import { BasicsSection } from "#/features/resume-form/components/basics-section";
 import { EducationSection } from "#/features/resume-form/components/education-section";
 import { LanguagesSection } from "#/features/resume-form/components/languages-section";
@@ -5,6 +7,7 @@ import { ProjectsSection } from "#/features/resume-form/components/projects-sect
 import { SkillsSection } from "#/features/resume-form/components/skills-section";
 import { useFormWarnings } from "#/features/resume-form/components/use-form-warnings";
 import { WorkSection } from "#/features/resume-form/components/work-section";
+import { warningCount } from "#/features/resume-form/constants";
 import {
   DEFAULT_OPEN_SECTIONS,
   type SectionId,
@@ -42,6 +45,9 @@ export function FormPanel({ form }: { form: ResumeForm }) {
         <div className="flex flex-col p-2 @lg/form:p-4">
           <Accordion
             multiple
+            // A closed panel would unmount its fields, and TanStack Form clears
+            // an unmounted field's warnings.
+            keepMounted
             defaultValue={[...DEFAULT_OPEN_SECTIONS]}
             // shadcn's AccordionContent pads its panel element, which its
             // className doesn't reach.
@@ -65,10 +71,8 @@ export function FormPanel({ form }: { form: ResumeForm }) {
                             variant="outline"
                             className="border-warning/40 bg-warning/10 text-warning"
                           >
-                            {count}
-                            <span className="sr-only">
-                              {count === 1 ? " warning" : " warnings"}
-                            </span>
+                            <TriangleAlertIcon aria-hidden />
+                            {warningCount(count)}
                           </Badge>
                         ) : null}
                       </span>

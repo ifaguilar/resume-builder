@@ -50,10 +50,12 @@ export function DesignPanel({
               sections={settings.sections}
               defaultTitles={cvWords(language).sectionTitles}
               onChange={(change) =>
-                onSettingsChange((current) => ({
-                  ...current,
-                  sections: change(current.sections),
-                }))
+                onSettingsChange((current) => {
+                  const sections = change(current.sections);
+                  return sections === current.sections
+                    ? current
+                    : { ...current, sections };
+                })
               }
             />
           </section>

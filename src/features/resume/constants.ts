@@ -50,7 +50,7 @@ export const CV_LANGUAGES = ["en", "es"] as const;
 export type CvLanguage = (typeof CV_LANGUAGES)[number];
 export const DEFAULT_CV_LANGUAGE: CvLanguage = "en";
 
-export const TEMPLATE_IDS = ["classic"] as const;
+export const TEMPLATE_IDS = ["default"] as const;
 export const THEME_IDS = ["default"] as const;
 export const DEFAULT_TEMPLATE_ID = TEMPLATE_IDS[0];
 export const DEFAULT_THEME_ID = THEME_IDS[0];

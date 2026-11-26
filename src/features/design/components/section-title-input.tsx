@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { SECTION_TITLE_DEBOUNCE_MS } from "#/features/design/constants";
+import { PREVIEW_DEBOUNCE_MS } from "#/features/editor/constants";
 import { createDebouncedSave } from "#/features/editor/debounced-save";
 import { Input } from "#/shared/components/ui/input";
 
@@ -30,7 +30,7 @@ export function SectionTitleInput({
   function saver(): DebouncedSave {
     saverRef.current ??= createDebouncedSave<string>({
       save: (next) => commitRef.current(next),
-      delayMs: SECTION_TITLE_DEBOUNCE_MS,
+      delayMs: PREVIEW_DEBOUNCE_MS,
     });
     return saverRef.current;
   }

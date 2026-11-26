@@ -1,5 +1,6 @@
 import { useId } from "react";
 
+import { commitIfChanged } from "#/features/resume-form/fields/commit-if-changed";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-warnings";
 import { useFieldContext } from "#/features/resume-form/form-context";
@@ -47,7 +48,7 @@ export function TextareaField({
         }
         onFocus={focusProps.onFocus}
         onBlur={() => {
-          field.handleChange(toTrimmedText(field.state.value));
+          commitIfChanged(field, toTrimmedText(field.state.value));
           focusProps.onBlur();
         }}
       />
