@@ -113,7 +113,7 @@ function SectionBody({ section }: { section: ResumeSection }) {
   }
 }
 
-export function ClassicTemplate({
+export function DefaultTemplate({
   resume,
   settings,
 }: {
