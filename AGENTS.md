@@ -11,7 +11,7 @@ A free, open-source, local-first resume builder. The user edits a [JSON Resume](
 
 ## Tech stack
 
-TanStack Start (React 19, TypeScript 7, TanStack Router and Form), Zod 4, `@react-pdf/renderer`, Paraglide JS (UI translations), shadcn/ui on Base UI, Tailwind CSS 4, Temporal for dates, Vitest, oxlint, oxfmt, pnpm.
+TanStack Start (React 19, TypeScript 7, TanStack Router and Form), Zod 4, `@react-pdf/renderer`, Paraglide JS (UI translations), shadcn/ui on Base UI, Tailwind CSS 4, Motion, Temporal for dates, Vitest, oxlint, oxfmt, pnpm.
 
 ## Commands
 
