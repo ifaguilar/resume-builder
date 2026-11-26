@@ -11,7 +11,7 @@ export const PAGE_SIZE_OPTIONS = [
     value: "LETTER",
     title: "US Letter",
     dimensions: "8.5 × 11 in",
-    regions: "US, Canada, Mexico and Central America",
+    regions: "US, Canada, Mexico and parts of Latin America",
   },
   {
     value: "A4",
