@@ -1,8 +1,8 @@
-import { countryName } from "#/features/resume/countries";
+import type { CvWords } from "#/features/languages/constants";
+import { countryName } from "#/features/languages/countries";
 import { parsePartialDate } from "#/features/resume/partial-date";
 import type { Location } from "#/features/resume/resume-schema";
 import {
-  type CvWords,
   DATE_RANGE_SEPARATOR,
   LIST_SEPARATOR,
   PLACE_SEPARATOR,

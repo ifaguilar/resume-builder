@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import {
+  COUNTRY_CODES,
+  countryName,
+  listCountries,
+} from "#/features/languages/countries";
 import { warningCount } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
@@ -39,11 +44,6 @@ import {
 import { hasInput, sectionOf } from "#/features/resume-form/warning-paths";
 import { withHttps } from "#/features/resume-form/with-https";
 import { WARNING_MESSAGES } from "#/features/resume/constants";
-import {
-  COUNTRY_CODES,
-  countryName,
-  listCountries,
-} from "#/features/resume/countries";
 import { formatLocation } from "#/features/resume/format-location";
 import type { Resume } from "#/features/resume/resume-schema";
 

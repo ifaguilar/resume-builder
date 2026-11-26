@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import type { Resume } from "#/features/resume/resume-schema";
 import {
   cvLanguage,
   documentWord,
   unsupportedCvLanguage,
-} from "#/features/templates/cv-language";
+} from "#/features/languages/cv-language";
+import type { Resume } from "#/features/resume/resume-schema";
 
 describe("cvLanguage", () => {
   it.each([

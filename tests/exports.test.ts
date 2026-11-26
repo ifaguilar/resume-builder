@@ -4,10 +4,10 @@ import { SETTINGS_META_KEY } from "#/features/export/constants";
 import { pdfFileName } from "#/features/export/file-name";
 import { toJson } from "#/features/export/json-export";
 import { fromJson } from "#/features/import/json-import";
+import { CV_WORD, RESUME_WORD } from "#/features/languages/constants";
 import { PAGE_SIZES } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
-import { CV_WORD, RESUME_WORD } from "#/features/templates/constants";
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,

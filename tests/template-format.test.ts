@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { CV_WORDS } from "#/features/templates/constants";
+import { CV_WORDS } from "#/features/languages/constants";
 import {
   cleanList,
   displayUrl,

@@ -1,16 +1,14 @@
 import {
   CV_LANGUAGES,
-  type CvLanguage,
-  DEFAULT_CV_LANGUAGE,
-} from "#/features/resume/constants";
-import type { Resume } from "#/features/resume/resume-schema";
-import type { PageSize } from "#/features/resume/settings-schema";
-import {
   CV_WORD,
   CV_WORDS,
+  type CvLanguage,
   type CvWords,
+  DEFAULT_CV_LANGUAGE,
   RESUME_WORD,
-} from "#/features/templates/constants";
+} from "#/features/languages/constants";
+import type { Resume } from "#/features/resume/resume-schema";
+import type { PageSize } from "#/features/resume/settings-schema";
 
 const SUBTAG_SEPARATOR = "-";
 

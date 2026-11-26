@@ -5,10 +5,10 @@ import {
   CV_LANGUAGE_LEGEND,
   CV_LANGUAGE_OPTIONS,
   CV_LANGUAGE_TIP,
+  type CvLanguage,
   NO_CV_LANGUAGE,
   unsupportedLanguage,
-} from "#/features/design/constants";
-import type { CvLanguage } from "#/features/resume/constants";
+} from "#/features/languages/constants";
 import {
   Field,
   FieldContent,

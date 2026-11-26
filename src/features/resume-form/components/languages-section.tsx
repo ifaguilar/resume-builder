@@ -1,5 +1,6 @@
 import { useStore } from "@tanstack/react-form";
 
+import { cvLanguage, cvWords } from "#/features/languages/cv-language";
 import {
   EntryCard,
   EntryHeader,
@@ -14,7 +15,6 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Language } from "#/features/resume/resume-schema";
-import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 
 const EMPTY_LANGUAGE: Language = {};
 

@@ -7,9 +7,9 @@ import {
 } from "#/features/export/constants";
 import { downloadFile } from "#/features/export/download";
 import { pdfFileName } from "#/features/export/file-name";
+import { cvLanguage, documentWord } from "#/features/languages/cv-language";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
-import { cvLanguage, documentWord } from "#/features/templates/cv-language";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
 import { Button } from "#/shared/components/ui/button";
 
