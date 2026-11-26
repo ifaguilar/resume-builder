@@ -50,9 +50,9 @@ export const SkillsSection = withForm({
             return (
               <EntryList
                 count={entries.length}
-                emptyText="No skills yet."
-                addLabel="Add skill"
-                entryLabel="skill"
+                emptyText="No skill categories yet."
+                addLabel="Add category"
+                entryLabel="category"
                 onAdd={() => field.pushValue({})}
                 onRemove={(index) => field.removeValue(index)}
                 onMove={(from, to) => field.moveValue(from, to)}
@@ -65,9 +65,9 @@ export const SkillsSection = withForm({
                       >
                         {(entry) => (
                           <EntryHeader
-                            title={entryTitle([entry?.name], "New skill")}
+                            title={entryTitle([entry?.name], "New category")}
                             entry={entry}
-                            entryLabel="skill"
+                            entryLabel="category"
                             onRemove={remove}
                           />
                         )}
