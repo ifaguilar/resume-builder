@@ -15,10 +15,10 @@ export function fromJson(text: string): ImportResult {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { ok: false, message: IMPORT_ERROR_MESSAGES.notJson };
+    return { ok: false, message: IMPORT_ERROR_MESSAGES.notJson() };
   }
   if (!isRecord(parsed)) {
-    return { ok: false, message: IMPORT_ERROR_MESSAGES.notAResume };
+    return { ok: false, message: IMPORT_ERROR_MESSAGES.notAResume() };
   }
 
   const { meta, ...rest } = parsed;

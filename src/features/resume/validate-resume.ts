@@ -42,7 +42,7 @@ function toWarnings(
   }
 
   if (path.length === 0 && issue.code === "invalid_type") {
-    return [{ path, message: WARNING_MESSAGES.notAnObject }];
+    return [{ path, message: WARNING_MESSAGES.notAnObject() }];
   }
 
   return [{ path, message: issue.message }];

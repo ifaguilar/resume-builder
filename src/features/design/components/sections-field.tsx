@@ -2,14 +2,7 @@ import { cn } from "cn";
 import { type ReactNode, use, useId } from "react";
 
 import { SectionTitleInput } from "#/features/design/components/section-title-input";
-import {
-  SECTION_NAMES,
-  SECTIONS_TIP,
-  reorderSectionLabel,
-  sectionMoved,
-  sectionTitleLabel,
-  showSectionLabel,
-} from "#/features/design/constants";
+import { SECTION_NAMES } from "#/features/design/constants";
 import {
   moveSection,
   sectionSetting,
@@ -18,6 +11,7 @@ import {
 } from "#/features/design/section-settings";
 import type { CvSectionId } from "#/features/resume/constants";
 import type { SectionSetting } from "#/features/resume/settings-schema";
+import { m } from "#/paraglide/messages.js";
 import { AnnounceContext } from "#/shared/components/announce-context";
 import { ReorderMenu } from "#/shared/components/reorder-menu";
 import { SortableItemContext } from "#/shared/components/sortable-item-context";
@@ -41,7 +35,7 @@ function SectionRow({
 }: SectionRowProps) {
   const item = use(SortableItemContext);
   const id = useId();
-  const name = SECTION_NAMES[section.id];
+  const name = SECTION_NAMES[section.id]();
 
   return (
     <div
@@ -57,7 +51,7 @@ function SectionRow({
       <Checkbox
         id={id}
         checked={section.visible}
-        aria-label={showSectionLabel(name)}
+        aria-label={m.design_show_section({ name })}
         onCheckedChange={(visible) =>
           onChange((current) =>
             sectionSetting(current.id, visible, current.title),
@@ -76,7 +70,7 @@ function SectionRow({
       <SectionTitleInput
         value={section.title}
         placeholder={defaultTitle}
-        label={sectionTitleLabel(name)}
+        label={m.design_section_title_label({ name })}
         onCommit={(text) =>
           onChange((current) =>
             sectionSetting(
@@ -112,12 +106,18 @@ export function SectionsField({
     const section = movable[from];
     if (section === undefined) return;
     onChange((current) => moveSection(current, from, to));
-    announce(sectionMoved(SECTION_NAMES[section.id], to + 1, movable.length));
+    announce(
+      m.design_section_moved({
+        name: SECTION_NAMES[section.id](),
+        position: to + 1,
+        count: movable.length,
+      }),
+    );
   }
 
   return (
     <>
-      <FieldDescription>{SECTIONS_TIP}</FieldDescription>
+      <FieldDescription>{m.design_sections_tip()}</FieldDescription>
       <div className="flex flex-col gap-2">
         {fixed === undefined ? null : (
           <SectionRow
@@ -142,7 +142,9 @@ export function SectionsField({
                 defaultTitle={defaultTitles[section.id]}
                 grip={
                   <ReorderMenu
-                    label={reorderSectionLabel(SECTION_NAMES[section.id])}
+                    label={m.design_reorder_section({
+                      name: SECTION_NAMES[section.id](),
+                    })}
                   />
                 }
                 onChange={change(section.id)}

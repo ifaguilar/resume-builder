@@ -7,7 +7,6 @@ import { ProjectsSection } from "#/features/resume-form/components/projects-sect
 import { SkillsSection } from "#/features/resume-form/components/skills-section";
 import { useFormWarnings } from "#/features/resume-form/components/use-form-warnings";
 import { WorkSection } from "#/features/resume-form/components/work-section";
-import { warningCount } from "#/features/resume-form/constants";
 import {
   DEFAULT_OPEN_SECTIONS,
   type SectionId,
@@ -15,6 +14,7 @@ import {
 } from "#/features/resume-form/sections";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import { sectionOf } from "#/features/resume-form/warning-paths";
+import { m } from "#/paraglide/messages.js";
 import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import {
   Accordion,
@@ -64,7 +64,7 @@ export function FormPanel({ form }: { form: ResumeForm }) {
                     <span className="flex flex-col gap-1">
                       <span className="flex items-center gap-2">
                         <span className="text-base font-semibold">
-                          {section.title}
+                          {section.title()}
                         </span>
                         {count > 0 ? (
                           <Badge
@@ -72,12 +72,12 @@ export function FormPanel({ form }: { form: ResumeForm }) {
                             className="border-warning/40 bg-warning/10 text-warning"
                           >
                             <TriangleAlertIcon aria-hidden />
-                            {warningCount(count)}
+                            {m.form_warning_count({ count })}
                           </Badge>
                         ) : null}
                       </span>
                       <span className="text-sm font-normal text-muted-foreground">
-                        {section.intro}
+                        {section.intro()}
                       </span>
                     </span>
                   </AccordionTrigger>

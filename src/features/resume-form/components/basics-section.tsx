@@ -5,6 +5,7 @@ import {
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { LabeledGroup } from "#/features/resume-form/components/labeled-group";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
+import { ENTRY_MESSAGES } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -12,6 +13,7 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Profile } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 import { FieldGroup } from "#/shared/components/ui/field";
 
 const EMPTY_PROFILE: Profile = {};
@@ -23,15 +25,18 @@ const ProfileFields = withFieldGroup({
       <div className="grid grid-cols-1 gap-x-4 gap-y-6 @xl/form:grid-cols-[1fr_2fr]">
         <group.AppField name="network">
           {(field) => (
-            <field.TextField label="Network" placeholder="e.g. LinkedIn" />
+            <field.TextField
+              label={m.form_network_label()}
+              placeholder={m.form_network_placeholder()}
+            />
           )}
         </group.AppField>
         <group.AppField name="url">
           {(field) => (
             <field.TextField
-              label="URL"
+              label={m.form_profile_url_label()}
               type="url"
-              placeholder="e.g. https://linkedin.com/in/ana-torres"
+              placeholder={m.form_profile_url_placeholder()}
             />
           )}
         </group.AppField>
@@ -49,8 +54,8 @@ export const BasicsSection = withForm({
         <form.AppField name="basics.name">
           {(field) => (
             <field.TextField
-              label="Full name"
-              placeholder="e.g. Ana Torres"
+              label={m.form_name_label()}
+              placeholder={m.form_name_placeholder()}
               autoComplete="name"
             />
           )}
@@ -58,9 +63,9 @@ export const BasicsSection = withForm({
         <form.AppField name="basics.label">
           {(field) => (
             <field.TextField
-              label="Headline"
-              placeholder="e.g. Frontend Developer"
-              description="The role you're targeting, in the words recruiters search for."
+              label={m.form_headline_label()}
+              placeholder={m.form_headline_placeholder()}
+              description={m.form_headline_tip()}
             />
           )}
         </form.AppField>
@@ -68,8 +73,8 @@ export const BasicsSection = withForm({
           <form.AppField name="basics.email">
             {(field) => (
               <field.TextField
-                label="Email"
-                placeholder="e.g. ana@example.com"
+                label={m.form_email_label()}
+                placeholder={m.form_email_placeholder()}
                 type="email"
                 autoComplete="email"
               />
@@ -78,9 +83,9 @@ export const BasicsSection = withForm({
           <form.AppField name="basics.phone">
             {(field) => (
               <field.TextField
-                label="Phone"
+                label={m.form_phone_label()}
                 type="tel"
-                placeholder="e.g. +1 512 555 0142"
+                placeholder={m.form_phone_placeholder()}
                 autoComplete="tel"
               />
             )}
@@ -89,9 +94,9 @@ export const BasicsSection = withForm({
         <form.AppField name="basics.url">
           {(field) => (
             <field.TextField
-              label="Website"
+              label={m.form_website_label()}
               type="url"
-              placeholder="e.g. https://example.com"
+              placeholder={m.form_website_placeholder()}
               autoComplete="url"
             />
           )}
@@ -99,9 +104,9 @@ export const BasicsSection = withForm({
         <form.AppField name="basics.summary">
           {(field) => (
             <field.TextareaField
-              label="Summary"
-              placeholder="e.g. Frontend developer with 5 years of experience building accessible web apps…"
-              description="Two or three sentences: who you are, your strongest result, and what you want next."
+              label={m.form_summary_label()}
+              placeholder={m.form_summary_placeholder()}
+              description={m.form_summary_tip()}
             />
           )}
         </form.AppField>
@@ -109,23 +114,29 @@ export const BasicsSection = withForm({
         {/* The divider is on a wrapper: on a fieldset, the browser draws the
             border through the legend. */}
         <div className="border-t pt-6">
-          <LabeledGroup title="Location">
+          <LabeledGroup title={m.form_location_title()}>
             <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2 @2xl/form:grid-cols-3 @lg/form:[&>:last-child]:col-span-2 @2xl/form:[&>:last-child]:col-span-1">
               <form.AppField name="basics.location.city">
                 {(field) => (
-                  <field.TextField label="City" placeholder="e.g. Austin" />
+                  <field.TextField
+                    label={m.form_city_label()}
+                    placeholder={m.form_city_placeholder()}
+                  />
                 )}
               </form.AppField>
               <form.AppField name="basics.location.region">
                 {(field) => (
-                  <field.TextField label="Region" placeholder="e.g. TX" />
+                  <field.TextField
+                    label={m.form_region_label()}
+                    placeholder={m.form_region_placeholder()}
+                  />
                 )}
               </form.AppField>
               <form.AppField name="basics.location.countryCode">
                 {(field) => (
                   <field.CountryField
-                    label="Country"
-                    placeholder="e.g. United States"
+                    label={m.form_country_label()}
+                    placeholder={m.form_country_placeholder()}
                   />
                 )}
               </form.AppField>
@@ -134,16 +145,14 @@ export const BasicsSection = withForm({
         </div>
 
         <div className="border-t pt-6">
-          <LabeledGroup title="Online profiles">
+          <LabeledGroup title={m.form_profiles_title()}>
             <form.Field name="basics.profiles" mode="array">
               {(field) => {
                 const profiles = field.state.value ?? [];
                 return (
                   <EntryList
                     count={profiles.length}
-                    emptyText="No profiles yet."
-                    addLabel="Add profile"
-                    entryLabel="profile"
+                    messages={ENTRY_MESSAGES.profile}
                     onAdd={() => field.pushValue({})}
                     onRemove={(index) => field.removeValue(index)}
                     onMove={(from, to) => field.moveValue(from, to)}
@@ -160,10 +169,10 @@ export const BasicsSection = withForm({
                               <EntryHeader
                                 title={entryTitle(
                                   [profile?.network],
-                                  "New profile",
+                                  ENTRY_MESSAGES.profile.untitled(),
                                 )}
                                 entry={profile}
-                                entryLabel="profile"
+                                messages={ENTRY_MESSAGES.profile}
                                 onRemove={remove}
                               />
                             )}

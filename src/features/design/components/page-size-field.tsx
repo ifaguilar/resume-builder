@@ -1,11 +1,8 @@
 import { useId } from "react";
 
-import {
-  PAGE_SIZE_LEGEND,
-  PAGE_SIZE_OPTIONS,
-  PAGE_SIZE_TIP,
-} from "#/features/design/constants";
+import { PAGE_SIZE_OPTIONS } from "#/features/design/constants";
 import type { PageSize } from "#/features/resume/settings-schema";
+import { m } from "#/paraglide/messages.js";
 import {
   Field,
   FieldContent,
@@ -28,8 +25,8 @@ export function PageSizeField({
 
   return (
     <FieldSet>
-      <FieldLegend variant="label">{PAGE_SIZE_LEGEND}</FieldLegend>
-      <FieldDescription>{PAGE_SIZE_TIP}</FieldDescription>
+      <FieldLegend variant="label">{m.design_page_size_legend()}</FieldLegend>
+      <FieldDescription>{m.design_page_size_tip()}</FieldDescription>
       <RadioGroup
         value={value}
         onValueChange={(next) => {
@@ -42,11 +39,11 @@ export function PageSizeField({
           <FieldLabel key={option.value} htmlFor={`${id}-${option.value}`}>
             <Field orientation="horizontal">
               <FieldContent>
-                <FieldTitle>{option.title}</FieldTitle>
+                <FieldTitle>{option.title()}</FieldTitle>
                 <FieldDescription className="tabular-nums">
-                  {option.dimensions}
+                  {option.dimensions()}
                 </FieldDescription>
-                <FieldDescription>{option.regions}</FieldDescription>
+                <FieldDescription>{option.regions()}</FieldDescription>
               </FieldContent>
               <RadioGroupItem
                 value={option.value}

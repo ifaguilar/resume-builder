@@ -3,13 +3,13 @@ import { type ChangeEvent, useRef, useState } from "react";
 
 import {
   IMPORT_ERROR_MESSAGES,
-  IMPORT_ERROR_TITLE,
   JSON_FILE_ACCEPT,
 } from "#/features/import/constants";
 import { fromJson, type ImportResult } from "#/features/import/json-import";
 import { hasContent } from "#/features/resume-form/has-content";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Draft } from "#/features/storage/draft-format";
+import { m } from "#/paraglide/messages.js";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
 import {
   AlertDialog,
@@ -28,7 +28,7 @@ async function readImport(file: File): Promise<ImportResult> {
   try {
     return fromJson(await file.text());
   } catch {
-    return { ok: false, message: IMPORT_ERROR_MESSAGES.unreadable };
+    return { ok: false, message: IMPORT_ERROR_MESSAGES.unreadable() };
   }
 }
 
@@ -52,7 +52,7 @@ export function ImportJsonButton({
 
     const result = await readImport(file);
     if (!result.ok) {
-      setNotice({ title: IMPORT_ERROR_TITLE, message: result.message });
+      setNotice({ title: m.import_error_title(), message: result.message });
     } else if (hasContent(form.state.values)) {
       setPending(result.draft);
     } else {
@@ -68,7 +68,7 @@ export function ImportJsonButton({
         onClick={() => inputRef.current?.click()}
       >
         <Upload data-icon="inline-start" aria-hidden />
-        Import JSON
+        {m.import_json_button()}
       </Button>
       <input
         ref={inputRef}
@@ -90,21 +90,20 @@ export function ImportJsonButton({
             <AlertDialogMedia className="bg-warning/10 text-warning">
               <FileUpIcon />
             </AlertDialogMedia>
-            <AlertDialogTitle>Replace your current resume?</AlertDialogTitle>
+            <AlertDialogTitle>{m.import_replace_title()}</AlertDialogTitle>
             <AlertDialogDescription>
-              Everything in the editor will be replaced by the imported file.
-              Export JSON first if you want to keep it.
+              {m.import_replace_description()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{m.shared_cancel()}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (pending) onImport(pending);
                 setPending(null);
               }}
             >
-              Replace
+              {m.import_replace_confirm()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

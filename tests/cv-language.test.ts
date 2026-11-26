@@ -5,9 +5,9 @@ import {
   cvLanguage,
   cvLanguageSample,
   documentWord,
-  languageName,
   unsupportedCvLanguage,
 } from "#/features/languages/cv-language";
+import { languageName } from "#/features/languages/language-name";
 import type { Resume } from "#/features/resume/resume-schema";
 
 describe("cvLanguage", () => {

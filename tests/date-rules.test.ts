@@ -15,13 +15,13 @@ function warningsOf(input: unknown) {
 }
 
 function future(path: (string | number)[]) {
-  return { path, message: WARNING_MESSAGES.futureDate };
+  return { path, message: WARNING_MESSAGES.futureDate() };
 }
 
 function endBeforeStart(section: string, index: number) {
   return {
     path: [section, index, "endDate"],
-    message: WARNING_MESSAGES.endBeforeStart,
+    message: WARNING_MESSAGES.endBeforeStart(),
   };
 }
 
@@ -151,11 +151,11 @@ describe("end date before start date", () => {
 });
 
 function tooOld(path: (string | number)[]) {
-  return { path, message: WARNING_MESSAGES.dateTooOld };
+  return { path, message: WARNING_MESSAGES.dateTooOld() };
 }
 
 function tooFar(path: (string | number)[]) {
-  return { path, message: WARNING_MESSAGES.dateTooFar };
+  return { path, message: WARNING_MESSAGES.dateTooFar() };
 }
 
 describe("dates more than 100 years away", () => {
@@ -202,10 +202,10 @@ describe("malformed input", () => {
     expect(
       warningsOf({ work: [{ startDate: "2030-13", endDate: "2023-02-30" }] }),
     ).toEqual([
-      { path: ["work", 0, "startDate"], message: WARNING_MESSAGES.date },
+      { path: ["work", 0, "startDate"], message: WARNING_MESSAGES.date() },
       {
         path: ["work", 0, "endDate"],
-        message: WARNING_MESSAGES.nonexistentDate,
+        message: WARNING_MESSAGES.nonexistentDate(),
       },
     ]);
   });
@@ -218,10 +218,10 @@ describe("malformed input", () => {
     expect(
       warningsOf(input).filter(
         (warning) =>
-          warning.message === WARNING_MESSAGES.futureDate ||
-          warning.message === WARNING_MESSAGES.endBeforeStart ||
-          warning.message === WARNING_MESSAGES.dateTooOld ||
-          warning.message === WARNING_MESSAGES.dateTooFar,
+          warning.message === WARNING_MESSAGES.futureDate() ||
+          warning.message === WARNING_MESSAGES.endBeforeStart() ||
+          warning.message === WARNING_MESSAGES.dateTooOld() ||
+          warning.message === WARNING_MESSAGES.dateTooFar(),
       ),
     ).toEqual([]);
   });

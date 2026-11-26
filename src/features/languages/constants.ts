@@ -160,9 +160,6 @@ export const CV_WORDS = {
   },
 } as const satisfies Record<CvLanguage, CvWords>;
 
-export const CV_LANGUAGE_LEGEND = "CV language";
-export const CV_LANGUAGE_TIP =
-  "Write your CV in the language of the job posting.";
 // Matches no option, so none is selected while the stored language is one
 // the CV can't use.
 export const NO_CV_LANGUAGE = "";
@@ -171,7 +168,3 @@ export const NO_CV_LANGUAGE = "";
 // month, in the CV's own words.
 export const CV_LANGUAGE_SAMPLE_START = "2023-09";
 export const CV_LANGUAGE_SAMPLE_SEPARATOR = " · ";
-
-export function unsupportedLanguage(value: string): string {
-  return `This resume's language is "${value}"; the CV uses English.`;
-}

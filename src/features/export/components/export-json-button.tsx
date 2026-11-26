@@ -5,6 +5,7 @@ import { downloadFile } from "#/features/export/download";
 import { toJson } from "#/features/export/json-export";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
+import { m } from "#/paraglide/messages.js";
 import { Button } from "#/shared/components/ui/button";
 
 export function ExportJsonButton({
@@ -22,7 +23,7 @@ export function ExportJsonButton({
   return (
     <Button variant="outline" size="sm" onClick={exportJson}>
       <Download data-icon="inline-start" aria-hidden />
-      Export JSON
+      {m.export_json_button()}
     </Button>
   );
 }

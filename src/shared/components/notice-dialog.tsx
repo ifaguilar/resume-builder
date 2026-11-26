@@ -1,5 +1,6 @@
 import { TriangleAlertIcon } from "lucide-react";
 
+import { m } from "#/paraglide/messages.js";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -36,7 +37,9 @@ export function NoticeDialog({
           <AlertDialogDescription>{notice?.message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel variant="default">OK</AlertDialogCancel>
+          <AlertDialogCancel variant="default">
+            {m.shared_ok()}
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

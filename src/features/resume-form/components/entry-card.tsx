@@ -2,13 +2,14 @@ import { cn } from "cn";
 import { type ReactNode, use } from "react";
 
 import { RemoveEntryButton } from "#/features/resume-form/components/remove-entry-button";
+import type { EntryMessages } from "#/features/resume-form/constants";
 import { ReorderMenu } from "#/shared/components/reorder-menu";
 import { SortableItemContext } from "#/shared/components/sortable-item-context";
 
 type EntryHeaderProps = {
   title: string;
   entry: unknown;
-  entryLabel: string;
+  messages: EntryMessages;
   onRemove: () => void;
 };
 
@@ -17,19 +18,19 @@ type EntryHeaderProps = {
 export function EntryHeader({
   title,
   entry,
-  entryLabel,
+  messages,
   onRemove,
 }: EntryHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-2 border-b pb-3">
       <div className="flex min-w-0 items-center gap-1">
-        <ReorderMenu label={`Reorder ${entryLabel}`} />
+        <ReorderMenu label={messages.reorder()} />
         <h3 className="truncate font-semibold">{title}</h3>
       </div>
       <RemoveEntryButton
         entry={entry}
         entryName={title}
-        entryLabel={entryLabel}
+        messages={messages}
         onRemove={onRemove}
       />
     </div>

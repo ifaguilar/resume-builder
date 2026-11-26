@@ -23,6 +23,7 @@ import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-wa
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { moveItem, removeItem } from "#/features/resume-form/list-keys";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { m } from "#/paraglide/messages.js";
 import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { ReorderMenu } from "#/shared/components/reorder-menu";
@@ -87,7 +88,7 @@ export function HighlightsField({
   function move(from: number, to: number) {
     field.handleChange(moveItem(items, from, to));
     keys.move(from, to);
-    announce(`Moved bullet to position ${to + 1} of ${items.length}.`);
+    announce(m.form_bullet_moved({ position: to + 1, count: items.length }));
   }
 
   function trim(index: number) {
@@ -178,7 +179,10 @@ export function HighlightsField({
                 textareaRef={(element) => {
                   textareas.current[index] = element;
                 }}
-                label={`${label} ${index + 1}`}
+                label={m.form_bullet_label({
+                  list: label,
+                  position: index + 1,
+                })}
                 position={index + 1}
                 value={items[index] ?? ""}
                 placeholder={index === 0 ? placeholder : undefined}
@@ -250,7 +254,7 @@ function BulletRow({
           "relative z-10 bg-background shadow-lg ring-1 ring-primary/30",
       )}
     >
-      <ReorderMenu label={`Reorder bullet ${position}`} />
+      <ReorderMenu label={m.form_reorder_bullet({ position })} />
       <Textarea
         ref={textareaRef}
         aria-label={label}
@@ -266,7 +270,7 @@ function BulletRow({
         onFocus={onFocus}
         onBlur={onBlur}
       />
-      <IconTooltip label={`Remove bullet ${position}`}>
+      <IconTooltip label={m.form_remove_bullet({ position })}>
         <RemoveButton onClick={onRemove}>
           <Trash2Icon />
         </RemoveButton>

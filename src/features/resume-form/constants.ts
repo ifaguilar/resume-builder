@@ -9,6 +9,7 @@ import type {
   Skill,
   WorkEntry,
 } from "#/features/resume/resume-schema";
+import { m } from "#/paraglide/messages.js";
 
 export const EMPTY_RESUME: Resume = {};
 
@@ -25,34 +26,6 @@ export const END_KEY = "End";
 export const KEYWORD_COMMIT_KEYS: readonly string[] = [ENTER_KEY, ","];
 export const KEYWORD_SEPARATOR = ",";
 
-export function keywordInputLabel(label: string, position: number): string {
-  return `${label} ${position}`;
-}
-
-export function addKeywordLabel(label: string): string {
-  return `Add to ${label}`;
-}
-
-export function reorderKeywordLabel(keyword: string): string {
-  return `Reorder ${keyword}`;
-}
-
-export function removeKeywordLabel(keyword: string): string {
-  return `Remove ${keyword}`;
-}
-
-export function keywordMoved(
-  keyword: string,
-  position: number,
-  count: number,
-): string {
-  return `Moved ${keyword} to position ${position} of ${count}.`;
-}
-
-export function keywordExists(keyword: string): string {
-  return `${keyword} is already in the list.`;
-}
-
 export const ENTRY_TITLE_SEPARATOR = " · ";
 
 export const HTTPS_PREFIX = "https://";
@@ -63,15 +36,10 @@ export const MONTH_DIGITS = 2;
 // The years PARTIAL_DATE_PATTERN accepts.
 export const MIN_PICKER_YEAR = 1000;
 export const MAX_PICKER_YEAR = 2999;
-export const DISPLAY_LOCALE = "en";
 // Any Gregorian year works: month names don't depend on it.
 export const MONTH_NAMES_REFERENCE_YEAR = 2000;
 
 export const POPUP_SIDE_OFFSET_PX = 6;
-
-export function example(text: string): string {
-  return `e.g. ${text}`;
-}
 
 // Path lengths of the inputs the form binds: basics.email,
 // work[0].startDate or basics.location.city, basics.profiles[0].url.
@@ -145,25 +113,75 @@ export const EDITED_ENTRY_KEYS = {
 
 export type EntrySectionId = keyof typeof EDITED_ENTRY_KEYS;
 
-const UI_PLURAL_RULES = new Intl.PluralRules("en");
-
-const WARNING_COUNT: Record<"one" | "other", (count: number) => string> = {
-  one: (count) => `${count} warning`,
-  other: (count) => `${count} warnings`,
-};
-
-export function warningCount(count: number): string {
-  const category = UI_PLURAL_RULES.select(count) === "one" ? "one" : "other";
-  return WARNING_COUNT[category](count);
-}
-
 export const YEARS_PER_PAGE = 12;
 export const YEAR_GRID_COLUMNS = 3;
 export const YEAR_RANGE_SEPARATOR = " – ";
-export const PREVIOUS_YEARS_LABEL = "Previous years";
-export const NEXT_YEARS_LABEL = "Next years";
-export const BACK_TO_MONTHS_LABEL = "Back to months";
 
-export function chooseYearLabel(year: number): string {
-  return `Choose year, ${year}`;
-}
+// Entry kinds get whole sentences of their own: other languages inflect the
+// words around the entry's name.
+export type EntryMessages = {
+  empty: () => string;
+  add: () => string;
+  untitled: () => string;
+  reorder: () => string;
+  remove: () => string;
+  removeTitle: () => string;
+  moved: (inputs: { position: number; count: number }) => string;
+};
+
+export const ENTRY_MESSAGES = {
+  profile: {
+    empty: m.form_profile_empty,
+    add: m.form_profile_add,
+    untitled: m.form_profile_untitled,
+    reorder: m.form_profile_reorder,
+    remove: m.form_profile_remove,
+    removeTitle: m.form_profile_remove_title,
+    moved: m.form_profile_moved,
+  },
+  category: {
+    empty: m.form_category_empty,
+    add: m.form_category_add,
+    untitled: m.form_category_untitled,
+    reorder: m.form_category_reorder,
+    remove: m.form_category_remove,
+    removeTitle: m.form_category_remove_title,
+    moved: m.form_category_moved,
+  },
+  language: {
+    empty: m.form_language_empty,
+    add: m.form_language_add,
+    untitled: m.form_language_untitled,
+    reorder: m.form_language_reorder,
+    remove: m.form_language_remove,
+    removeTitle: m.form_language_remove_title,
+    moved: m.form_language_moved,
+  },
+  work: {
+    empty: m.form_work_empty,
+    add: m.form_work_add,
+    untitled: m.form_work_untitled,
+    reorder: m.form_work_reorder,
+    remove: m.form_work_remove,
+    removeTitle: m.form_work_remove_title,
+    moved: m.form_work_moved,
+  },
+  project: {
+    empty: m.form_project_empty,
+    add: m.form_project_add,
+    untitled: m.form_project_untitled,
+    reorder: m.form_project_reorder,
+    remove: m.form_project_remove,
+    removeTitle: m.form_project_remove_title,
+    moved: m.form_project_moved,
+  },
+  education: {
+    empty: m.form_education_empty,
+    add: m.form_education_add,
+    untitled: m.form_education_untitled,
+    reorder: m.form_education_reorder,
+    remove: m.form_education_remove,
+    removeTitle: m.form_education_remove_title,
+    moved: m.form_education_moved,
+  },
+} as const satisfies Record<string, EntryMessages>;

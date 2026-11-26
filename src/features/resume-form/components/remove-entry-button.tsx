@@ -3,7 +3,9 @@ import { use } from "react";
 
 import { AddEntryButtonContext } from "#/features/resume-form/components/entry-list-context";
 import { RemoveButton } from "#/features/resume-form/components/remove-button";
+import type { EntryMessages } from "#/features/resume-form/constants";
 import { hasContent } from "#/features/resume-form/has-content";
+import { m } from "#/paraglide/messages.js";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import {
   AlertDialog,
@@ -21,17 +23,17 @@ import {
 type RemoveEntryButtonProps = {
   entry: unknown;
   entryName: string;
-  entryLabel: string;
+  messages: EntryMessages;
   onRemove: () => void;
 };
 
 export function RemoveEntryButton({
   entry,
   entryName,
-  entryLabel,
+  messages,
   onRemove,
 }: RemoveEntryButtonProps) {
-  const label = `Remove ${entryLabel}`;
+  const label = messages.remove();
   const addButtonRef = use(AddEntryButtonContext);
 
   // The card (and the dialog inside it) unmounts on removal, so wait a frame
@@ -63,15 +65,15 @@ export function RemoveEntryButton({
           <AlertDialogMedia className="bg-destructive/10 text-destructive">
             <Trash2Icon />
           </AlertDialogMedia>
-          <AlertDialogTitle>Remove this {entryLabel}?</AlertDialogTitle>
+          <AlertDialogTitle>{messages.removeTitle()}</AlertDialogTitle>
           <AlertDialogDescription>
-            “{entryName}” and everything in it will be deleted.
+            {m.form_remove_entry_description({ name: entryName })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{m.shared_cancel()}</AlertDialogCancel>
           <AlertDialogAction variant="destructive" onClick={removeAndMoveFocus}>
-            Remove
+            {m.form_remove_entry_confirm()}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

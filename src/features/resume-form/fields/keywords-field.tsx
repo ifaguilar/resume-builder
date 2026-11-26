@@ -12,16 +12,10 @@ import {
 import { LabeledGroup } from "#/features/resume-form/components/labeled-group";
 import { RemoveButton } from "#/features/resume-form/components/remove-button";
 import {
-  addKeywordLabel,
   ENTER_KEY,
   ESCAPE_KEY,
   KEYWORD_COMMIT_KEYS,
   KEYWORD_SEPARATOR,
-  keywordExists,
-  keywordInputLabel,
-  keywordMoved,
-  removeKeywordLabel,
-  reorderKeywordLabel,
 } from "#/features/resume-form/constants";
 import { FieldWarnings } from "#/features/resume-form/fields/field-warnings";
 import {
@@ -32,6 +26,7 @@ import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-wa
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { moveItem, removeItem } from "#/features/resume-form/list-keys";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { m } from "#/paraglide/messages.js";
 import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
 import { ReorderMenu } from "#/shared/components/reorder-menu";
@@ -83,7 +78,7 @@ export function KeywordsField({
 
   function add(candidates: string[]) {
     const existing = findExisting(items, candidates);
-    if (existing) announce(keywordExists(existing));
+    if (existing) announce(m.form_keyword_exists({ keyword: existing }));
     const next = addKeywords(items, candidates);
     if (next.length === items.length) return;
     field.handleChange(next);
@@ -107,7 +102,9 @@ export function KeywordsField({
   function edit(index: number, text: string, refocus: boolean) {
     if (text.trim() === items[index]) return;
     const { items: next, count } = replaceKeyword(items, index, text);
-    if (count === 0 && text.trim() !== "") announce(keywordExists(text.trim()));
+    if (count === 0 && text.trim() !== "") {
+      announce(m.form_keyword_exists({ keyword: text.trim() }));
+    }
     field.handleChange(next.length > 0 ? next : undefined);
     if (count === 1) return;
     if (refocus) pendingFocus.current = count > 1 ? index + count - 1 : index;
@@ -125,7 +122,13 @@ export function KeywordsField({
   function move(from: number, to: number) {
     field.handleChange(moveItem(items, from, to));
     keys.move(from, to);
-    announce(keywordMoved(items[from] ?? "", to + 1, items.length));
+    announce(
+      m.form_keyword_moved({
+        keyword: items[from] ?? "",
+        position: to + 1,
+        count: items.length,
+      }),
+    );
   }
 
   return (
@@ -148,7 +151,7 @@ export function KeywordsField({
               inputRef={(element) => {
                 inputs.current[index] = element;
               }}
-              label={keywordInputLabel(label, index + 1)}
+              label={m.form_keyword_label({ list: label, position: index + 1 })}
               value={items[index] ?? ""}
               onCommit={(text, refocus) => edit(index, text, refocus)}
               onRemove={() => remove(index)}
@@ -164,7 +167,7 @@ export function KeywordsField({
         </span>
         <Input
           ref={addInput}
-          aria-label={addKeywordLabel(label)}
+          aria-label={m.form_add_keyword({ list: label })}
           aria-invalid={isInvalid || undefined}
           value={draft}
           placeholder={placeholder}
@@ -233,7 +236,7 @@ function KeywordRow({
           "relative z-10 bg-background shadow-lg ring-1 ring-primary/30",
       )}
     >
-      <ReorderMenu label={reorderKeywordLabel(value)} />
+      <ReorderMenu label={m.form_reorder_keyword({ keyword: value })} />
       <Input
         ref={inputRef}
         aria-label={label}
@@ -250,7 +253,7 @@ function KeywordRow({
           onBlur();
         }}
       />
-      <IconTooltip label={removeKeywordLabel(value)}>
+      <IconTooltip label={m.form_remove_keyword({ keyword: value })}>
         <RemoveButton onClick={onRemove}>
           <Trash2Icon />
         </RemoveButton>

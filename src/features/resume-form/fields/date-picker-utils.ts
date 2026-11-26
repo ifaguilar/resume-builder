@@ -3,7 +3,6 @@ import {
   ARROW_LEFT_KEY,
   ARROW_RIGHT_KEY,
   ARROW_UP_KEY,
-  DISPLAY_LOCALE,
   END_KEY,
   HOME_KEY,
   MAX_PICKER_YEAR,
@@ -20,28 +19,52 @@ import {
   type PartialDate,
   parsePartialDate,
 } from "#/features/resume/partial-date";
+import { getLocale } from "#/paraglide/runtime.js";
 
-type MonthWidth = "short" | "long";
+const shortMonthNames = new Map<string, readonly string[]>();
+const formattedDates = new Map<string, string>();
 
-const monthNamesByWidth = new Map<MonthWidth, readonly string[]>();
-
-// Formatting a Temporal date with Intl is slow (tens of µs), and a month's
-// name doesn't depend on its year, so the names are formatted once, on first
-// use. Intl can't format a PlainYearMonth without an explicit calendar,
+// Formatting a Temporal date with Intl is slow (tens of µs), so every result
+// is kept. Intl can't format a PlainYearMonth without an explicit calendar,
 // hence the day.
-function nameOfMonth(width: MonthWidth, month: number): string {
-  let names = monthNamesByWidth.get(width);
+function shortMonthName(month: number): string {
+  const locale = getLocale();
+  let names = shortMonthNames.get(locale);
   if (!names) {
     names = Array.from({ length: MONTHS_PER_YEAR }, (_, index) =>
       Temporal.PlainDate.from({
         year: MONTH_NAMES_REFERENCE_YEAR,
         month: index + 1,
         day: 1,
-      }).toLocaleString(DISPLAY_LOCALE, { month: width }),
+      }).toLocaleString(locale, { month: "short" }),
     );
-    monthNamesByWidth.set(width, names);
+    shortMonthNames.set(locale, names);
   }
   return names[month - 1] ?? String(month);
+}
+
+// The UI language decides the word order and joiners: "September 2023",
+// "septiembre de 2023", "5. Sept. 2023".
+function formatDate(
+  date: { year: number; month: number; day?: number },
+  monthWidth: "short" | "long",
+): string {
+  const locale = getLocale();
+  const key = `${locale} ${monthWidth} ${date.year}-${date.month}-${date.day ?? ""}`;
+  let text = formattedDates.get(key);
+  if (text === undefined) {
+    text = Temporal.PlainDate.from({
+      ...date,
+      day: date.day ?? 1,
+    }).toLocaleString(
+      locale,
+      date.day === undefined
+        ? { year: "numeric", month: monthWidth }
+        : { year: "numeric", month: monthWidth, day: "numeric" },
+    );
+    formattedDates.set(key, text);
+  }
+  return text;
 }
 
 export function initialFocusMonth(
@@ -91,11 +114,11 @@ export function toMonthValue(year: number, month: number): string {
 }
 
 export function formatShortMonth(month: number): string {
-  return nameOfMonth("short", month);
+  return shortMonthName(month);
 }
 
 export function formatLongMonthYear(year: number, month: number): string {
-  return `${nameOfMonth("long", month)} ${year}`;
+  return formatDate({ year, month }, "long");
 }
 
 export function formatDisplayDate(value: string): string {
@@ -103,10 +126,7 @@ export function formatDisplayDate(value: string): string {
   if (!date) return value;
   const { year, month, day } = date;
   if (month === undefined) return String(year);
-  const monthName = formatShortMonth(month);
-  return day === undefined
-    ? `${monthName} ${year}`
-    : `${monthName} ${day}, ${year}`;
+  return formatDate({ year, month, day }, "short");
 }
 
 // Pages end on the current year, so the first page a work date opens on has
