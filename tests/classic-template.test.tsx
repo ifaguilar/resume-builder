@@ -34,9 +34,12 @@ afterEach(() => {
 });
 
 describe("ClassicTemplate", () => {
-  const cases = [...Object.entries(fixtures), ["empty", {}] as const].flatMap(
-    ([name, resume]) =>
-      PAGE_SIZES.map((pageSize) => [name, pageSize, resume] as const),
+  const cases = [
+    ...Object.entries(fixtures),
+    ["empty", {}] as const,
+    ["empty Spanish", { meta: { language: "es" } }] as const,
+  ].flatMap(([name, resume]) =>
+    PAGE_SIZES.map((pageSize) => [name, pageSize, resume] as const),
   );
 
   it.each(cases)(

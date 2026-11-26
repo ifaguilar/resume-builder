@@ -1,15 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  PDF_FALLBACK_FILE_NAME,
-  SETTINGS_META_KEY,
-} from "#/features/export/constants";
+import { SETTINGS_META_KEY } from "#/features/export/constants";
 import { pdfFileName } from "#/features/export/file-name";
 import { toJson } from "#/features/export/json-export";
 import { fromJson } from "#/features/import/json-import";
 import { PAGE_SIZES } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
+import { CV_WORD, RESUME_WORD } from "#/features/templates/constants";
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
@@ -58,11 +56,18 @@ describe("pdfFileName", () => {
     ["Morgan Achterberg", "Morgan-Achterberg-Resume.pdf"],
     ["  Ana   María  López ", "Ana-María-López-Resume.pdf"],
     ['Jo "JJ" O/Neil: Dev?', "Jo-JJ-ONeil-Dev-Resume.pdf"],
-    ["", PDF_FALLBACK_FILE_NAME],
-    ['  <>:"/\\|?*  ', PDF_FALLBACK_FILE_NAME],
-    [undefined, PDF_FALLBACK_FILE_NAME],
-    [{ first: "Ada" }, PDF_FALLBACK_FILE_NAME],
+    ["", "Resume.pdf"],
+    ['  <>:"/\\|?*  ', "Resume.pdf"],
+    [undefined, "Resume.pdf"],
+    [{ first: "Ada" }, "Resume.pdf"],
   ])("%j → %s", (name, expected) => {
-    expect(pdfFileName(name)).toBe(expected);
+    expect(pdfFileName(name, RESUME_WORD)).toBe(expected);
+  });
+
+  it("uses the word it is given", () => {
+    expect(pdfFileName("Lucía Peñalosa", CV_WORD)).toBe(
+      "Lucía-Peñalosa-CV.pdf",
+    );
+    expect(pdfFileName("", CV_WORD)).toBe("CV.pdf");
   });
 });

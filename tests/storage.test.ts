@@ -95,9 +95,34 @@ describe("parseDraft", () => {
     ).toEqual({ resume: {}, settings: A4_SETTINGS });
   });
 
+  it("drops unknown setting keys and keeps the rest", () => {
+    expect(
+      parseDraft(
+        draftText({ resume: {}, settings: { pageSize: "A4", zoom: 2 } }),
+      ),
+    ).toEqual({ resume: {}, settings: A4_SETTINGS });
+  });
+
+  it("resets only the invalid setting", () => {
+    const sections = [
+      { id: "education", visible: true },
+      { id: "projects", visible: false },
+      { id: "experience", visible: true },
+      { id: "skills", visible: true },
+      { id: "summary", visible: true },
+    ];
+    expect(
+      parseDraft(
+        draftText({ resume: {}, settings: { pageSize: "Legal", sections } }),
+      )?.settings,
+    ).toEqual({
+      ...DEFAULT_SETTINGS,
+      sections: [{ id: "summary", visible: true }, ...sections.slice(0, -1)],
+    });
+  });
+
   it.each([
     ["an unknown page size", { pageSize: "Legal" }],
-    ["an unknown key", { pageSize: "A4", zoom: 2 }],
     ["a non-object", "A4"],
   ])("keeps the resume and uses default settings for %s", (_, settings) => {
     const resume = { basics: { name: "Ana Torres" } };

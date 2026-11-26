@@ -2,8 +2,8 @@ import { cn } from "cn";
 import { type ReactNode, use } from "react";
 
 import { RemoveEntryButton } from "#/features/resume-form/components/remove-entry-button";
-import { ReorderMenu } from "#/features/resume-form/components/reorder-menu";
-import { SortableItemContext } from "#/features/resume-form/components/sortable-item-context";
+import { ReorderMenu } from "#/shared/components/reorder-menu";
+import { SortableItemContext } from "#/shared/components/sortable-item-context";
 
 type EntryHeaderProps = {
   title: string;

@@ -66,7 +66,7 @@ describe("fromJson", () => {
     });
   });
 
-  it("uses the default settings when a saved one is invalid", () => {
+  it("resets only the setting that is invalid", () => {
     const result = fromJson(
       json({
         meta: {
@@ -78,7 +78,7 @@ describe("fromJson", () => {
     );
     expect(result).toEqual({
       ok: true,
-      draft: { resume: {}, settings: DEFAULT_SETTINGS },
+      draft: { resume: {}, settings: { ...DEFAULT_SETTINGS, pageSize: "A4" } },
     });
   });
 

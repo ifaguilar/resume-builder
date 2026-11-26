@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { CV_WORDS } from "#/features/templates/constants";
 import {
   cleanList,
   displayUrl,
@@ -9,6 +10,9 @@ import {
   formatPlace,
   formatYear,
 } from "#/features/templates/format";
+
+const EN = CV_WORDS.en;
+const ES = CV_WORDS.es;
 
 describe("formatDate", () => {
   it.each([
@@ -22,7 +26,18 @@ describe("formatDate", () => {
     [2030, "2030"],
     [{}, ""],
   ])("formats %j", (value, expected) => {
-    expect(formatDate(value)).toBe(expected);
+    expect(formatDate(value, EN.locale)).toBe(expected);
+  });
+
+  it("writes Spanish month names", () => {
+    expect(formatDate("2023-09", ES.locale)).toBe("sept 2023");
+    expect(formatDate("2024-01", ES.locale)).toBe("ene 2024");
+  });
+
+  it("keeps month names apart by language", () => {
+    expect(formatDate("2023-09", EN.locale)).toBe("Sep 2023");
+    expect(formatDate("2023-09", ES.locale)).toBe("sept 2023");
+    expect(formatDate("2023-09", EN.locale)).toBe("Sep 2023");
   });
 });
 
@@ -45,30 +60,47 @@ describe("formatDateRange", () => {
     [undefined, "2025-05", "May 2025"],
     [undefined, undefined, ""],
   ])("formats %j to %j", (start, end, expected) => {
-    expect(formatDateRange(start, end)).toBe(expected);
+    expect(formatDateRange(start, end, EN)).toBe(expected);
+  });
+
+  it("writes an open range in Spanish", () => {
+    expect(formatDateRange("2022-02", undefined, ES)).toBe(
+      "feb 2022 - actualidad",
+    );
   });
 });
 
 describe("formatPlace", () => {
   it("joins city, region and the country name", () => {
     expect(
-      formatPlace({
-        address: "100 Example Street",
-        postalCode: "94000",
-        city: "Sample City",
-        region: "California",
-        countryCode: "US",
-      }),
+      formatPlace(
+        {
+          address: "100 Example Street",
+          postalCode: "94000",
+          city: "Sample City",
+          region: "California",
+          countryCode: "US",
+        },
+        EN.locale,
+      ),
     ).toBe("Sample City, California, United States");
   });
 
   it("skips empty parts", () => {
-    expect(formatPlace({ city: " ", countryCode: "HN" })).toBe("Honduras");
+    expect(formatPlace({ city: " ", countryCode: "HN" }, EN.locale)).toBe(
+      "Honduras",
+    );
+  });
+
+  it("names the country in the CV language", () => {
+    expect(formatPlace({ city: "Logroño", countryCode: "ES" }, ES.locale)).toBe(
+      "Logroño, España",
+    );
   });
 
   it("keeps text locations as typed", () => {
-    expect(formatPlace(" Remote ")).toBe("Remote");
-    expect(formatPlace(undefined)).toBe("");
+    expect(formatPlace(" Remote ", EN.locale)).toBe("Remote");
+    expect(formatPlace(undefined, EN.locale)).toBe("");
   });
 });
 

@@ -9,6 +9,7 @@ import { downloadFile } from "#/features/export/download";
 import { pdfFileName } from "#/features/export/file-name";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import type { Settings } from "#/features/resume/settings-schema";
+import { cvLanguage, documentWord } from "#/features/templates/cv-language";
 import { type Notice, NoticeDialog } from "#/shared/components/notice-dialog";
 import { Button } from "#/shared/components/ui/button";
 
@@ -31,7 +32,13 @@ export function ExportPdfButton({
     try {
       const { toPdf } = await import("#/features/export/pdf-export");
       const blob = await toPdf(resume, settings);
-      downloadFile(blob, pdfFileName(resume.basics?.name));
+      downloadFile(
+        blob,
+        pdfFileName(
+          resume.basics?.name,
+          documentWord(cvLanguage(resume), settings.pageSize),
+        ),
+      );
     } catch {
       setNotice({
         title: PDF_EXPORT_ERROR_TITLE,

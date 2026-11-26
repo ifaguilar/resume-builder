@@ -1,7 +1,6 @@
 import { BasicsSection } from "#/features/resume-form/components/basics-section";
 import { EducationSection } from "#/features/resume-form/components/education-section";
 import { LanguagesSection } from "#/features/resume-form/components/languages-section";
-import { LiveAnnouncer } from "#/features/resume-form/components/live-announcer";
 import { ProjectsSection } from "#/features/resume-form/components/projects-section";
 import { SkillsSection } from "#/features/resume-form/components/skills-section";
 import { useFormWarnings } from "#/features/resume-form/components/use-form-warnings";
@@ -13,6 +12,7 @@ import {
 } from "#/features/resume-form/sections";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import { sectionOf } from "#/features/resume-form/warning-paths";
+import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import {
   Accordion,
   AccordionContent,

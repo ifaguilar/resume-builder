@@ -60,6 +60,7 @@ export function Editor({
                 content: <FormPanel form={form} />,
                 design: (
                   <DesignPanel
+                    form={form}
                     settings={settings}
                     onSettingsChange={setSettings}
                   />

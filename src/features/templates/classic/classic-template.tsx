@@ -3,11 +3,11 @@ import { Document, Page, Text, View } from "@react-pdf/renderer";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { PageSize, Settings } from "#/features/resume/settings-schema";
 import {
-  DOCUMENT_LANGUAGE,
-  DOCUMENT_TITLE_SUFFIX,
+  DOCUMENT_TITLE_SEPARATOR,
   LABEL_SUFFIX,
 } from "#/features/templates/constants";
 import { withContentKeys } from "#/features/templates/content-keys";
+import { documentWord } from "#/features/templates/cv-language";
 import { BODY_LEADING, tw } from "#/features/templates/design-tokens";
 import { PDF_FONT_FEATURES } from "#/features/templates/fonts/constants";
 import {
@@ -121,14 +121,15 @@ export function ClassicTemplate({
   settings: Settings;
 }) {
   const layout = PAGE_LAYOUTS[settings.pageSize];
-  const content = resumeContent(resume);
+  const content = resumeContent(resume, settings);
   const { name } = content.header;
+  const word = documentWord(content.language, settings.pageSize);
 
   return (
     <Document
-      title={name ? name + DOCUMENT_TITLE_SUFFIX : undefined}
+      title={name ? name + DOCUMENT_TITLE_SEPARATOR + word : undefined}
       author={name || undefined}
-      language={DOCUMENT_LANGUAGE}
+      language={content.language}
     >
       <Page
         size={settings.pageSize}

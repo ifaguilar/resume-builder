@@ -9,15 +9,8 @@ import {
   useRef,
 } from "react";
 
-import { AnnounceContext } from "#/features/resume-form/components/announce-context";
 import { LabeledGroup } from "#/features/resume-form/components/labeled-group";
 import { RemoveButton } from "#/features/resume-form/components/remove-button";
-import { ReorderMenu } from "#/features/resume-form/components/reorder-menu";
-import { SortableItemContext } from "#/features/resume-form/components/sortable-item-context";
-import {
-  SortableItem,
-  SortableList,
-} from "#/features/resume-form/components/sortable-list";
 import { BACKSPACE_KEY, ENTER_KEY } from "#/features/resume-form/constants";
 import {
   filledBulletIndexes,
@@ -30,7 +23,11 @@ import { useVisibleWarnings } from "#/features/resume-form/fields/use-visible-wa
 import { useFieldContext } from "#/features/resume-form/form-context";
 import { moveItem, removeItem } from "#/features/resume-form/list-keys";
 import { useListKeys } from "#/features/resume-form/use-list-keys";
+import { AnnounceContext } from "#/shared/components/announce-context";
 import { IconTooltip } from "#/shared/components/icon-tooltip";
+import { ReorderMenu } from "#/shared/components/reorder-menu";
+import { SortableItemContext } from "#/shared/components/sortable-item-context";
+import { SortableItem, SortableList } from "#/shared/components/sortable-list";
 import { Button } from "#/shared/components/ui/button";
 import { Textarea } from "#/shared/components/ui/textarea";
 

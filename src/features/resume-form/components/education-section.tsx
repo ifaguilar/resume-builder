@@ -1,10 +1,12 @@
+import { useStore } from "@tanstack/react-form";
+
 import {
   EntryCard,
   EntryHeader,
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
-import { DEGREE_SUGGESTIONS } from "#/features/resume-form/constants";
+import { example } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -12,12 +14,17 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { EducationEntry } from "#/features/resume/resume-schema";
+import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 
 const EMPTY_EDUCATION_ENTRY: EducationEntry = {};
 
+type SuggestionProps = { suggestions: readonly string[]; placeholder: string };
+const NO_SUGGESTIONS: SuggestionProps = { suggestions: [], placeholder: "" };
+
 const EducationEntryFields = withFieldGroup({
   defaultValues: EMPTY_EDUCATION_ENTRY,
-  render: function EducationEntryFields({ group }) {
+  props: NO_SUGGESTIONS,
+  render: function EducationEntryFields({ group, suggestions, placeholder }) {
     return (
       <>
         <group.AppField name="institution">
@@ -33,8 +40,8 @@ const EducationEntryFields = withFieldGroup({
             {(field) => (
               <field.AutocompleteField
                 label="Degree"
-                placeholder="e.g. Bachelor's degree"
-                suggestions={DEGREE_SUGGESTIONS}
+                placeholder={placeholder}
+                suggestions={suggestions}
               />
             )}
           </group.AppField>
@@ -64,6 +71,9 @@ const EducationEntryFields = withFieldGroup({
 export const EducationSection = withForm({
   ...resumeFormOptions,
   render: function EducationSection({ form }) {
+    // The degree is printed on the CV, so it's suggested in the CV's language.
+    const meta = useStore(form.store, (state) => state.values.meta);
+    const words = cvWords(cvLanguage({ meta }));
     return (
       <div className="flex flex-col gap-6">
         <SectionWarnings store={form.store} section="education" />
@@ -105,6 +115,8 @@ export const EducationSection = withForm({
                       key={index}
                       form={form}
                       fields={`education[${index}]`}
+                      suggestions={words.degreeSuggestions}
+                      placeholder={example(words.degreeExample)}
                     />
                   </EntryCard>
                 )}

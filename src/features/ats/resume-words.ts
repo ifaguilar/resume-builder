@@ -1,5 +1,6 @@
 import { toWords } from "#/features/ats/extract-text";
 import type { Resume } from "#/features/resume/resume-schema";
+import type { Settings } from "#/features/resume/settings-schema";
 import { LABEL_SUFFIX } from "#/features/templates/constants";
 import {
   type ResumeSection,
@@ -30,8 +31,8 @@ function sectionTexts(section: ResumeSection): string[] {
 
 // Every word the CV draws, in its reading order. Headings are upper-cased
 // like the drawn ones, so a parser should read exactly these words.
-export function expectedWords(resume: Resume): string[] {
-  const { header, sections } = resumeContent(resume);
+export function expectedWords(resume: Resume, settings: Settings): string[] {
+  const { header, sections } = resumeContent(resume, settings);
   return [
     header.name,
     header.label,

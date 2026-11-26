@@ -41,23 +41,9 @@ export const MONTH_NAMES_REFERENCE_YEAR = 2000;
 
 export const POPUP_SIDE_OFFSET_PX = 6;
 
-export const FLUENCY_SUGGESTIONS = [
-  "Elementary proficiency",
-  "Limited working proficiency",
-  "Professional working proficiency",
-  "Full professional proficiency",
-  "Native or bilingual proficiency",
-] as const;
-
-export const DEGREE_SUGGESTIONS = [
-  "High school diploma",
-  "Associate degree",
-  "Bachelor's degree",
-  "Master's degree",
-  "MBA",
-  "Doctorate (PhD)",
-  "Professional certificate",
-] as const;
+export function example(text: string): string {
+  return `e.g. ${text}`;
+}
 
 // Path lengths of the inputs the form binds: basics.email,
 // work[0].startDate or basics.location.city, basics.profiles[0].url.
@@ -130,10 +116,3 @@ export const EDITED_ENTRY_KEYS = {
 } as const;
 
 export type EntrySectionId = keyof typeof EDITED_ENTRY_KEYS;
-
-// A plain click on a grip opens its menu; only a real movement starts a drag.
-export const DRAG_ACTIVATION_DISTANCE_PX = 4;
-export const TOUCH_DRAG_DELAY_MS = 250;
-export const TOUCH_DRAG_TOLERANCE_PX = 5;
-export const TOUCH_POINTER_TYPE = "touch";
-export const MIN_SORTABLE_ITEMS = 2;

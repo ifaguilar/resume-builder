@@ -1,15 +1,14 @@
-import { usePDF } from "@react-pdf/renderer";
 import { TriangleAlertIcon } from "lucide-react";
-import { type ReactNode, useEffect } from "react";
+import type { ReactNode } from "react";
 
 import {
   PDF_MIME_TYPE,
   PREVIEW_ERROR_MESSAGE,
   PREVIEW_TITLE,
 } from "#/features/pdf-preview/constants";
+import { usePdfPreview } from "#/features/pdf-preview/use-pdf-preview";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { Settings } from "#/features/resume/settings-schema";
-import { ClassicTemplate } from "#/features/templates/classic/classic-template";
 import { registerFonts } from "#/features/templates/fonts/register-fonts";
 
 registerFonts();
@@ -34,11 +33,7 @@ export default function PdfPreview({
   settings: Settings;
   fallback: ReactNode;
 }) {
-  const [pdf, updatePdf] = usePDF();
-
-  useEffect(() => {
-    updatePdf(<ClassicTemplate resume={resume} settings={settings} />);
-  }, [resume, settings, updatePdf]);
+  const pdf = usePdfPreview(resume, settings);
 
   // A failed render keeps the last good PDF on screen.
   if (!pdf.url) {

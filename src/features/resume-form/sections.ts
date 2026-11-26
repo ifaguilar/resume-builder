@@ -5,19 +5,19 @@ export const sections = [
     intro: "Who you are and how recruiters reach you.",
   },
   {
-    id: "work",
-    title: "Work",
-    intro: "Most recent first. Focus on the last 10 years.",
-  },
-  {
-    id: "education",
-    title: "Education",
-    intro: "Your highest degree first.",
-  },
-  {
     id: "skills",
     title: "Skills",
     intro: "The tools and methods the job asks for.",
+  },
+  {
+    id: "languages",
+    title: "Languages",
+    intro: "Languages you could use at work.",
+  },
+  {
+    id: "work",
+    title: "Work",
+    intro: "Most recent first. Focus on the last 10 years.",
   },
   {
     id: "projects",
@@ -25,9 +25,9 @@ export const sections = [
     intro: "Work that shows your skills, especially early in your career.",
   },
   {
-    id: "languages",
-    title: "Languages",
-    intro: "Languages you could use at work.",
+    id: "education",
+    title: "Education",
+    intro: "Your highest degree first.",
   },
 ] as const;
 
