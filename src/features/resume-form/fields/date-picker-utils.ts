@@ -3,7 +3,6 @@ import {
   ARROW_LEFT_KEY,
   ARROW_RIGHT_KEY,
   ARROW_UP_KEY,
-  DATE_PART_SEPARATOR,
   DISPLAY_LOCALE,
   END_KEY,
   HOME_KEY,
@@ -11,44 +10,45 @@ import {
   MIN_PICKER_YEAR,
   MONTH_DIGITS,
   MONTH_GRID_COLUMNS,
+  MONTH_NAMES_REFERENCE_YEAR,
   MONTHS_PER_YEAR,
 } from "#/features/resume-form/constants";
-import { PARTIAL_DATE_PATTERN } from "#/features/resume/constants";
+import { DATE_PART_SEPARATOR } from "#/features/resume/constants";
+import {
+  type PartialDate,
+  parsePartialDate,
+} from "#/features/resume/partial-date";
 
-export type PartialDate = { year: number; month?: number; day?: number };
+type MonthWidth = "short" | "long";
 
-const shortMonth = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-  month: "short",
-  timeZone: "UTC",
-});
-const longMonthYear = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
+const monthNamesByWidth = new Map<MonthWidth, readonly string[]>();
 
-function utcDate(year: number, month: number): Date {
-  return new Date(Date.UTC(year, month - 1));
-}
-
-export function parsePartialDate(
-  value: string | undefined,
-): PartialDate | undefined {
-  if (value === undefined || !PARTIAL_DATE_PATTERN.test(value)) {
-    return undefined;
+// Formatting a Temporal date with Intl is slow (tens of µs), and a month's
+// name doesn't depend on its year, so the names are formatted once, on first
+// use. Intl can't format a PlainYearMonth without an explicit calendar,
+// hence the day.
+function nameOfMonth(width: MonthWidth, month: number): string {
+  let names = monthNamesByWidth.get(width);
+  if (!names) {
+    names = Array.from({ length: MONTHS_PER_YEAR }, (_, index) =>
+      Temporal.PlainDate.from({
+        year: MONTH_NAMES_REFERENCE_YEAR,
+        month: index + 1,
+        day: 1,
+      }).toLocaleString(DISPLAY_LOCALE, { month: width }),
+    );
+    monthNamesByWidth.set(width, names);
   }
-  const [year, month, day] = value.split(DATE_PART_SEPARATOR).map(Number);
-  if (year === undefined) return undefined;
-  return { year, month, day };
+  return names[month - 1] ?? String(month);
 }
 
 export function initialFocusMonth(
   date: PartialDate | undefined,
   shownYear: number,
-  today: Date,
+  today: Temporal.PlainDate,
 ): number {
   if (date?.year === shownYear && date.month !== undefined) return date.month;
-  if (today.getFullYear() === shownYear) return today.getMonth() + 1;
+  if (today.year === shownYear) return today.month;
   return 1;
 }
 
@@ -63,6 +63,10 @@ export function moveMonth(
   year: number,
   month: number,
   key: string,
+  {
+    minYear = MIN_PICKER_YEAR,
+    maxYear = MAX_PICKER_YEAR,
+  }: { minYear?: number; maxYear?: number } = {},
 ): { year: number; month: number } | undefined {
   if (key === HOME_KEY) return { year, month: 1 };
   if (key === END_KEY) return { year, month: MONTHS_PER_YEAR };
@@ -73,7 +77,7 @@ export function moveMonth(
     year: Math.floor(index / MONTHS_PER_YEAR),
     month: (index % MONTHS_PER_YEAR) + 1,
   };
-  if (next.year < MIN_PICKER_YEAR || next.year > MAX_PICKER_YEAR) {
+  if (next.year < minYear || next.year > maxYear) {
     return undefined;
   }
   return next;
@@ -84,12 +88,12 @@ export function toMonthValue(year: number, month: number): string {
   return `${year}${DATE_PART_SEPARATOR}${paddedMonth}`;
 }
 
-export function formatShortMonth(year: number, month: number): string {
-  return shortMonth.format(utcDate(year, month));
+export function formatShortMonth(month: number): string {
+  return nameOfMonth("short", month);
 }
 
 export function formatLongMonthYear(year: number, month: number): string {
-  return longMonthYear.format(utcDate(year, month));
+  return `${nameOfMonth("long", month)} ${year}`;
 }
 
 export function formatDisplayDate(value: string): string {
@@ -97,7 +101,7 @@ export function formatDisplayDate(value: string): string {
   if (!date) return value;
   const { year, month, day } = date;
   if (month === undefined) return String(year);
-  const monthName = formatShortMonth(year, month);
+  const monthName = formatShortMonth(month);
   return day === undefined
     ? `${monthName} ${year}`
     : `${monthName} ${day}, ${year}`;

@@ -20,7 +20,7 @@ const ProfileFields = withFieldGroup({
   defaultValues: EMPTY_PROFILE,
   render: function ProfileFields({ group }) {
     return (
-      <div className="grid grid-cols-[1fr_2fr] gap-x-4 gap-y-6">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 @xl/form:grid-cols-[1fr_2fr]">
         <group.AppField name="network">
           {(field) => (
             <field.TextField label="Network" placeholder="e.g. LinkedIn" />
@@ -64,7 +64,7 @@ export const BasicsSection = withForm({
             />
           )}
         </form.AppField>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2">
           <form.AppField name="basics.email">
             {(field) => (
               <field.TextField
@@ -107,12 +107,10 @@ export const BasicsSection = withForm({
         </form.AppField>
 
         {/* The divider is on a wrapper: on a fieldset, the browser draws the
-
             border through the legend. */}
-
         <div className="border-t pt-6">
           <LabeledGroup title="Location">
-            <div className="grid grid-cols-3 gap-x-4 gap-y-6">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2 @2xl/form:grid-cols-3 @lg/form:[&>:last-child]:col-span-2 @2xl/form:[&>:last-child]:col-span-1">
               <form.AppField name="basics.location.city">
                 {(field) => (
                   <field.TextField label="City" placeholder="e.g. Austin" />
@@ -142,16 +140,16 @@ export const BasicsSection = withForm({
                 const profiles = field.state.value ?? [];
                 return (
                   <EntryList
-                    isEmpty={profiles.length === 0}
+                    count={profiles.length}
                     emptyText="No profiles yet."
                     addLabel="Add profile"
+                    entryLabel="profile"
                     onAdd={() => field.pushValue({})}
+                    onRemove={(index) => field.removeValue(index)}
+                    onMove={(from, to) => field.moveValue(from, to)}
                   >
-                    {profiles.map((_, index) => (
+                    {({ index, remove }) => (
                       <EntryCard
-                        // Index keys until entries get stable ids.
-                        // oxlint-disable-next-line react/no-array-index-key
-                        key={index}
                         header={
                           <form.Subscribe
                             selector={(state) =>
@@ -166,18 +164,20 @@ export const BasicsSection = withForm({
                                 )}
                                 entry={profile}
                                 entryLabel="profile"
-                                onRemove={() => field.removeValue(index)}
+                                onRemove={remove}
                               />
                             )}
                           </form.Subscribe>
                         }
                       >
+                        {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                         <ProfileFields
+                          key={index}
                           form={form}
                           fields={`basics.profiles[${index}]`}
                         />
                       </EntryCard>
-                    ))}
+                    )}
                   </EntryList>
                 );
               }}

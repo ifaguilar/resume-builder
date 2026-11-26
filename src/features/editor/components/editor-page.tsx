@@ -1,54 +1,33 @@
-import { AppHeader } from "#/features/editor/components/app-header";
-import { PanelDivider } from "#/features/editor/components/panel-divider";
-import {
-  FORM_PANEL_DEFAULT_SIZE_PERCENT,
-  FORM_PANEL_MIN_SIZE_PX,
-  RESIZE_TARGET_COARSE_PX,
-  RESIZE_TARGET_FINE_PX,
-  PREVIEW_PANEL_DEFAULT_SIZE_PERCENT,
-  PREVIEW_PANEL_MIN_SIZE_PX,
-} from "#/features/editor/constants";
-import { PreviewPanel } from "#/features/pdf-preview/components/preview-panel";
-import { FormPanel } from "#/features/resume-form/components/form-panel";
-import { useResumeForm } from "#/features/resume-form/use-resume-form";
-import {
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "#/shared/components/ui/resizable";
-import { TooltipProvider } from "#/shared/components/ui/tooltip";
+import { useEffect, useState } from "react";
 
-export function EditorPage() {
-  const form = useResumeForm();
+import { Editor } from "#/features/editor/components/editor";
+import type { Draft } from "#/features/storage/draft-format";
+import { storage } from "#/features/storage/storage";
 
+export function EditorPage({ draft }: { draft: Draft | undefined }) {
+  const [current, setCurrent] = useState({ draft, importCount: 0 });
+
+  // An effect, not the click handler: the old editor's autosave flushes on
+  // unmount, and React runs every unmount cleanup before mount effects, so
+  // this save comes last and the imported draft wins.
+  useEffect(() => {
+    if (current.importCount > 0 && current.draft) {
+      void storage.saveDraft(current.draft);
+    }
+  }, [current]);
+
+  // A new key gives the import a fresh form: list keys, field state and
+  // warnings all start from the imported resume.
   return (
-    <TooltipProvider>
-      <div className="flex h-dvh flex-col">
-        <AppHeader />
-        <ResizablePanelGroup
-          orientation="horizontal"
-          // The PDF preview is an iframe, which swallows pointer events and
-          // would stop a drag that moves over it.
-          className="min-h-0 flex-1 has-data-[separator=active]:[&_iframe]:pointer-events-none"
-          resizeTargetMinimumSize={{
-            fine: RESIZE_TARGET_FINE_PX,
-            coarse: RESIZE_TARGET_COARSE_PX,
-          }}
-        >
-          <ResizablePanel
-            defaultSize={FORM_PANEL_DEFAULT_SIZE_PERCENT}
-            minSize={FORM_PANEL_MIN_SIZE_PX}
-          >
-            <FormPanel form={form} />
-          </ResizablePanel>
-          <PanelDivider />
-          <ResizablePanel
-            defaultSize={PREVIEW_PANEL_DEFAULT_SIZE_PERCENT}
-            minSize={PREVIEW_PANEL_MIN_SIZE_PX}
-          >
-            <PreviewPanel />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    </TooltipProvider>
+    <Editor
+      key={current.importCount}
+      draft={current.draft}
+      onImport={(imported) =>
+        setCurrent(({ importCount }) => ({
+          draft: imported,
+          importCount: importCount + 1,
+        }))
+      }
+    />
   );
 }

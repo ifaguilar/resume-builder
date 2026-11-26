@@ -12,6 +12,7 @@ import {
 } from "#/features/resume-form/sections";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
 import { sectionOf } from "#/features/resume-form/warning-paths";
+import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import {
   Accordion,
   AccordionContent,
@@ -34,47 +35,57 @@ export function FormPanel({ form }: { form: ResumeForm }) {
   const warnings = useFormWarnings(form.store);
 
   return (
-    <ScrollArea className="h-full bg-background">
-      <div className="flex flex-col p-4">
-        <Accordion multiple defaultValue={[...DEFAULT_OPEN_SECTIONS]}>
-          {sections.map((section) => {
-            const Section = SECTION_COMPONENTS[section.id];
-            const count = warnings.filter(
-              (warning) => sectionOf(warning) === section.id,
-            ).length;
-            return (
-              <AccordionItem key={section.id} value={section.id}>
-                <AccordionTrigger className="items-center px-5 py-4 hover:no-underline">
-                  <span className="flex flex-col gap-1">
-                    <span className="flex items-center gap-2">
-                      <span className="text-base font-semibold">
-                        {section.title}
+    <LiveAnnouncer>
+      {/* A container query can't style its own element, and the padding
+          below depends on the width. */}
+      <ScrollArea className="@container/form h-full bg-background">
+        <div className="flex flex-col p-2 @lg/form:p-4">
+          <Accordion
+            multiple
+            defaultValue={[...DEFAULT_OPEN_SECTIONS]}
+            // shadcn's AccordionContent pads its panel element, which its
+            // className doesn't reach.
+            className="[&_[data-slot=accordion-content]]:px-2 @lg/form:[&_[data-slot=accordion-content]]:px-4"
+          >
+            {sections.map((section) => {
+              const Section = SECTION_COMPONENTS[section.id];
+              const count = warnings.filter(
+                (warning) => sectionOf(warning) === section.id,
+              ).length;
+              return (
+                <AccordionItem key={section.id} value={section.id}>
+                  <AccordionTrigger className="items-center px-3 py-4 hover:no-underline @lg/form:px-5">
+                    <span className="flex flex-col gap-1">
+                      <span className="flex items-center gap-2">
+                        <span className="text-base font-semibold">
+                          {section.title}
+                        </span>
+                        {count > 0 ? (
+                          <Badge
+                            variant="outline"
+                            className="border-warning/40 bg-warning/10 text-warning"
+                          >
+                            {count}
+                            <span className="sr-only">
+                              {count === 1 ? " warning" : " warnings"}
+                            </span>
+                          </Badge>
+                        ) : null}
                       </span>
-                      {count > 0 ? (
-                        <Badge
-                          variant="outline"
-                          className="border-warning/40 bg-warning/10 text-warning"
-                        >
-                          {count}
-                          <span className="sr-only">
-                            {count === 1 ? " warning" : " warnings"}
-                          </span>
-                        </Badge>
-                      ) : null}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        {section.intro}
+                      </span>
                     </span>
-                    <span className="text-sm font-normal text-muted-foreground">
-                      {section.intro}
-                    </span>
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="px-1 pt-2 pb-6">
-                  <Section form={form} />
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      </div>
-    </ScrollArea>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-1 pt-2 pb-6">
+                    <Section form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
+      </ScrollArea>
+    </LiveAnnouncer>
   );
 }

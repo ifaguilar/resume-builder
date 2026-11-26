@@ -27,7 +27,7 @@
   ],
   "education": [
     {
-      "institution": "Universidad de Ejemplo",
+      "institution": "Universidad Autónoma de Ejemplo",
       "area": "Ingeniería Informática",
       "studyType": "Grado",
       "startDate": "2015",
@@ -52,6 +52,10 @@
     }
   ],
   "meta": {
-    "version": "v1.0.0"
+    "version": "v1.0.0",
+    "language": "es",
+    "translations": [
+      { "language": "en", "url": "https://example.org/resume.en.json" }
+    ]
   }
 }

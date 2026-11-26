@@ -10,7 +10,8 @@ type LabeledGroupProps = {
 };
 
 // A legend isn't a flex item of its fieldset, so the space below it is a
-// margin, not a gap.
+// margin, not a gap. Fieldsets default to a min-content minimum width, so
+// without min-w-0 a long unbroken word in a field would widen the whole form.
 export function LabeledGroup({
   title,
   description,
@@ -21,7 +22,7 @@ export function LabeledGroup({
   const isGroup = variant === "group";
 
   return (
-    <fieldset className={className}>
+    <fieldset className={cn("min-w-0", className)}>
       <legend
         className={cn("flex w-full flex-col gap-1", isGroup ? "mb-4" : "mb-2")}
       >

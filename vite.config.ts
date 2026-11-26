@@ -14,7 +14,9 @@ const config = defineConfig(({ mode }) => ({
     devtools(),
     // Nitro only builds the server. Under Vitest it breaks imports of JSON
     // files from node_modules, so it is left out there.
-    mode === VITEST_MODE ? [] : nitro(),
+    mode === VITEST_MODE
+      ? []
+      : nitro({ compressPublicAssets: { gzip: true, brotli: true } }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

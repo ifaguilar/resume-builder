@@ -1,0 +1,21 @@
+Jordan Ellery
+Junior Frontend Developer
+Portland, Oregon, United States 555-0142 jordan.ellery@example.com
+jordanellery.example.com github.example.com/jellery
+SUMMARY
+Recent computer science graduate who builds accessible web interfaces with React and TypeScript.
+SKILLS
+• Frontend: React, TypeScript, CSS
+• Languages: English (Native speaker)
+WORK EXPERIENCE
+Frontend Intern Jun 2024 - Aug 2024
+Brightleaf Studio
+• Rebuilt the booking form with accessible error messages
+• Cut the landing page bundle size by 30%
+PROJECTS
+Trail Notes Jan 2025 - Present
+Offline-first hiking journal trailnotes.example.com
+• Works fully offline with IndexedDB
+EDUCATION
+Bachelor in Computer Science 2025
+Cascade State University

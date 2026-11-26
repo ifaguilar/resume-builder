@@ -1,0 +1,188 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import type { Resume } from "#/features/resume/resume-schema";
+import {
+  DEFAULT_SETTINGS,
+  type Settings,
+} from "#/features/resume/settings-schema";
+import {
+  DRAFT_BACKUP_STORAGE_KEY,
+  DRAFT_STORAGE_KEY,
+} from "#/features/storage/constants";
+import { parseDraft, serializeDraft } from "#/features/storage/draft-format";
+import { localDraftStorage } from "#/features/storage/local-storage";
+
+const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
+  eager: true,
+  import: "default",
+});
+
+function stubStorage({
+  items = {},
+  readThrows = false,
+  writeThrows = false,
+}: {
+  items?: Record<string, string>;
+  readThrows?: boolean;
+  writeThrows?: boolean;
+} = {}) {
+  const store = new Map(Object.entries(items));
+  vi.stubGlobal("localStorage", {
+    getItem: (key: string) => {
+      if (readThrows) throw new DOMException("blocked", "SecurityError");
+      return store.get(key) ?? null;
+    },
+    setItem: (key: string, value: string) => {
+      if (writeThrows) throw new DOMException("full", "QuotaExceededError");
+      store.set(key, value);
+    },
+    removeItem: (key: string) => store.delete(key),
+  });
+  return store;
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+const A4_SETTINGS: Settings = { ...DEFAULT_SETTINGS, pageSize: "A4" };
+
+function draftText(fields: Record<string, unknown>) {
+  return JSON.stringify({ version: 1, ...fields });
+}
+
+describe("parseDraft", () => {
+  it("reads a saved draft", () => {
+    const resume = { basics: { name: "Ana Torres" } };
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
+  });
+
+  it("keeps a resume that breaks schema rules", () => {
+    const resume = { basics: { email: "ana@" }, extra: true };
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
+  });
+
+  it.each([
+    ["broken JSON", "{"],
+    ["null", "null"],
+    ["an array", "[]"],
+    ["no resume", '{"version":1}'],
+    ["a resume that isn't an object", '{"version":1,"resume":[]}'],
+    ["another version", '{"version":2,"resume":{}}'],
+  ])("rejects %s", (_, text) => {
+    expect(parseDraft(text)).toBeUndefined();
+  });
+
+  it("reads saved settings", () => {
+    const draft = { resume: {}, settings: A4_SETTINGS };
+    expect(parseDraft(serializeDraft(draft))).toEqual(draft);
+  });
+
+  it("gives a draft without settings the defaults", () => {
+    expect(parseDraft(draftText({ resume: {} }))).toEqual({
+      resume: {},
+      settings: DEFAULT_SETTINGS,
+    });
+  });
+
+  it("fills in settings the draft lacks", () => {
+    expect(
+      parseDraft(draftText({ resume: {}, settings: { pageSize: "A4" } })),
+    ).toEqual({ resume: {}, settings: A4_SETTINGS });
+  });
+
+  it("drops unknown setting keys and keeps the rest", () => {
+    expect(
+      parseDraft(
+        draftText({ resume: {}, settings: { pageSize: "A4", zoom: 2 } }),
+      ),
+    ).toEqual({ resume: {}, settings: A4_SETTINGS });
+  });
+
+  it("resets only the invalid setting", () => {
+    const sections = [
+      { id: "education", visible: true },
+      { id: "projects", visible: false },
+      { id: "experience", visible: true },
+      { id: "skills", visible: true },
+      { id: "summary", visible: true },
+    ];
+    expect(
+      parseDraft(
+        draftText({ resume: {}, settings: { pageSize: "Legal", sections } }),
+      )?.settings,
+    ).toEqual({
+      ...DEFAULT_SETTINGS,
+      sections: [{ id: "summary", visible: true }, ...sections.slice(0, -1)],
+    });
+  });
+
+  it.each([
+    ["an unknown page size", { pageSize: "Legal" }],
+    ["a non-object", "A4"],
+  ])("keeps the resume and uses default settings for %s", (_, settings) => {
+    const resume = { basics: { name: "Ana Torres" } };
+    expect(parseDraft(draftText({ resume, settings }))).toEqual({
+      resume,
+      settings: DEFAULT_SETTINGS,
+    });
+  });
+
+  it.each(Object.entries(fixtures))("round-trips %s", (_, resume) => {
+    expect(
+      parseDraft(serializeDraft({ resume, settings: DEFAULT_SETTINGS })),
+    ).toEqual({ resume, settings: DEFAULT_SETTINGS });
+  });
+});
+
+describe("localDraftStorage", () => {
+  it("saves and loads a draft", async () => {
+    stubStorage();
+    const resume = { basics: { name: "Ana Torres" } };
+    await localDraftStorage.saveDraft({ resume, settings: DEFAULT_SETTINGS });
+    await expect(localDraftStorage.loadDraft()).resolves.toEqual({
+      resume,
+      settings: DEFAULT_SETTINGS,
+    });
+  });
+
+  it("loads nothing when there's no draft", async () => {
+    stubStorage();
+    await expect(localDraftStorage.loadDraft()).resolves.toBeUndefined();
+  });
+
+  it("backs up an unreadable draft and clears it", async () => {
+    const store = stubStorage({ items: { [DRAFT_STORAGE_KEY]: "{broken" } });
+    await expect(localDraftStorage.loadDraft()).resolves.toBeUndefined();
+    expect(store.get(DRAFT_BACKUP_STORAGE_KEY)).toBe("{broken");
+    expect(store.has(DRAFT_STORAGE_KEY)).toBe(false);
+  });
+
+  it("never overwrites an existing backup", async () => {
+    const store = stubStorage({
+      items: {
+        [DRAFT_STORAGE_KEY]: "second",
+        [DRAFT_BACKUP_STORAGE_KEY]: "first",
+      },
+    });
+    await localDraftStorage.loadDraft();
+    expect(store.get(DRAFT_BACKUP_STORAGE_KEY)).toBe("first");
+    expect(store.has(DRAFT_STORAGE_KEY)).toBe(false);
+  });
+
+  it("loads nothing when storage is blocked", async () => {
+    stubStorage({ readThrows: true });
+    await expect(localDraftStorage.loadDraft()).resolves.toBeUndefined();
+  });
+
+  it("skips a save when storage is full", async () => {
+    stubStorage({ writeThrows: true });
+    await expect(
+      localDraftStorage.saveDraft({ resume: {}, settings: DEFAULT_SETTINGS }),
+    ).resolves.toBeUndefined();
+  });
+});

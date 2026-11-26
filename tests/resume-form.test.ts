@@ -2,20 +2,28 @@ import { describe, expect, it } from "vitest";
 
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
+  filledBulletIndexes,
   pasteBullets,
-  removeBullet,
   splitBullet,
   toBulletLines,
 } from "#/features/resume-form/fields/bullet-list";
 import {
   formatDisplayDate,
+  formatLongMonthYear,
+  formatShortMonth,
   initialFocusMonth,
   moveMonth,
-  parsePartialDate,
   toMonthValue,
 } from "#/features/resume-form/fields/date-picker-utils";
 import { addKeywords } from "#/features/resume-form/fields/keyword-list";
 import { hasContent } from "#/features/resume-form/has-content";
+import {
+  createKeys,
+  insertItems,
+  moveItem,
+  removeItem,
+  syncKeys,
+} from "#/features/resume-form/list-keys";
 import { resumeWarningsValidator } from "#/features/resume-form/resume-warnings-validator";
 import { toFieldName } from "#/features/resume-form/to-field-name";
 import {
@@ -138,20 +146,8 @@ describe("warning paths", () => {
 });
 
 describe("date picker", () => {
-  it.each([
-    ["2023", { year: 2023, month: undefined, day: undefined }],
-    ["2023-09", { year: 2023, month: 9, day: undefined }],
-    ["2023-09-15", { year: 2023, month: 9, day: 15 }],
-    ["", undefined],
-    ["Sept 2023", undefined],
-    ["2023-13", undefined],
-    [undefined, undefined],
-  ])("parses %j", (value, expected) => {
-    expect(parsePartialDate(value)).toEqual(expected);
-  });
-
   it("focuses the selected month, else this month, else January", () => {
-    const today = new Date(2026, 10, 2);
+    const today = Temporal.PlainDate.from({ year: 2026, month: 11, day: 2 });
     expect(initialFocusMonth({ year: 2023, month: 9 }, 2023, today)).toBe(9);
     expect(initialFocusMonth({ year: 2023, month: 9 }, 2026, today)).toBe(11);
     expect(initialFocusMonth({ year: 2019 }, 2019, today)).toBe(1);
@@ -172,6 +168,13 @@ describe("date picker", () => {
     ["Sept 2023", "Sept 2023"],
   ])("shows %s as %s", (value, display) => {
     expect(formatDisplayDate(value)).toBe(display);
+  });
+
+  it("names each month in the grid", () => {
+    expect(formatShortMonth(5)).toBe("May");
+    expect(formatShortMonth(12)).toBe("Dec");
+    expect(formatLongMonthYear(2023, 9)).toBe("September 2023");
+    expect(formatLongMonthYear(1999, 1)).toBe("January 1999");
   });
 });
 
@@ -235,6 +238,11 @@ describe("countries", () => {
 });
 
 describe("bullets", () => {
+  it("finds the bullets that have text", () => {
+    expect(filledBulletIndexes(["a", "", "  ", "b"])).toEqual([0, 3]);
+    expect(filledBulletIndexes(["", " "])).toEqual([]);
+  });
+
   it("splits a bullet at the caret", () => {
     expect(splitBullet(["Led the redesign Built it", "Other"], 0, 17)).toEqual([
       "Led the redesign",
@@ -248,7 +256,7 @@ describe("bullets", () => {
   });
 
   it("removes a bullet", () => {
-    expect(removeBullet(["a", "", "c"], 1)).toEqual(["a", "c"]);
+    expect(removeItem(["a", "", "c"], 1)).toEqual(["a", "c"]);
   });
 });
 
@@ -282,6 +290,26 @@ describe("moveMonth", () => {
     [1000, 1, "ArrowLeft", undefined],
   ])("%i-%i %s", (year, month, key, expected) => {
     expect(moveMonth(year, month, key)).toEqual(expected);
+  });
+
+  it("stops at the last year allowed", () => {
+    const bounds = { maxYear: 2026 };
+    expect(moveMonth(2026, 12, "ArrowRight", bounds)).toBeUndefined();
+    expect(moveMonth(2026, 11, "ArrowDown", bounds)).toBeUndefined();
+    expect(moveMonth(2026, 8, "ArrowDown", bounds)).toEqual({
+      year: 2026,
+      month: 11,
+    });
+  });
+
+  it("stops at the first year allowed", () => {
+    const bounds = { minYear: 1926 };
+    expect(moveMonth(1926, 1, "ArrowLeft", bounds)).toBeUndefined();
+    expect(moveMonth(1926, 2, "ArrowUp", bounds)).toBeUndefined();
+    expect(moveMonth(1926, 5, "ArrowUp", bounds)).toEqual({
+      year: 1926,
+      month: 2,
+    });
   });
 });
 
@@ -342,5 +370,56 @@ describe("toTrimmedText", () => {
     [undefined, undefined],
   ])("%j becomes %j", (value, expected) => {
     expect(toTrimmedText(value)).toBe(expected);
+  });
+});
+
+describe("list keys", () => {
+  it.each([
+    [0, 2, ["b", "c", "a", "d"]],
+    [3, 1, ["a", "d", "b", "c"]],
+    [1, 0, ["b", "a", "c", "d"]],
+    [2, 3, ["a", "b", "d", "c"]],
+    [1, 1, ["a", "b", "c", "d"]],
+    [0, 9, ["a", "b", "c", "d"]],
+  ])("moves index %i to %i", (from, to, expected) => {
+    const items = ["a", "b", "c", "d"];
+    expect(moveItem(items, from, to)).toEqual(expected);
+    expect(items).toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("inserts items at the start, middle and end", () => {
+    expect(insertItems(["a", "b"], 0, ["x"])).toEqual(["x", "a", "b"]);
+    expect(insertItems(["a", "b"], 1, ["x", "y"])).toEqual([
+      "a",
+      "x",
+      "y",
+      "b",
+    ]);
+    expect(insertItems(["a", "b"], 2, [])).toEqual(["a", "b"]);
+  });
+
+  it("removes only the given index", () => {
+    expect(removeItem(["a", "b", "c"], 0)).toEqual(["b", "c"]);
+    expect(removeItem(["a", "b", "c"], 5)).toEqual(["a", "b", "c"]);
+  });
+
+  it("never repeats a key", () => {
+    const keys = [...createKeys(3), ...createKeys(3)];
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("keeps keys that match the list and replaces keys that don't", () => {
+    const keys = createKeys(2);
+    expect(syncKeys(keys, 2)).toBe(keys);
+    const replaced = syncKeys(keys, 3);
+    expect(replaced).toHaveLength(3);
+    expect(replaced.some((key) => keys.includes(key))).toBe(false);
+  });
+
+  it("adds one key per new bullet from a split or a paste", () => {
+    const items = ["Led a team", "Shipped"];
+    expect(splitBullet(items, 0, 3).length - items.length).toBe(1);
+    const pasted = pasteBullets(items, 1, { start: 7, end: 7 }, "- One\n- Two");
+    expect(pasted.items.length - items.length).toBe(2);
   });
 });

@@ -1,10 +1,12 @@
+import { useStore } from "@tanstack/react-form";
+
 import {
   EntryCard,
   EntryHeader,
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
-import { DEGREE_SUGGESTIONS } from "#/features/resume-form/constants";
+import { example } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -12,12 +14,17 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { EducationEntry } from "#/features/resume/resume-schema";
+import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 
 const EMPTY_EDUCATION_ENTRY: EducationEntry = {};
 
+type SuggestionProps = { suggestions: readonly string[]; placeholder: string };
+const NO_SUGGESTIONS: SuggestionProps = { suggestions: [], placeholder: "" };
+
 const EducationEntryFields = withFieldGroup({
   defaultValues: EMPTY_EDUCATION_ENTRY,
-  render: function EducationEntryFields({ group }) {
+  props: NO_SUGGESTIONS,
+  render: function EducationEntryFields({ group, suggestions, placeholder }) {
     return (
       <>
         <group.AppField name="institution">
@@ -28,13 +35,13 @@ const EducationEntryFields = withFieldGroup({
             />
           )}
         </group.AppField>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 @2xl/form:grid-cols-2">
           <group.AppField name="studyType">
             {(field) => (
               <field.AutocompleteField
                 label="Degree"
-                placeholder="e.g. Bachelor's degree"
-                suggestions={DEGREE_SUGGESTIONS}
+                placeholder={placeholder}
+                suggestions={suggestions}
               />
             )}
           </group.AppField>
@@ -52,6 +59,7 @@ const EducationEntryFields = withFieldGroup({
             <field.DateField
               label="Graduation date (or expected)"
               kind="single"
+              allowFuture
             />
           )}
         </group.AppField>
@@ -63,6 +71,9 @@ const EducationEntryFields = withFieldGroup({
 export const EducationSection = withForm({
   ...resumeFormOptions,
   render: function EducationSection({ form }) {
+    // The degree is printed on the CV, so it's suggested in the CV's language.
+    const meta = useStore(form.store, (state) => state.values.meta);
+    const words = cvWords(cvLanguage({ meta }));
     return (
       <div className="flex flex-col gap-6">
         <SectionWarnings store={form.store} section="education" />
@@ -71,16 +82,16 @@ export const EducationSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No education yet."
                 addLabel="Add education"
+                entryLabel="education entry"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.education?.[index]}
@@ -93,18 +104,22 @@ export const EducationSection = withForm({
                             )}
                             entry={entry}
                             entryLabel="education entry"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                     <EducationEntryFields
+                      key={index}
                       form={form}
                       fields={`education[${index}]`}
+                      suggestions={words.degreeSuggestions}
+                      placeholder={example(words.degreeExample)}
                     />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}

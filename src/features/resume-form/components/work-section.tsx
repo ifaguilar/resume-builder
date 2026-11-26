@@ -40,7 +40,7 @@ const WorkEntryFields = withFieldGroup({
             />
           )}
         </group.AppField>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 @lg/form:grid-cols-2">
           <group.AppField name="startDate">
             {(field) => <field.DateField label="Start date" kind="start" />}
           </group.AppField>
@@ -74,16 +74,16 @@ export const WorkSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No work experience yet."
                 addLabel="Add work entry"
+                entryLabel="work entry"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.work?.[index]}
@@ -96,15 +96,20 @@ export const WorkSection = withForm({
                             )}
                             entry={entry}
                             entryLabel="work entry"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
-                    <WorkEntryFields form={form} fields={`work[${index}]`} />
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
+                    <WorkEntryFields
+                      key={index}
+                      form={form}
+                      fields={`work[${index}]`}
+                    />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}

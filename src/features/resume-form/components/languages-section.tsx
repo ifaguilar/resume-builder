@@ -1,10 +1,12 @@
+import { useStore } from "@tanstack/react-form";
+
 import {
   EntryCard,
   EntryHeader,
 } from "#/features/resume-form/components/entry-card";
 import { EntryList } from "#/features/resume-form/components/entry-list";
 import { SectionWarnings } from "#/features/resume-form/components/section-warnings";
-import { FLUENCY_SUGGESTIONS } from "#/features/resume-form/constants";
+import { example } from "#/features/resume-form/constants";
 import { entryTitle } from "#/features/resume-form/entry-title";
 import {
   resumeFormOptions,
@@ -12,14 +14,19 @@ import {
   withForm,
 } from "#/features/resume-form/use-resume-form";
 import type { Language } from "#/features/resume/resume-schema";
+import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 
 const EMPTY_LANGUAGE: Language = {};
 
+type SuggestionProps = { suggestions: readonly string[]; placeholder: string };
+const NO_SUGGESTIONS: SuggestionProps = { suggestions: [], placeholder: "" };
+
 const LanguageFields = withFieldGroup({
   defaultValues: EMPTY_LANGUAGE,
-  render: function LanguageFields({ group }) {
+  props: NO_SUGGESTIONS,
+  render: function LanguageFields({ group, suggestions, placeholder }) {
     return (
-      <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 @2xl/form:grid-cols-[1fr_2fr]">
         <group.AppField name="language">
           {(field) => (
             <field.TextField label="Language" placeholder="e.g. Spanish" />
@@ -29,8 +36,8 @@ const LanguageFields = withFieldGroup({
           {(field) => (
             <field.AutocompleteField
               label="Fluency"
-              placeholder="e.g. Professional working proficiency"
-              suggestions={FLUENCY_SUGGESTIONS}
+              placeholder={placeholder}
+              suggestions={suggestions}
             />
           )}
         </group.AppField>
@@ -42,6 +49,9 @@ const LanguageFields = withFieldGroup({
 export const LanguagesSection = withForm({
   ...resumeFormOptions,
   render: function LanguagesSection({ form }) {
+    // Fluency is printed on the CV, so it's suggested in the CV's language.
+    const meta = useStore(form.store, (state) => state.values.meta);
+    const words = cvWords(cvLanguage({ meta }));
     return (
       <div className="flex flex-col gap-6">
         <SectionWarnings store={form.store} section="languages" />
@@ -50,16 +60,16 @@ export const LanguagesSection = withForm({
             const entries = field.state.value ?? [];
             return (
               <EntryList
-                isEmpty={entries.length === 0}
+                count={entries.length}
                 emptyText="No languages yet."
                 addLabel="Add language"
+                entryLabel="language"
                 onAdd={() => field.pushValue({})}
+                onRemove={(index) => field.removeValue(index)}
+                onMove={(from, to) => field.moveValue(from, to)}
               >
-                {entries.map((_, index) => (
+                {({ index, remove }) => (
                   <EntryCard
-                    // Index keys until entries get stable ids.
-                    // oxlint-disable-next-line react/no-array-index-key
-                    key={index}
                     header={
                       <form.Subscribe
                         selector={(state) => state.values.languages?.[index]}
@@ -72,18 +82,22 @@ export const LanguagesSection = withForm({
                             )}
                             entry={entry}
                             entryLabel="language"
-                            onRemove={() => field.removeValue(index)}
+                            onRemove={remove}
                           />
                         )}
                       </form.Subscribe>
                     }
                   >
+                    {/* useFieldGroup keeps its first path, so remount when the entry moves. */}
                     <LanguageFields
+                      key={index}
                       form={form}
                       fields={`languages[${index}]`}
+                      suggestions={words.fluencySuggestions}
+                      placeholder={example(words.fluencyExample)}
                     />
                   </EntryCard>
-                ))}
+                )}
               </EntryList>
             );
           }}

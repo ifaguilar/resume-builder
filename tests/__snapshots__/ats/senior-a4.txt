@@ -1,0 +1,58 @@
+Morgan Achterberg
+Staff Software Engineer
+Sample City, California, United States +1 555 010 7788 morgan@example.org
+morgan.example.org linkedin.example.com/in/machterberg
+SUMMARY
+Staff engineer with over fifteen years of experience building distributed data systems. Leads platform teams,
+turns unreliable pipelines into dependable products, and cares about efficient, well-tested code and clear
+documentation.
+SKILLS
+• Distributed Systems: Kafka, Raft
+• Languages and Frameworks: Go, Rust, Java, TypeScript, gRPC, SQL
+• Infrastructure: Kubernetes, Terraform, PostgreSQL, ClickHouse, OpenTelemetry, AWS
+• Languages: English (Native speaker), Dutch (Professional)
+WORK EXPERIENCE
+Staff Software Engineer Mar 2020 - Present
+Northwind Data Remote
+• Scaled ingestion to two million events per second by redesigning partitioning and backpressure across
+40 Kafka topics
+• Led a platform team of eight engineers and set the technical roadmap for streaming, storage and query
+services
+• Cut cloud spend by 31% after profiling hot paths and moving cold data to tiered object storage
+• Introduced an incident review workflow that halved repeat outages within two quarters
+• Mentored five engineers to senior level through pairing, design reviews and a weekly reading group
+Senior Software Engineer Aug 2016 - Feb 2020
+Fabrikam Labs Sample City, California, United States
+• Designed the multi-region storage layer serving 12 billion reads per day with 99.99% availability
+• Built an efficient change-data-capture pipeline from PostgreSQL to the analytics warehouse
+• Replaced a fragile cron-based scheduler with a fault-tolerant workflow engine written in Go
+• Defined service level objectives and on-call practices adopted by six product teams
+Software Engineer Sep 2013 - Jul 2016
+Contoso Analytics Amsterdam, Netherlands
+• Shipped the first real-time dashboard product, used by 300 enterprise customers
+• Rewrote the query planner, making the slowest reports four times faster
+• Added end-to-end tracing with OpenTelemetry across 25 services
+• Ran a fluent, bilingual support rotation for Dutch and English customers
+
+Backend Developer Jun 2011 - Aug 2013
+Tailspin Toys Utrecht, Netherlands
+• Built payment and order services handling seasonal peaks of 50,000 orders per hour
+• Automated deployments with a continuous delivery pipeline, from weekly releases to several per day
+• Wrote integration tests that raised coverage of the checkout flow from 35% to 90%
+• Migrated file-based configuration to a central, versioned configuration service
+Junior Developer Sep 2009 - May 2011
+Litware Utrecht, Netherlands
+• Maintained the internal reporting tool and fixed long-standing performance issues
+• Built a CSV import that replaced hours of manual data entry each week
+• Documented the release process for a team of twelve developers
+PROJECTS
+Flowgate 2019 - Present
+Adaptive rate limiting for Go services. flowgate.example.com
+• Used by several hundred projects, including two public cloud providers
+• Keeps tail latency flat under overload with an adaptive concurrency limit
+Tracelight Apr 2022 - Jan 2024
+Profiling toolkit for Kafka consumers. tracelight.example.com
+• Finds slow partitions and lagging consumers from broker metrics alone
+EDUCATION
+Master in Computer Engineering 2013
+Example Institute of Technology

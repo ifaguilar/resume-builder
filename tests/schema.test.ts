@@ -1,3 +1,4 @@
+import conformanceManifest from "@jsonresume/schema/conformance/manifest.json";
 import careerChanger from "@jsonresume/schema/examples/career-changer.resume.json";
 import newGrad from "@jsonresume/schema/examples/new-grad.resume.json";
 import seniorEngineer from "@jsonresume/schema/examples/senior-engineer.resume.json";
@@ -22,6 +23,22 @@ const fixtures = import.meta.glob<unknown>("/tests/fixtures/*.json", {
   eager: true,
   import: "default",
 });
+
+const CONFORMANCE_ROOT = "/node_modules/@jsonresume/schema/conformance/";
+const conformanceDocuments = import.meta.glob<unknown>(
+  "/node_modules/@jsonresume/schema/conformance/resume/**/*.json",
+  { eager: true, import: "default" },
+);
+const resumeCases = conformanceManifest.cases
+  .filter((entry) => entry.schema === "resume")
+  .map(({ file, valid }) => ({
+    file,
+    valid,
+    document: conformanceDocuments[`${CONFORMANCE_ROOT}${file}`],
+  }));
+// Valid upstream because JSON Resume allows extra keys; our strict mirror
+// warns about each one and keeps it.
+const UNKNOWN_PROPERTIES_CASE = "resume/valid/unknown-properties.json";
 
 type JsonObject = Record<string, unknown>;
 
@@ -119,6 +136,50 @@ describe("official JSON Resume conformance", () => {
       majorMinor(JSON_RESUME_SCHEMA_VERSION),
     );
   });
+});
+
+describe("official conformance suite", () => {
+  it("has resume cases", () => {
+    expect(resumeCases.length).toBeGreaterThan(0);
+  });
+
+  it.each(resumeCases)("$file is in the package", ({ document }) => {
+    expect(document).toBeDefined();
+  });
+
+  it.each(
+    resumeCases.filter(
+      ({ valid, file }) => valid && file !== UNKNOWN_PROPERTIES_CASE,
+    ),
+  )("$file has no warnings", ({ document }) => {
+    expect(warningsOf(document)).toEqual([]);
+  });
+
+  it("warns about each unknown property and keeps the data", () => {
+    const document = resumeCases.find(
+      ({ file }) => file === UNKNOWN_PROPERTIES_CASE,
+    )?.document;
+    const before = structuredClone(document);
+    expect(warningsOf(document)).toEqual([
+      {
+        path: ["basics", "favouriteNumber"],
+        message: WARNING_MESSAGES.unknownKey("favouriteNumber"),
+      },
+      {
+        path: ["work", 0, "teamSize"],
+        message: WARNING_MESSAGES.unknownKey("teamSize"),
+      },
+      { path: ["x-tool"], message: WARNING_MESSAGES.unknownKey("x-tool") },
+    ]);
+    expect(document).toEqual(before);
+  });
+
+  it.each(resumeCases.filter(({ valid }) => !valid))(
+    "$file warns",
+    ({ document }) => {
+      expect(warningsOf(document)).not.toEqual([]);
+    },
+  );
 });
 
 describe("validateResume", () => {
@@ -254,6 +315,35 @@ describe("validateResume", () => {
     ).toEqual([]);
   });
 
+  it("accepts skill references as names or skill objects", () => {
+    expect(
+      warningsOf({
+        work: [{ skills: ["go", { name: "Rust", level: "Expert" }] }],
+        projects: [{ skills: [{ keywords: ["tokio"] }] }],
+      }),
+    ).toEqual([]);
+  });
+
+  it("reports an unknown key inside a skill reference object", () => {
+    expect(
+      warningsOf({ work: [{ skills: [{ name: "Go", years: 5 }] }] }),
+    ).toEqual([
+      {
+        path: ["work", 0, "skills", 0, "years"],
+        message: WARNING_MESSAGES.unknownKey("years"),
+      },
+    ]);
+  });
+
+  it("warns about basics.pronouns, which the schema no longer has", () => {
+    expect(warningsOf({ basics: { pronouns: "they/them" } })).toEqual([
+      {
+        path: ["basics", "pronouns"],
+        message: WARNING_MESSAGES.unknownKey("pronouns"),
+      },
+    ]);
+  });
+
   it("reports wrong types at their path", () => {
     expect(warningsOf({ work: [{ highlights: "Did things" }] })).toEqual([
       { path: ["work", 0, "highlights"], message: expect.any(String) },
@@ -269,6 +359,13 @@ describe("settings", () => {
   it("rejects an unknown template id", () => {
     expect(
       settingsSchema.safeParse({ ...DEFAULT_SETTINGS, templateId: "fancy" })
+        .success,
+    ).toBe(false);
+  });
+
+  it("rejects an unknown page size", () => {
+    expect(
+      settingsSchema.safeParse({ ...DEFAULT_SETTINGS, pageSize: "Legal" })
         .success,
     ).toBe(false);
   });

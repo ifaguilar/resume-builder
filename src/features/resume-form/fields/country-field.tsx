@@ -17,6 +17,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  useComboboxAnchor,
 } from "#/shared/components/ui/combobox";
 import { Field, FieldLabel } from "#/shared/components/ui/field";
 
@@ -28,6 +29,7 @@ export function CountryField({ label, placeholder }: CountryFieldProps) {
   const field = useFieldContext<string | undefined>();
   const { warnings, isInvalid, focusProps } = useVisibleWarnings(field);
   const id = useId();
+  const anchor = useComboboxAnchor();
   const code = field.state.value;
   const selected: Country | null = code
     ? (COUNTRIES.find((country) => country.code === code) ?? {
@@ -50,21 +52,24 @@ export function CountryField({ label, placeholder }: CountryFieldProps) {
         isItemEqualToValue={(a, b) => a.code === b.code}
         autoHighlight
       >
-        <ComboboxInput
-          id={id}
-          name={field.name}
-          placeholder={placeholder}
-          aria-invalid={isInvalid || undefined}
-          className="w-full border-foreground/15 bg-background shadow-xs has-[[data-slot][aria-invalid=true]]:border-warning has-[[data-slot][aria-invalid=true]]:ring-warning/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-warning/40 [&_input]:pr-9"
-          showTrigger={false}
-          {...focusProps}
-        >
-          <ChevronDownIcon
-            aria-hidden
-            className="pointer-events-none absolute right-3 size-4 text-muted-foreground transition-transform group-has-data-popup-open/input-group:rotate-180"
-          />
-        </ComboboxInput>
-        <ComboboxContent>
+        {/* The popup anchors to this box; the input inside it is narrower. */}
+        <div ref={anchor}>
+          <ComboboxInput
+            id={id}
+            name={field.name}
+            placeholder={placeholder}
+            aria-invalid={isInvalid || undefined}
+            className="w-full border-foreground/15 bg-background shadow-xs has-[[data-slot][aria-invalid=true]]:border-warning has-[[data-slot][aria-invalid=true]]:ring-warning/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-warning/40 [&_input]:pr-9"
+            showTrigger={false}
+            {...focusProps}
+          >
+            <ChevronDownIcon
+              aria-hidden
+              className="pointer-events-none absolute right-3 size-4 text-muted-foreground transition-transform group-has-data-popup-open/input-group:rotate-180"
+            />
+          </ComboboxInput>
+        </div>
+        <ComboboxContent anchor={anchor}>
           <ComboboxEmpty>No countries found.</ComboboxEmpty>
           <ComboboxList>
             {(country: Country) => (
