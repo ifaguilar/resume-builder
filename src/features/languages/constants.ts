@@ -161,6 +161,7 @@ export const CV_WORDS = {
 } as const satisfies Record<CvLanguage, CvWords>;
 
 export const CV_LANGUAGE_LEGEND = "CV language";
+export const UI_LANGUAGE_LEGEND = "App language";
 export const CV_LANGUAGE_TIP =
   "Write your CV in the language of the job posting.";
 // Matches no option, so none is selected while the stored language is one

@@ -1,4 +1,3 @@
-import { ColorSchemeMenu } from "#/features/color-scheme/color-scheme-menu";
 import { ExportJsonButton } from "#/features/export/components/export-json-button";
 import { ExportPdfButton } from "#/features/export/components/export-pdf-button";
 import { ImportJsonButton } from "#/features/import/components/import-json-button";
@@ -25,7 +24,6 @@ export function AppHeader({
           <ExportJsonButton form={form} settings={settings} />
         </ButtonGroup>
         <ExportPdfButton form={form} settings={settings} />
-        <ColorSchemeMenu />
       </div>
     </header>
   );

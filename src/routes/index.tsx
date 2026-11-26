@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { EditorPage } from "#/features/editor/components/editor-page";
 import { DEFAULT_EDITOR_TAB, EDITOR_TABS } from "#/features/editor/constants";
+import { applyDocumentLanguage } from "#/features/languages/document-language";
 import { storage } from "#/features/storage/storage";
 
 const editorSearchSchema = z.object({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/")({
   // The editor owns the draft after the first load, so a tab change must not
   // read it again.
   shouldReload: false,
+  beforeLoad: applyDocumentLanguage,
   loader: () => storage.loadDraft(),
   component: EditorRoute,
 });

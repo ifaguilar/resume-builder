@@ -18,6 +18,7 @@ import { usePreviewResume } from "#/features/pdf-preview/use-preview-resume";
 import { FormPanel } from "#/features/resume-form/components/form-panel";
 import { useResumeForm } from "#/features/resume-form/use-resume-form";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
+import { SettingsPanel } from "#/features/settings/components/settings-panel";
 import type { Draft } from "#/features/storage/draft-format";
 import {
   ResizablePanel,
@@ -65,6 +66,7 @@ export function Editor({
                     onSettingsChange={setSettings}
                   />
                 ),
+                settings: <SettingsPanel form={form} />,
               }}
             />
           </ResizablePanel>

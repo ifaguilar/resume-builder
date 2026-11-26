@@ -26,8 +26,6 @@ export const PAGE_SIZE_OPTIONS = [
   regions: string;
 }[];
 
-export const LANGUAGE_GROUP_TITLE = "Language";
-
 export const SECTIONS_GROUP_TITLE = "Sections";
 export const SECTIONS_TIP = "Recent graduates: put Education first.";
 

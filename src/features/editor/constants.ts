@@ -8,10 +8,11 @@ export const RESIZE_TARGET_FINE_PX = 16;
 export const RESIZE_TARGET_COARSE_PX = 28;
 export const DRAFT_SAVE_DEBOUNCE_MS = 500;
 export const PREVIEW_DEBOUNCE_MS = 1000;
-export const EDITOR_TABS = ["content", "design"] as const;
+export const EDITOR_TABS = ["content", "design", "settings"] as const;
 export type EditorTab = (typeof EDITOR_TABS)[number];
 export const EDITOR_TAB_LABELS: Record<EditorTab, string> = {
   content: "Content",
   design: "Design",
+  settings: "Settings",
 };
 export const DEFAULT_EDITOR_TAB: EditorTab = "content";

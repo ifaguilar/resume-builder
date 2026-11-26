@@ -9,10 +9,8 @@ import {
   NO_CV_LANGUAGE,
   unsupportedLanguage,
 } from "#/features/languages/constants";
-import {
-  cvLanguageSample,
-  languageName,
-} from "#/features/languages/cv-language";
+import { cvLanguageSample } from "#/features/languages/cv-language";
+import { languageName } from "#/features/languages/language-name";
 import {
   Field,
   FieldContent,
