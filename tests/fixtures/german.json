@@ -1,0 +1,75 @@
+{
+  "basics": {
+    "name": "Jörg Weiß-Brückner",
+    "label": "Softwareentwickler",
+    "email": "joerg.weiss@example.de",
+    "phone": "+49 170 0000000",
+    "url": "https://joerg-weiss.example.de",
+    "summary": "Softwareentwickler mit acht Jahren Erfahrung in barrierefreien Webanwendungen und verteilten Systemen. Überzeugt von „einfach statt clever“.",
+    "location": {
+      "city": "Köln",
+      "region": "Nordrhein-Westfalen",
+      "countryCode": "DE"
+    }
+  },
+  "work": [
+    {
+      "name": "Beispiel GmbH",
+      "location": "Düsseldorf",
+      "position": "Leitender Entwickler",
+      "startDate": "2024-03",
+      "highlights": [
+        "Ladezeiten der Kundenportale um 45 % verkürzt",
+        "Migration von zwölf Diensten auf TypeScript geleitet"
+      ]
+    },
+    {
+      "name": "Mustermann & Söhne AG",
+      "location": "München",
+      "position": "Softwareentwickler",
+      "startDate": "2017-06",
+      "endDate": "2024-02",
+      "highlights": [
+        "Zahlungsabwicklung für über 300.000 Bestellungen pro Monat entwickelt",
+        "Auszubildende in testgetriebener Entwicklung geschult"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Größenwahn",
+      "description": "Freies Werkzeug zur Prüfung von Schriftgrößen.",
+      "url": "https://groessenwahn.example.de",
+      "startDate": "2021-11",
+      "highlights": ["Über 1.500 Sterne auf GitHub"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Technische Universität Beispielstadt",
+      "area": "Informatik",
+      "studyType": "Bachelor",
+      "startDate": "2013",
+      "endDate": "2017"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Webentwicklung",
+      "keywords": ["TypeScript", "React", "Barrierefreiheit", "Node.js"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Deutsch",
+      "fluency": "Muttersprache"
+    },
+    {
+      "language": "Englisch",
+      "fluency": "Verhandlungssicher"
+    }
+  ],
+  "meta": {
+    "language": "de"
+  }
+}

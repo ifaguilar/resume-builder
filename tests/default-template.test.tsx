@@ -38,6 +38,8 @@ describe("DefaultTemplate", () => {
     ...Object.entries(fixtures),
     ["empty", {}] as const,
     ["empty Spanish", { meta: { language: "es" } }] as const,
+    ["empty French", { meta: { language: "fr" } }] as const,
+    ["empty German", { meta: { language: "de" } }] as const,
   ].flatMap(([name, resume]) =>
     PAGE_SIZES.map((pageSize) => [name, pageSize, resume] as const),
   );

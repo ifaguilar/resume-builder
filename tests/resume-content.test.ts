@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import { CV_WORDS } from "#/features/languages/constants";
 import { CV_SECTION_IDS } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import {
   DEFAULT_SETTINGS,
   type Settings,
 } from "#/features/resume/settings-schema";
-import { CV_WORDS } from "#/features/templates/constants";
 import {
   type ResumeSection,
   resumeContent,

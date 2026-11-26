@@ -1,5 +1,6 @@
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 
+import { documentWord } from "#/features/languages/cv-language";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { PageSize, Settings } from "#/features/resume/settings-schema";
 import {
@@ -7,7 +8,6 @@ import {
   LABEL_SUFFIX,
 } from "#/features/templates/constants";
 import { withContentKeys } from "#/features/templates/content-keys";
-import { documentWord } from "#/features/templates/cv-language";
 import { BODY_LEADING, tw } from "#/features/templates/design-tokens";
 import { PDF_FONT_FEATURES } from "#/features/templates/fonts/constants";
 import {

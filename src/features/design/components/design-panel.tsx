@@ -1,7 +1,6 @@
 import { useStore } from "@tanstack/react-form";
 import type { Dispatch, SetStateAction } from "react";
 
-import { CvLanguageField } from "#/features/design/components/cv-language-field";
 import { PageSizeField } from "#/features/design/components/page-size-field";
 import { SectionsField } from "#/features/design/components/sections-field";
 import {
@@ -9,13 +8,14 @@ import {
   PAGE_GROUP_TITLE,
   SECTIONS_GROUP_TITLE,
 } from "#/features/design/constants";
-import type { ResumeForm } from "#/features/resume-form/use-resume-form";
-import type { Settings } from "#/features/resume/settings-schema";
+import { CvLanguageField } from "#/features/languages/components/cv-language-field";
 import {
   cvLanguage,
   cvWords,
   unsupportedCvLanguage,
-} from "#/features/templates/cv-language";
+} from "#/features/languages/cv-language";
+import type { ResumeForm } from "#/features/resume-form/use-resume-form";
+import type { Settings } from "#/features/resume/settings-schema";
 import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import { ScrollArea } from "#/shared/components/ui/scroll-area";
 

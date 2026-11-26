@@ -1,13 +1,13 @@
-import type { CvLanguage, CvSectionId } from "#/features/resume/constants";
+import type { CvLanguage, CvWords } from "#/features/languages/constants";
+import { cvLanguage, cvWords } from "#/features/languages/cv-language";
+import type { CvSectionId } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import type { Settings } from "#/features/resume/settings-schema";
 import {
-  type CvWords,
   LIST_SEPARATOR,
   MAILTO_PREFIX,
   TEL_PREFIX,
 } from "#/features/templates/constants";
-import { cvLanguage, cvWords } from "#/features/templates/cv-language";
 import {
   cleanList,
   cleanText,

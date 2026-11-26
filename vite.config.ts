@@ -1,3 +1,4 @@
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -12,6 +13,8 @@ const config = defineConfig(({ mode }) => ({
   server: { port: 3000 },
   plugins: [
     devtools(),
+    // Options are in project.inlang/paraglide.config.ts.
+    paraglideVitePlugin({ project: "./project.inlang" }),
     // Nitro only builds the server. Under Vitest it breaks imports of JSON
     // files from node_modules, so it is left out there.
     mode === VITEST_MODE

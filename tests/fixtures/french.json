@@ -1,0 +1,75 @@
+{
+  "basics": {
+    "name": "Camille Lefèvre-Garçon",
+    "label": "Ingénieure logiciel",
+    "email": "camille.lefevre@example.fr",
+    "phone": "+33 6 00 00 00 00",
+    "url": "https://camille-lefevre.example.fr",
+    "summary": "Ingénieure passionnée par l'accessibilité, au cœur des équipes produit depuis six ans. Spécialisée dans les interfaces « sans friction » et les systèmes de design.",
+    "location": {
+      "city": "Besançon",
+      "region": "Bourgogne-Franche-Comté",
+      "countryCode": "FR"
+    }
+  },
+  "work": [
+    {
+      "name": "Société Exemple SAS",
+      "location": "Lyon",
+      "position": "Développeuse principale",
+      "startDate": "2023-09",
+      "highlights": [
+        "Réduit le délai de mise en production de 35 % grâce à une chaîne d'intégration continue",
+        "Encadré une équipe de quatre développeurs sur la refonte du parcours d'achat"
+      ]
+    },
+    {
+      "name": "Œuvre Numérique",
+      "location": "Paris",
+      "position": "Développeuse front-end",
+      "startDate": "2019-02",
+      "endDate": "2023-08",
+      "highlights": [
+        "Conçu une bibliothèque de composants réutilisée par cinq applications",
+        "Amélioré le score d'accessibilité de 62 à 98"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Façade",
+      "description": "Outil libre de vérification des contrastes.",
+      "url": "https://facade.example.fr",
+      "startDate": "2022-06",
+      "highlights": ["Utilisé par plus de 2 000 développeurs"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Université Exemple de Lyon",
+      "area": "informatique",
+      "studyType": "Master",
+      "startDate": "2016",
+      "endDate": "2018"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Développement web",
+      "keywords": ["TypeScript", "React", "Accessibilité", "Tests automatisés"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Langue maternelle"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Courant"
+    }
+  ],
+  "meta": {
+    "language": "fr"
+  }
+}

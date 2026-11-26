@@ -4,10 +4,10 @@ import { SETTINGS_META_KEY } from "#/features/export/constants";
 import { pdfFileName } from "#/features/export/file-name";
 import { toJson } from "#/features/export/json-export";
 import { fromJson } from "#/features/import/json-import";
+import { CV_WORDS } from "#/features/languages/constants";
 import { PAGE_SIZES } from "#/features/resume/constants";
 import type { Resume } from "#/features/resume/resume-schema";
 import { DEFAULT_SETTINGS } from "#/features/resume/settings-schema";
-import { CV_WORD, RESUME_WORD } from "#/features/templates/constants";
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
@@ -61,13 +61,16 @@ describe("pdfFileName", () => {
     [undefined, "Resume.pdf"],
     [{ first: "Ada" }, "Resume.pdf"],
   ])("%j → %s", (name, expected) => {
-    expect(pdfFileName(name, RESUME_WORD)).toBe(expected);
+    expect(pdfFileName(name, CV_WORDS.en.documentWord.LETTER)).toBe(expected);
   });
 
   it("uses the word it is given", () => {
-    expect(pdfFileName("Lucía Peñalosa", CV_WORD)).toBe(
+    expect(pdfFileName("Lucía Peñalosa", CV_WORDS.es.documentWord.A4)).toBe(
       "Lucía-Peñalosa-CV.pdf",
     );
-    expect(pdfFileName("", CV_WORD)).toBe("CV.pdf");
+    expect(pdfFileName("", CV_WORDS.es.documentWord.A4)).toBe("CV.pdf");
+    expect(pdfFileName("Jörg Weiß", CV_WORDS.de.documentWord.A4)).toBe(
+      "Jörg-Weiß-Lebenslauf.pdf",
+    );
   });
 });

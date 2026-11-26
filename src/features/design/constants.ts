@@ -1,4 +1,4 @@
-import type { CvLanguage, CvSectionId } from "#/features/resume/constants";
+import type { CvSectionId } from "#/features/resume/constants";
 import type { PageSize } from "#/features/resume/settings-schema";
 
 export const PAGE_GROUP_TITLE = "Page";
@@ -27,25 +27,6 @@ export const PAGE_SIZE_OPTIONS = [
 }[];
 
 export const LANGUAGE_GROUP_TITLE = "Language";
-export const CV_LANGUAGE_LEGEND = "CV language";
-export const CV_LANGUAGE_TIP =
-  "Write your CV in the language of the job posting.";
-// Matches no option, so none is selected while the stored language is one
-// the CV can't use.
-export const NO_CV_LANGUAGE = "";
-
-export const CV_LANGUAGE_OPTIONS = [
-  { value: "en", title: "English", sample: "Sep 2023 - Present" },
-  { value: "es", title: "Español", sample: "sept 2023 - actualidad" },
-] as const satisfies readonly {
-  value: CvLanguage;
-  title: string;
-  sample: string;
-}[];
-
-export function unsupportedLanguage(value: string): string {
-  return `This resume's language is "${value}"; the CV uses English.`;
-}
 
 export const SECTIONS_GROUP_TITLE = "Sections";
 export const SECTIONS_TIP = "Recent graduates: put Education first.";
