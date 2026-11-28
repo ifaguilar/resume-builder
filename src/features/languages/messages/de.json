@@ -81,6 +81,7 @@
   "resume_warning_date_too_old": "Dieses Datum liegt mehr als {years} Jahre zurück",
   "resume_warning_date_too_far": "Dieses Datum liegt mehr als {years} Jahre in der Zukunft",
   "resume_warning_location": "Verwenden Sie Text oder eine Adresse",
+  "resume_warning_markdown_block": "Überschriften, Listen und Tabellen erscheinen im Lebenslauf so, wie Sie sie eingeben. Schreiben Sie stattdessen ganze Sätze.",
   "resume_warning_not_an_object": "Ein Lebenslauf muss ein JSON-Objekt sein",
   "resume_warning_unknown_key": "„{key}“ gehört nicht zu JSON Resume. Es bleibt erhalten; verschieben Sie es am besten unter „custom“.",
 

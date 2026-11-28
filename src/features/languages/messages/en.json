@@ -81,6 +81,7 @@
   "resume_warning_date_too_old": "This date is more than {years} years ago",
   "resume_warning_date_too_far": "This date is more than {years} years from now",
   "resume_warning_location": "Use text or an address",
+  "resume_warning_markdown_block": "Headings, lists and tables show as typed on the CV. Write plain sentences instead.",
   "resume_warning_not_an_object": "A resume must be a JSON object",
   "resume_warning_unknown_key": "\"{key}\" is not part of JSON Resume. It will be kept; consider moving it under \"custom\".",
 
