@@ -14,8 +14,8 @@ const palette = createTw({});
 const colorOf = (className: string) => String(palette(className).color);
 
 const BASE_COLORS = {
-  foreground: colorOf("text-slate-950"),
-  muted: colorOf("text-slate-500"),
+  foreground: colorOf("text-neutral-950"),
+  muted: colorOf("text-neutral-500"),
 };
 
 export type TemplateTw = ReturnType<typeof createTw>;
