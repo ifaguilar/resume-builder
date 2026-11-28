@@ -17,6 +17,8 @@ import {
   formatPlace,
   formatYear,
 } from "#/features/templates/format";
+import { inlineMarkdown } from "#/features/templates/inline-markdown";
+import { plainText, type RichText } from "#/features/templates/rich-text";
 import { isRecord } from "#/shared/lib/is-record";
 
 const PHONE_LINK_JUNK = /[^\d+]/g;
@@ -29,9 +31,9 @@ export type LabeledItem = { label: string; value: string };
 export type EntryContent = {
   title: string;
   date: string;
-  subtitle: string;
+  subtitle: RichText;
   aside?: LinkedText;
-  highlights: string[];
+  highlights: RichText[];
 };
 
 type EntrySectionId = Extract<
@@ -40,7 +42,7 @@ type EntrySectionId = Extract<
 >;
 
 export type ResumeSection =
-  | { id: "summary"; title: string; text: string }
+  | { id: "summary"; title: string; text: RichText }
   | { id: "skills"; title: string; items: LabeledItem[] }
   | { id: EntrySectionId; title: string; entries: EntryContent[] };
 
@@ -90,11 +92,17 @@ function header(resume: Resume, words: CvWords): ResumeHeader {
   };
 }
 
+function markdownList(items: unknown): RichText[] {
+  return cleanList(items)
+    .map(inlineMarkdown)
+    .filter((runs) => runs.length > 0);
+}
+
 function hasContent(entry: EntryContent): boolean {
   return Boolean(
     entry.title ||
     entry.date ||
-    entry.subtitle ||
+    entry.subtitle.length > 0 ||
     entry.aside ||
     entry.highlights.length > 0,
   );
@@ -110,8 +118,8 @@ function entrySection(
 }
 
 function summary(resume: Resume, title: string): ResumeSection | null {
-  const text = cleanText(basicsOf(resume).summary);
-  return text ? { id: "summary", title, text } : null;
+  const text = inlineMarkdown(cleanText(basicsOf(resume).summary));
+  return text.length > 0 ? { id: "summary", title, text } : null;
 }
 
 function skills(
@@ -151,9 +159,9 @@ function experience(
       return {
         title: cleanText(work.position),
         date: formatDateRange(work.startDate, work.endDate, words),
-        subtitle: cleanText(work.name),
+        subtitle: plainText(cleanText(work.name)),
         aside: place ? { text: place } : undefined,
-        highlights: cleanList(work.highlights),
+        highlights: markdownList(work.highlights),
       };
     }),
   );
@@ -172,9 +180,9 @@ function projects(
       return {
         title: cleanText(project.name),
         date: formatDateRange(project.startDate, project.endDate, words),
-        subtitle: cleanText(project.description),
+        subtitle: inlineMarkdown(cleanText(project.description)),
         aside: url ? { text: displayUrl(url), href: url } : undefined,
-        highlights: cleanList(project.highlights),
+        highlights: markdownList(project.highlights),
       };
     }),
   );
@@ -193,7 +201,7 @@ function education(
         .filter((part) => part !== "")
         .join(words.degreeAreaJoiner),
       date: formatYear(entry.endDate),
-      subtitle: cleanText(entry.institution),
+      subtitle: plainText(cleanText(entry.institution)),
       highlights: [],
     })),
   );

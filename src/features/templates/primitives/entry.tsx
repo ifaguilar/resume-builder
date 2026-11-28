@@ -7,9 +7,11 @@ import {
   Bullet,
   BulletList,
 } from "#/features/templates/primitives/bullet-list";
+import { FormattedText } from "#/features/templates/primitives/formatted-text";
+import type { RichText } from "#/features/templates/rich-text";
 import { useTw } from "#/features/templates/template-theme";
 
-const NO_HIGHLIGHTS: string[] = [];
+const NO_HIGHLIGHTS: RichText[] = [];
 
 function Row({ left, right }: { left: ReactNode; right: ReactNode }) {
   const tw = useTw();
@@ -22,12 +24,14 @@ function Row({ left, right }: { left: ReactNode; right: ReactNode }) {
   );
 }
 
-function Bullets({ items }: { items: Keyed<string>[] }) {
+function Bullets({ items }: { items: Keyed<RichText>[] }) {
   if (items.length === 0) return null;
   return (
     <BulletList>
       {items.map(({ key, item }) => (
-        <Bullet key={key}>{item}</Bullet>
+        <Bullet key={key}>
+          <FormattedText text={item} />
+        </Bullet>
       ))}
     </BulletList>
   );
@@ -42,9 +46,9 @@ export function Entry({
 }: {
   title: string;
   date: string;
-  subtitle: string;
+  subtitle: RichText;
   aside?: ReactNode;
-  highlights?: string[];
+  highlights?: RichText[];
 }) {
   const tw = useTw();
   const [first, ...rest] = withContentKeys(highlights ?? NO_HIGHLIGHTS);
@@ -69,7 +73,11 @@ export function Entry({
           />
           <Row
             left={
-              subtitle ? <Text style={tw("text-muted")}>{subtitle}</Text> : null
+              subtitle.length > 0 ? (
+                <Text style={tw("text-muted")}>
+                  <FormattedText text={subtitle} muted />
+                </Text>
+              ) : null
             }
             right={aside}
           />

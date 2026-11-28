@@ -6,6 +6,7 @@ import {
   type ResumeSection,
   resumeContent,
 } from "#/features/templates/resume-content";
+import { richTextString } from "#/features/templates/rich-text";
 
 function labeled(label: string, value: string): string {
   if (!label) return value;
@@ -15,16 +16,16 @@ function labeled(label: string, value: string): string {
 function sectionTexts(section: ResumeSection): string[] {
   switch (section.id) {
     case "summary":
-      return [section.text];
+      return [richTextString(section.text)];
     case "skills":
       return section.items.map((item) => labeled(item.label, item.value));
     default:
       return section.entries.flatMap((entry) => [
         entry.title,
         entry.date,
-        entry.subtitle,
+        richTextString(entry.subtitle),
         entry.aside?.text ?? "",
-        ...entry.highlights,
+        ...entry.highlights.map(richTextString),
       ]);
   }
 }

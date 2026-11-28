@@ -88,7 +88,7 @@ describe("resumeContent", () => {
         {
           title: "",
           date: "Sep 2023 - Present",
-          subtitle: "",
+          subtitle: [],
           highlights: [],
         },
       ],
@@ -142,6 +142,42 @@ describe("resumeContent", () => {
         { label: "Tools", value: "Git, Docker" },
         { label: "Languages", value: "English (Native), Spanish" },
       ],
+    });
+  });
+
+  it("draws Markdown in the summary, descriptions and bullets only", () => {
+    const resume: Resume = {
+      basics: { summary: "**Led** teams" },
+      work: [{ name: "**Acme**", highlights: ["Cut costs **31%**", " "] }],
+      projects: [
+        { description: "A [tool](https://tool.example)", highlights: ["*x*"] },
+      ],
+      education: [{ institution: "**Uni**" }],
+    };
+    expect(section(resume, "summary")).toMatchObject({
+      text: [{ text: "Led", bold: true }, { text: " teams" }],
+    });
+    expect(section(resume, "experience")).toMatchObject({
+      entries: [
+        {
+          subtitle: [{ text: "**Acme**" }],
+          highlights: [[{ text: "Cut costs " }, { text: "31%", bold: true }]],
+        },
+      ],
+    });
+    expect(section(resume, "projects")).toMatchObject({
+      entries: [
+        {
+          subtitle: [
+            { text: "A " },
+            { text: "tool", href: "https://tool.example" },
+          ],
+          highlights: [[{ text: "x" }]],
+        },
+      ],
+    });
+    expect(section(resume, "education")).toMatchObject({
+      entries: [{ subtitle: [{ text: "**Uni**" }] }],
     });
   });
 
