@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 import { Font, renderToBuffer } from "@react-pdf/renderer";
+import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import {
@@ -40,16 +41,42 @@ const CUSTOM_SECTIONS: Settings["sections"] = [
   { id: "projects", visible: false },
 ];
 
+const CUSTOM_ACCENT_COLOR = "#c0392b";
+const FIRST_PAGE = 1;
+
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
   import: "default",
 });
 
-async function renderPages(resume: Resume, settings: Settings) {
-  const pdf = await renderToBuffer(
+function renderPdf(resume: Resume, settings: Settings) {
+  return renderToBuffer(
     <DefaultTemplate resume={resume} settings={settings} />,
   );
-  return extractText(pdf);
+}
+
+async function renderPages(resume: Resume, settings: Settings) {
+  return extractText(await renderPdf(resume, settings));
+}
+
+// Every fill color the PDF draws with, read back through pdf.js.
+async function fillColors(pdf: Uint8Array): Promise<Set<unknown>> {
+  const task = getDocument({ data: new Uint8Array(pdf) });
+  try {
+    const document = await task.promise;
+    const pages = await Promise.all(
+      Array.from({ length: document.numPages }, async (_, index) => {
+        const page = await document.getPage(index + FIRST_PAGE);
+        const { fnArray, argsArray } = await page.getOperatorList();
+        return fnArray.flatMap((fn, at) =>
+          fn === OPS.setFillRGBColor ? [argsArray[at]?.[0]] : [],
+        );
+      }),
+    );
+    return new Set(pages.flat());
+  } finally {
+    await task.destroy();
+  }
 }
 
 async function readTextLayer(resume: Resume, settings: Settings) {
@@ -112,6 +139,23 @@ describe("DefaultTemplate text layer", () => {
       expect(findings).toEqual([]);
       await expect(text).toMatchFileSnapshot(
         snapshotPath(`${MULTI_PAGE_FIXTURE}-custom-sections`, pageSize),
+      );
+    },
+  );
+
+  it.each(PAGE_SIZES)(
+    `${MULTI_PAGE_FIXTURE} with a custom accent color on %s draws it and keeps the text`,
+    async (pageSize) => {
+      const resume = fixtures[MULTI_PAGE_FIXTURE_PATH] ?? {};
+      const settings = { ...DEFAULT_SETTINGS, pageSize };
+      const custom = { ...settings, accentColor: CUSTOM_ACCENT_COLOR };
+      const pdf = await renderPdf(resume, custom);
+      expect(await fillColors(pdf)).toContain(CUSTOM_ACCENT_COLOR);
+      expect(await fillColors(await renderPdf(resume, settings))).not.toContain(
+        CUSTOM_ACCENT_COLOR,
+      );
+      expect(pagesToText(await extractText(pdf))).toBe(
+        pagesToText(await renderPages(resume, settings)),
       );
     },
   );

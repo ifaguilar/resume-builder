@@ -3,15 +3,16 @@ import type { ReactNode } from "react";
 
 import { PDF_DATE_FEATURES } from "#/features/templates/constants";
 import { type Keyed, withContentKeys } from "#/features/templates/content-keys";
-import { tw } from "#/features/templates/design-tokens";
 import {
   Bullet,
   BulletList,
 } from "#/features/templates/primitives/bullet-list";
+import { useTw } from "#/features/templates/template-theme";
 
 const NO_HIGHLIGHTS: string[] = [];
 
 function Row({ left, right }: { left: ReactNode; right: ReactNode }) {
+  const tw = useTw();
   if (!left && !right) return null;
   return (
     <View style={tw("flex-row gap-4")}>
@@ -45,6 +46,7 @@ export function Entry({
   aside?: ReactNode;
   highlights?: string[];
 }) {
+  const tw = useTw();
   const [first, ...rest] = withContentKeys(highlights ?? NO_HIGHLIGHTS);
 
   return (

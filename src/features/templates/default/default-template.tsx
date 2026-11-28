@@ -8,7 +8,7 @@ import {
   LABEL_SUFFIX,
 } from "#/features/templates/constants";
 import { withContentKeys } from "#/features/templates/content-keys";
-import { BODY_LEADING, tw } from "#/features/templates/design-tokens";
+import { BODY_LEADING } from "#/features/templates/design-tokens";
 import { PDF_FONT_FEATURES } from "#/features/templates/fonts/constants";
 import {
   Bullet,
@@ -24,6 +24,7 @@ import {
   type ResumeSection,
   resumeContent,
 } from "#/features/templates/resume-content";
+import { TemplateTheme, useTw } from "#/features/templates/template-theme";
 
 // Letter is 50 pt shorter than A4, so it gets tighter margins and section
 // gaps to keep a one-page CV on one page.
@@ -33,6 +34,7 @@ const PAGE_LAYOUTS = {
 } satisfies Record<PageSize, { page: string; sectionGap: string }>;
 
 function LabeledItem({ label, value }: LabeledItemContent) {
+  const tw = useTw();
   return (
     <Bullet>
       {label && (
@@ -54,6 +56,7 @@ function Contact({ contact }: { contact: LinkedText }) {
 }
 
 function Aside({ aside }: { aside: LinkedText }) {
+  const tw = useTw();
   return aside.href ? (
     <Link href={aside.href}>{aside.text}</Link>
   ) : (
@@ -62,6 +65,7 @@ function Aside({ aside }: { aside: LinkedText }) {
 }
 
 function Header({ header }: { header: ResumeHeader }) {
+  const tw = useTw();
   return (
     <View>
       {header.name ? (
@@ -84,6 +88,7 @@ function Header({ header }: { header: ResumeHeader }) {
 }
 
 function SectionBody({ section }: { section: ResumeSection }) {
+  const tw = useTw();
   switch (section.id) {
     case "summary":
       return <Text>{section.text}</Text>;
@@ -113,13 +118,18 @@ function SectionBody({ section }: { section: ResumeSection }) {
   }
 }
 
-export function DefaultTemplate({
-  resume,
-  settings,
-}: {
-  resume: Resume;
-  settings: Settings;
-}) {
+type TemplateProps = { resume: Resume; settings: Settings };
+
+export function DefaultTemplate(props: TemplateProps) {
+  return (
+    <TemplateTheme settings={props.settings}>
+      <DefaultDocument {...props} />
+    </TemplateTheme>
+  );
+}
+
+function DefaultDocument({ resume, settings }: TemplateProps) {
+  const tw = useTw();
   const layout = PAGE_LAYOUTS[settings.pageSize];
   const content = resumeContent(resume, settings);
   const { name } = content.header;
