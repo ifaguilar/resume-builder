@@ -3,12 +3,12 @@ import { z } from "zod";
 import {
   CV_SECTION_IDS,
   FIXED_SECTION_ID,
+  DEFAULT_ACCENT_COLOR,
   DEFAULT_PAGE_SIZE,
   DEFAULT_TEMPLATE_ID,
-  DEFAULT_THEME_ID,
+  HEX_COLOR_PATTERN,
   PAGE_SIZES,
   TEMPLATE_IDS,
-  THEME_IDS,
 } from "#/features/resume/constants";
 import { isRecord } from "#/shared/lib/is-record";
 
@@ -21,7 +21,7 @@ export const sectionSettingSchema = z.strictObject({
 
 export const settingsSchema = z.strictObject({
   templateId: z.enum(TEMPLATE_IDS),
-  themeId: z.enum(THEME_IDS),
+  accentColor: z.string().regex(HEX_COLOR_PATTERN).toLowerCase(),
   pageSize: z.enum(PAGE_SIZES),
   sections: z.array(sectionSettingSchema),
 });
@@ -36,7 +36,7 @@ function defaultSections(): SectionSetting[] {
 
 export const DEFAULT_SETTINGS: Settings = {
   templateId: DEFAULT_TEMPLATE_ID,
-  themeId: DEFAULT_THEME_ID,
+  accentColor: DEFAULT_ACCENT_COLOR,
   pageSize: DEFAULT_PAGE_SIZE,
   sections: defaultSections(),
 };
@@ -95,7 +95,11 @@ export function parseSettings(value: unknown): Settings {
       input.templateId,
       DEFAULT_SETTINGS.templateId,
     ),
-    themeId: parseOr(shape.themeId, input.themeId, DEFAULT_SETTINGS.themeId),
+    accentColor: parseOr(
+      shape.accentColor,
+      input.accentColor,
+      DEFAULT_SETTINGS.accentColor,
+    ),
     pageSize: parseOr(
       shape.pageSize,
       input.pageSize,

@@ -1,5 +1,6 @@
 import { createTw } from "@react-pdf/tailwind";
 
+import { DEFAULT_ACCENT_COLOR } from "#/features/resume/constants";
 import {
   BODY_SIZE_PT,
   KEEP_WITH_NEXT_LINES,
@@ -12,17 +13,27 @@ import { FONT_FAMILY } from "#/features/templates/fonts/constants";
 const palette = createTw({});
 const colorOf = (className: string) => String(palette(className).color);
 
-export const THEME_COLORS = {
+const BASE_COLORS = {
   foreground: colorOf("text-slate-950"),
   muted: colorOf("text-slate-500"),
-  accent: colorOf("text-blue-600"),
 };
 
-export const tw = createTw(
-  { fontFamily: { sans: [FONT_FAMILY] }, colors: THEME_COLORS },
-  { ptPerRem: PT_PER_REM },
-);
+export type TemplateTw = ReturnType<typeof createTw>;
+
+export function createTemplateTw(accentColor: string): TemplateTw {
+  return createTw(
+    {
+      fontFamily: { sans: [FONT_FAMILY] },
+      colors: { ...BASE_COLORS, accent: accentColor },
+    },
+    { ptPerRem: PT_PER_REM },
+  );
+}
+
+export const DEFAULT_TEMPLATE_TW = createTemplateTw(DEFAULT_ACCENT_COLOR);
 
 export const BODY_LEADING = "leading-relaxed";
 export const KEEP_WITH_NEXT_PT =
-  KEEP_WITH_NEXT_LINES * BODY_SIZE_PT * Number(tw(BODY_LEADING).lineHeight);
+  KEEP_WITH_NEXT_LINES *
+  BODY_SIZE_PT *
+  Number(DEFAULT_TEMPLATE_TW(BODY_LEADING).lineHeight);

@@ -11,6 +11,8 @@ import { FONT_FAMILY, FONT_FILES } from "#/features/templates/fonts/constants";
 
 const PDF_SIGNATURE = "%PDF";
 const PUBLIC_DIR = new URL("../public", import.meta.url);
+const SENIOR_FIXTURE_PATH = "/tests/fixtures/senior.json";
+const CUSTOM_ACCENT_COLOR = "#c0392b";
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
   eager: true,
@@ -41,18 +43,30 @@ describe("DefaultTemplate", () => {
     ["empty French", { meta: { language: "fr" } }] as const,
     ["empty German", { meta: { language: "de" } }] as const,
   ].flatMap(([name, resume]) =>
-    PAGE_SIZES.map((pageSize) => [name, pageSize, resume] as const),
+    PAGE_SIZES.map(
+      (pageSize) =>
+        [name, pageSize, resume, DEFAULT_SETTINGS.accentColor] as const,
+    ),
+  );
+  const colorCases = PAGE_SIZES.map(
+    (pageSize) =>
+      [
+        "senior with a custom accent color",
+        pageSize,
+        fixtures[SENIOR_FIXTURE_PATH] ?? {},
+        CUSTOM_ACCENT_COLOR,
+      ] as const,
   );
 
-  it.each(cases)(
+  it.each([...cases, ...colorCases])(
     "renders %s on %s without warnings or errors",
-    async (_name, pageSize, resume) => {
+    async (_name, pageSize, resume, accentColor) => {
       const warn = vi.spyOn(console, "warn");
       const error = vi.spyOn(console, "error");
       const pdf = await renderToBuffer(
         <DefaultTemplate
           resume={resume}
-          settings={{ ...DEFAULT_SETTINGS, pageSize }}
+          settings={{ ...DEFAULT_SETTINGS, pageSize, accentColor }}
         />,
       );
       expect(pdf.subarray(0, PDF_SIGNATURE.length).toString()).toBe(

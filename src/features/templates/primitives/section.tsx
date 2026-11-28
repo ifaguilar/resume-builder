@@ -1,7 +1,8 @@
 import { Text, View } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 
-import { KEEP_WITH_NEXT_PT, tw } from "#/features/templates/design-tokens";
+import { KEEP_WITH_NEXT_PT } from "#/features/templates/design-tokens";
+import { useTw } from "#/features/templates/template-theme";
 
 export function Section({
   title,
@@ -13,6 +14,7 @@ export function Section({
   topMargin: string;
   children: ReactNode;
 }) {
+  const tw = useTw();
   return (
     <View style={tw(topMargin)}>
       <Text

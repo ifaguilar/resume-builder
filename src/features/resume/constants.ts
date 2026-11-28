@@ -47,9 +47,12 @@ export type CvSectionId = (typeof CV_SECTION_IDS)[number];
 export const FIXED_SECTION_ID = "summary" satisfies CvSectionId;
 
 export const TEMPLATE_IDS = ["default"] as const;
-export const THEME_IDS = ["default"] as const;
 export const DEFAULT_TEMPLATE_ID = TEMPLATE_IDS[0];
-export const DEFAULT_THEME_ID = THEME_IDS[0];
+// The form `<input type="color">` gives its value in.
+export const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/i;
+// Tailwind's blue-600. Kept here, not in the template's tokens, so the
+// settings don't load the PDF styling library.
+export const DEFAULT_ACCENT_COLOR = "#2563eb";
 // react-pdf's own page size names.
 export const PAGE_SIZES = ["LETTER", "A4"] as const;
 export const DEFAULT_PAGE_SIZE = PAGE_SIZES[0];

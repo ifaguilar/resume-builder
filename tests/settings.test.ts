@@ -26,6 +26,26 @@ describe("parseSettings", () => {
       parseSettings({ pageSize: "A4", templateId: "fancy", sections: 3 }),
     ).toEqual({ ...DEFAULT_SETTINGS, pageSize: "A4" });
   });
+
+  it.each([["red"], ["#abc"], [12], [null]])(
+    "falls back to the default accent color for %j",
+    (accentColor) => {
+      expect(parseSettings({ pageSize: "A4", accentColor })).toEqual({
+        ...DEFAULT_SETTINGS,
+        pageSize: "A4",
+      });
+    },
+  );
+
+  it("stores the accent color in lowercase", () => {
+    expect(parseSettings({ accentColor: "#C0392B" }).accentColor).toBe(
+      "#c0392b",
+    );
+  });
+
+  it("drops the old themeId", () => {
+    expect(parseSettings({ themeId: "default" })).toEqual(DEFAULT_SETTINGS);
+  });
 });
 
 describe("parseSections", () => {

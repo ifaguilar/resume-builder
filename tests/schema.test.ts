@@ -363,6 +363,13 @@ describe("settings", () => {
     ).toBe(false);
   });
 
+  it("rejects an accent color that isn't a hex color", () => {
+    expect(
+      settingsSchema.safeParse({ ...DEFAULT_SETTINGS, accentColor: "blue" })
+        .success,
+    ).toBe(false);
+  });
+
   it("rejects an unknown page size", () => {
     expect(
       settingsSchema.safeParse({ ...DEFAULT_SETTINGS, pageSize: "Legal" })
