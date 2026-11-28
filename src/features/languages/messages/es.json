@@ -81,6 +81,7 @@
   "resume_warning_date_too_old": "Esta fecha es de hace más de {years} años",
   "resume_warning_date_too_far": "Esta fecha está a más de {years} años en el futuro",
   "resume_warning_location": "Usa texto o una dirección",
+  "resume_warning_markdown_block": "Los títulos, listas y tablas aparecen en el CV tal como los escribes. Usa frases normales.",
   "resume_warning_not_an_object": "Un currículum debe ser un objeto JSON",
   "resume_warning_unknown_key": "«{key}» no forma parte de JSON Resume. Se conservará; considera moverlo a «custom».",
 

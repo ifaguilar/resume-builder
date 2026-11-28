@@ -3,9 +3,9 @@ Staff Software Engineer
 Sample City, California, United States +1 555 010 7788 morgan@example.org
 morgan.example.org linkedin.example.com/in/machterberg
 SUMMARY
-Staff engineer with over fifteen years of experience building distributed data systems. Leads platform teams,
-turns unreliable pipelines into dependable products, and cares about efficient, well-tested code and clear
-documentation.
+Staff engineer with over fifteen years of experience building distributed data systems. Leads platform
+teams, turns unreliable pipelines into dependable products, and cares about efficient, well-tested code and
+clear documentation.
 EDUCATION
 Master in Computer Engineering 2013
 Example Institute of Technology

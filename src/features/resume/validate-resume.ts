@@ -2,6 +2,7 @@ import type { z } from "zod";
 
 import { WARNING_MESSAGES } from "#/features/resume/constants";
 import { dateWarnings } from "#/features/resume/date-rules";
+import { markdownWarnings } from "#/features/resume/markdown-warnings";
 import { resumeSchema } from "#/features/resume/resume-schema";
 
 type WarningPath = (string | number)[];
@@ -56,5 +57,11 @@ export function validateResume(
   const schemaWarnings = result.success
     ? []
     : result.error.issues.flatMap((issue) => toWarnings(issue, []));
-  return { warnings: [...schemaWarnings, ...dateWarnings(input, today)] };
+  return {
+    warnings: [
+      ...schemaWarnings,
+      ...dateWarnings(input, today),
+      ...markdownWarnings(input),
+    ],
+  };
 }

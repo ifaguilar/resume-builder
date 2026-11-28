@@ -81,6 +81,7 @@
   "resume_warning_date_too_old": "Cette date remonte à plus de {years} ans",
   "resume_warning_date_too_far": "Cette date est à plus de {years} ans dans le futur",
   "resume_warning_location": "Utilisez du texte ou une adresse",
+  "resume_warning_markdown_block": "Les titres, listes et tableaux apparaissent tels quels sur le CV. Écrivez plutôt des phrases.",
   "resume_warning_not_an_object": "Un CV doit être un objet JSON",
   "resume_warning_unknown_key": "« {key} » ne fait pas partie de JSON Resume. Il sera conservé ; pensez à le déplacer sous « custom ».",
 

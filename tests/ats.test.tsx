@@ -42,6 +42,8 @@ const CUSTOM_SECTIONS: Settings["sections"] = [
 ];
 
 const CUSTOM_ACCENT_COLOR = "#c0392b";
+// A Markdown link in a senior.json bullet, as pdf.js normalizes it.
+const MARKDOWN_LINK = "https://go.dev/";
 const FIRST_PAGE = 1;
 
 const fixtures = import.meta.glob<Resume>("/tests/fixtures/*.json", {
@@ -74,6 +76,23 @@ async function fillColors(pdf: Uint8Array): Promise<Set<unknown>> {
       }),
     );
     return new Set(pages.flat());
+  } finally {
+    await task.destroy();
+  }
+}
+
+async function linkTargets(pdf: Uint8Array): Promise<unknown[]> {
+  const task = getDocument({ data: new Uint8Array(pdf) });
+  try {
+    const document = await task.promise;
+    const pages = await Promise.all(
+      Array.from({ length: document.numPages }, async (_, index) => {
+        const page = await document.getPage(index + FIRST_PAGE);
+        const annotations: { url?: unknown }[] = await page.getAnnotations();
+        return annotations.map((annotation) => annotation.url);
+      }),
+    );
+    return pages.flat();
   } finally {
     await task.destroy();
   }
@@ -157,6 +176,17 @@ describe("DefaultTemplate text layer", () => {
       expect(pagesToText(await extractText(pdf))).toBe(
         pagesToText(await renderPages(resume, settings)),
       );
+    },
+  );
+
+  it.each(PAGE_SIZES)(
+    `${MULTI_PAGE_FIXTURE} keeps its Markdown link clickable on %s`,
+    async (pageSize) => {
+      const pdf = await renderPdf(fixtures[MULTI_PAGE_FIXTURE_PATH] ?? {}, {
+        ...DEFAULT_SETTINGS,
+        pageSize,
+      });
+      expect(await linkTargets(pdf)).toContain(MARKDOWN_LINK);
     },
   );
 

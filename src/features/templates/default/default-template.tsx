@@ -15,6 +15,7 @@ import {
   BulletList,
 } from "#/features/templates/primitives/bullet-list";
 import { Entry } from "#/features/templates/primitives/entry";
+import { FormattedText } from "#/features/templates/primitives/formatted-text";
 import { Link } from "#/features/templates/primitives/link";
 import { Section } from "#/features/templates/primitives/section";
 import {
@@ -91,7 +92,11 @@ function SectionBody({ section }: { section: ResumeSection }) {
   const tw = useTw();
   switch (section.id) {
     case "summary":
-      return <Text>{section.text}</Text>;
+      return (
+        <Text>
+          <FormattedText text={section.text} />
+        </Text>
+      );
     case "skills":
       return (
         <BulletList>

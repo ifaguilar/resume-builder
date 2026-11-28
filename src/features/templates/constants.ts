@@ -19,6 +19,12 @@ export const DOCUMENT_TITLE_SEPARATOR = " ";
 export const TEL_PREFIX = "tel:";
 export const MAILTO_PREFIX = "mailto:";
 
+export const STRONG_MARK = "**";
+export const EMPHASIS_MARK = "*";
+export const WORD_CHARACTER = /[\p{L}\p{M}\p{N}]/u;
+export const ALLOWED_LINK = /^(?:https?|mailto):/i;
+export const HARD_BREAK = "\n";
+
 // A child's fontFeatureSettings replaces the Page's instead of merging, so
 // tabular-nums (['tnum']) alone would turn calt back on for dates.
 export const PDF_DATE_FEATURES = { ...PDF_FONT_FEATURES, tnum: 1 };

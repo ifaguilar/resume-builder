@@ -21,9 +21,15 @@ export const WARNING_MESSAGES = {
   dateTooOld: () => m.resume_warning_date_too_old({ years: DATE_RANGE_YEARS }),
   dateTooFar: () => m.resume_warning_date_too_far({ years: DATE_RANGE_YEARS }),
   location: () => m.resume_warning_location(),
+  markdownBlock: () => m.resume_warning_markdown_block(),
   notAnObject: () => m.resume_warning_not_an_object(),
   unknownKey: (key: string) => m.resume_warning_unknown_key({ key }),
 } as const;
+
+// A line the CV prints as typed because it starts like a Markdown heading,
+// list item or table row.
+export const MARKDOWN_BLOCK_LINE =
+  /^ {0,3}(?:#{1,6}(?:\s|$)|[-*+]\s|\d{1,9}[.)]\s|\|)/m;
 
 export const LOCATION_PART_KEYS = [
   "address",
