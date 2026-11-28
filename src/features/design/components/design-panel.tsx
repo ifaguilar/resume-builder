@@ -1,11 +1,15 @@
 import { useStore } from "@tanstack/react-form";
 import type { Dispatch, SetStateAction } from "react";
 
+import { AccentColorField } from "#/features/design/components/accent-color-field";
 import { PageSizeField } from "#/features/design/components/page-size-field";
 import { SectionsField } from "#/features/design/components/sections-field";
 import { cvLanguage, cvWords } from "#/features/languages/cv-language";
 import type { ResumeForm } from "#/features/resume-form/use-resume-form";
-import type { Settings } from "#/features/resume/settings-schema";
+import {
+  DEFAULT_SETTINGS,
+  type Settings,
+} from "#/features/resume/settings-schema";
 import { m } from "#/paraglide/messages.js";
 import { LiveAnnouncer } from "#/shared/components/live-announcer";
 import { ScrollArea } from "#/shared/components/ui/scroll-area";
@@ -40,6 +44,22 @@ export function DesignPanel({
                     ? current
                     : { ...current, sections };
                 })
+              }
+            />
+          </section>
+          <section className="flex flex-col gap-4 px-3 py-4 @lg/form:px-5">
+            <h2 className="text-base font-semibold">
+              {m.design_color_title()}
+            </h2>
+            <AccentColorField
+              value={settings.accentColor}
+              defaultValue={DEFAULT_SETTINGS.accentColor}
+              onChange={(accentColor) =>
+                onSettingsChange((current) =>
+                  current.accentColor === accentColor
+                    ? current
+                    : { ...current, accentColor },
+                )
               }
             />
           </section>
